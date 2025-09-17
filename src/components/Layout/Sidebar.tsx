@@ -8,7 +8,9 @@ import {
   BarChart3, 
   Bell,
   Settings,
-  Building2
+  Building2,
+  Shield,
+  Beaker
 } from 'lucide-react';
 
 const navigation = [
@@ -18,6 +20,8 @@ const navigation = [
   { name: 'Clientes', href: '/clientes', icon: Users },
   { name: 'Reportes', href: '/reportes', icon: BarChart3 },
   { name: 'Notificaciones', href: '/notificaciones', icon: Bell },
+  { name: 'FAUNA/CITES', href: '/fauna-cites', icon: Shield },
+  { name: 'RENPRE', href: '/renpre', icon: Beaker },
 ];
 
 export const Sidebar: React.FC = () => {
