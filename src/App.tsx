@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider, useAuth } from './hooks/use-auth';
+import { AuthProvider, useAuth } from './hooks/use-auth.tsx';
 import { Layout } from './components/Layout/Layout';
 import { Dashboard } from './pages/Dashboard/Dashboard';
 import { Expedientes } from './pages/Expedientes/Expedientes';
