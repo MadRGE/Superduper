@@ -7,7 +7,6 @@ import { Dashboard } from './pages/Dashboard/Dashboard';
 import { Expedientes } from './pages/Expedientes/Expedientes';
 import { ExpedienteDetail } from './pages/Expedientes/ExpedienteDetail';
 import { NuevoExpediente } from './pages/Expedientes/NuevoExpediente';
-import { NuevoExpediente } from './pages/Expedientes/NuevoExpediente';
 import { Catalogo } from './pages/Catalogo/Catalogo';
 import { Clientes } from './pages/Clientes/Clientes';
 import { Reportes } from './pages/Reportes/Reportes';
