@@ -16,6 +16,9 @@ import { FaunaCITES } from './pages/Fauna/FaunaCITES';
 import { RENPREManager } from './pages/RENPRE/RENPREManager';
 import { ANMaCManager } from './pages/ANMaC/ANMaCManager';
 import { GestionTramites } from './pages/Configuracion/GestionTramites';
+import { Presupuestos } from './pages/Comercial/Presupuestos';
+import { Facturacion } from './pages/Comercial/Facturacion';
+import { Proveedores } from './pages/Comercial/Proveedores';
 import { SGTProvider } from './context/SGTContext';
 import { startAutomations } from './services/AutomationService';
 import { Toaster } from '@/components/ui/toaster';
@@ -63,6 +66,9 @@ const AppContent: React.FC = () => {
           <Route path="/renpre" element={<RENPREManager />} />
           <Route path="/anmac" element={<ANMaCManager />} />
           <Route path="/configuracion/tramites" element={<GestionTramites />} />
+          <Route path="/presupuestos" element={<Presupuestos />} />
+          <Route path="/facturacion" element={<Facturacion />} />
+          <Route path="/proveedores" element={<Proveedores />} />
         </Routes>
       </Layout>
     </Router>

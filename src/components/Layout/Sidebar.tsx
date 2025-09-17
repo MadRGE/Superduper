@@ -11,6 +11,7 @@ import {
   Building2,
   Shield,
   Beaker,
+  DollarSign,
   ChevronDown
 } from 'lucide-react';
 
@@ -31,6 +32,15 @@ const navigation: NavigationItem[] = [
   { name: 'FAUNA/CITES', href: '/fauna-cites', icon: Shield },
   { name: 'RENPRE', href: '/renpre', icon: Beaker },
   { name: 'ANMaC', href: '/anmac', icon: Shield },
+  { 
+    name: 'Comercial', 
+    icon: DollarSign,
+    subItems: [
+      { name: 'Presupuestos', href: '/presupuestos' },
+      { name: 'Facturación', href: '/facturacion' },
+      { name: 'Proveedores', href: '/proveedores' }
+    ]
+  },
   { 
     name: 'Configuración', 
     icon: Settings,
