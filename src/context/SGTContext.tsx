@@ -21,9 +21,11 @@ interface SGTState {
 
 type SGTAction = 
   | { type: 'SET_EXPEDIENTES'; payload: Expediente[] }
+  | { type: 'ADD_EXPEDIENTE'; payload: Expediente }
   | { type: 'SET_TRAMITE_TIPOS'; payload: TramiteTipo[] }
   | { type: 'SET_ORGANISMOS'; payload: Organismo[] }
   | { type: 'SET_CLIENTES'; payload: Cliente[] }
+  | { type: 'ADD_CLIENTE'; payload: Cliente }
   | { type: 'SET_SELECTED_EXPEDIENTE'; payload: Expediente | null }
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'UPDATE_FILTERS'; payload: Partial<SGTState['filters']> }
@@ -50,12 +52,16 @@ const sgtReducer = (state: SGTState, action: SGTAction): SGTState => {
   switch (action.type) {
     case 'SET_EXPEDIENTES':
       return { ...state, expedientes: action.payload };
+    case 'ADD_EXPEDIENTE':
+      return { ...state, expedientes: [...state.expedientes, action.payload] };
     case 'SET_TRAMITE_TIPOS':
       return { ...state, tramiteTipos: action.payload };
     case 'SET_ORGANISMOS':
       return { ...state, organismos: action.payload };
     case 'SET_CLIENTES':
       return { ...state, clientes: action.payload };
+    case 'ADD_CLIENTE':
+      return { ...state, clientes: [...state.clientes, action.payload] };
     case 'SET_SELECTED_EXPEDIENTE':
       return { ...state, selectedExpediente: action.payload };
     case 'SET_LOADING':
@@ -77,6 +83,8 @@ const sgtReducer = (state: SGTState, action: SGTAction): SGTState => {
 const SGTContext = createContext<{
   state: SGTState;
   dispatch: React.Dispatch<SGTAction>;
+  addExpediente: (expediente: Expediente) => void;
+  addCliente: (cliente: Cliente) => void;
   fetchExpedientes: () => Promise<void>;
   fetchTramiteTipos: () => Promise<void>;
   fetchOrganismos: () => Promise<void>;
@@ -86,6 +94,15 @@ const SGTContext = createContext<{
 export const SGTProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(sgtReducer, initialState);
   const { usuario } = useAuth();
+
+  const addExpediente = (expediente: Expediente) => {
+    dispatch({ type: 'ADD_EXPEDIENTE', payload: expediente });
+  };
+
+  const addCliente = (cliente: Cliente) => {
+    dispatch({ type: 'ADD_CLIENTE', payload: cliente });
+    fetchClientes();
+  };
 
   const fetchExpedientes = async () => {
     try {
@@ -148,6 +165,8 @@ export const SGTProvider = ({ children }: { children: ReactNode }) => {
     <SGTContext.Provider value={{ 
       state, 
       dispatch, 
+      addExpediente,
+      addCliente,
       fetchExpedientes,
       fetchTramiteTipos,
       fetchOrganismos,

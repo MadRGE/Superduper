@@ -62,10 +62,13 @@ export const Expedientes: React.FC = () => {
             <Download className="w-4 h-4 mr-2" />
             Exportar
           </button>
-          <button className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium">
+          <Link 
+            to="/expedientes/nuevo"
+            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
+          >
             <Plus className="w-4 h-4 mr-2" />
             Nuevo Expediente
-          </button>
+          </Link>
         </div>
       </div>
 

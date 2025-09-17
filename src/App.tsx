@@ -5,6 +5,7 @@ import { Layout } from './components/Layout/Layout';
 import { Dashboard } from './pages/Dashboard/Dashboard';
 import { Expedientes } from './pages/Expedientes/Expedientes';
 import { ExpedienteDetail } from './pages/Expedientes/ExpedienteDetail';
+import { NuevoExpediente } from './pages/Expedientes/NuevoExpediente';
 import { Catalogo } from './pages/Catalogo/Catalogo';
 import { Clientes } from './pages/Clientes/Clientes';
 import { Reportes } from './pages/Reportes/Reportes';
@@ -37,6 +38,7 @@ const AppContent: React.FC = () => {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/expedientes" element={<Expedientes />} />
+          <Route path="/expedientes/nuevo" element={<NuevoExpediente />} />
           <Route path="/expedientes/:id" element={<ExpedienteDetail />} />
           <Route path="/catalogo" element={<Catalogo />} />
           <Route path="/clientes" element={<Clientes />} />
