@@ -14,7 +14,7 @@ import { SGTProvider } from './context/SGTContext';
 import { Toaster } from '@/components/ui/toaster';
 
 const AppContent: React.FC = () => {
-  const { user, loading } = useAuth();
+  const { usuario, loading } = useAuth();
 
   if (loading) {
     return (
@@ -27,7 +27,7 @@ const AppContent: React.FC = () => {
     );
   }
 
-  if (!user) {
+  if (!usuario) {
     return <Login />;
   }
 
