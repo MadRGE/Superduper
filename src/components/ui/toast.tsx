@@ -67,10 +67,10 @@ const ToastAction = React.forwardRef<
 ))
 ToastAction.displayName = ToastPrimitives.Action.displayName
 
-const ToastClose = React.forwardRef<
-  React.ElementRef<typeof ToastPrimitives.Close>,
-  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Close>
->(({ className, ...props }, ref) => (
+type ToastCloseRef = React.ElementRef<typeof ToastPrimitives.Close>
+type ToastCloseProps = React.ComponentPropsWithoutRef<typeof ToastPrimitives.Close>
+
+const ToastClose = React.forwardRef<ToastCloseRef, ToastCloseProps>(({ className, ...props }, ref) => (
   <ToastPrimitives.Close
     ref={ref}
     className={cn(
