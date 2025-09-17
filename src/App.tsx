@@ -14,6 +14,8 @@ import { Notificaciones } from './pages/Notificaciones/Notificaciones';
 import { Login } from './pages/Login/Login';
 import { FaunaCITES } from './pages/Fauna/FaunaCITES';
 import { RENPREManager } from './pages/RENPRE/RENPREManager';
+import { ANMaCManager } from './pages/ANMaC/ANMaCManager';
+import { GestionTramites } from './pages/Configuracion/GestionTramites';
 import { SGTProvider } from './context/SGTContext';
 import { startAutomations } from './services/AutomationService';
 import { Toaster } from '@/components/ui/toaster';
@@ -59,6 +61,8 @@ const AppContent: React.FC = () => {
           <Route path="/notificaciones" element={<Notificaciones />} />
           <Route path="/fauna-cites" element={<FaunaCITES />} />
           <Route path="/renpre" element={<RENPREManager />} />
+          <Route path="/anmac" element={<ANMaCManager />} />
+          <Route path="/configuracion/tramites" element={<GestionTramites />} />
         </Routes>
       </Layout>
     </Router>

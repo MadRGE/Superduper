@@ -25,6 +25,7 @@ type SGTAction =
   | { type: 'SET_EXPEDIENTES'; payload: Expediente[] }
   | { type: 'ADD_EXPEDIENTE'; payload: Expediente }
   | { type: 'SET_TRAMITE_TIPOS'; payload: TramiteTipo[] }
+  | { type: 'ADD_TRAMITE_TIPO'; payload: TramiteTipo }
   | { type: 'SET_ORGANISMOS'; payload: Organismo[] }
   | { type: 'SET_CLIENTES'; payload: Cliente[] }
   | { type: 'ADD_CLIENTE'; payload: Cliente }
@@ -58,6 +59,8 @@ const sgtReducer = (state: SGTState, action: SGTAction): SGTState => {
       return { ...state, expedientes: [...state.expedientes, action.payload] };
     case 'SET_TRAMITE_TIPOS':
       return { ...state, tramiteTipos: action.payload };
+    case 'ADD_TRAMITE_TIPO':
+      return { ...state, tramiteTipos: [...state.tramiteTipos, action.payload] };
     case 'SET_ORGANISMOS':
       return { ...state, organismos: action.payload };
     case 'SET_CLIENTES':
