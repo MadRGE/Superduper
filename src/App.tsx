@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './hooks/AuthProvider';
-import { useAuth } from './hooks/use-auth';
+import { AuthProvider, useAuth } from './hooks/use-auth';
 import { Layout } from './components/Layout/Layout';
 import { Dashboard } from './pages/Dashboard/Dashboard';
 import { Expedientes } from './pages/Expedientes/Expedientes';

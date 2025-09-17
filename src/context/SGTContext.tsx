@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
-import { supabase } from '../lib/supabase';
+import { mockExpedientes, mockOrganismos, mockTramiteTipos } from '../data/mockData';
 import { Expediente, TramiteTipo, Organismo, Cliente } from '../types/database';
 import { useAuth } from '../hooks/use-auth';
 
@@ -90,30 +90,8 @@ export const SGTProvider = ({ children }: { children: ReactNode }) => {
   const fetchExpedientes = async () => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
-      
-      let query = supabase
-        .from('expedientes')
-        .select(`
-          *,
-          tramite_tipo:tramite_tipos(*,
-            organismo:organismos(*)
-          ),
-          cliente:clientes(*),
-          despachante:despachantes(*)
-        `)
-        .eq('is_active', true);
-
-      // Apply role-based filtering
-      if (usuario?.rol === 'cliente') {
-        query = query.eq('cliente_id', usuario.entidad_id);
-      } else if (usuario?.rol === 'despachante') {
-        query = query.eq('despachante_id', usuario.entidad_id);
-      }
-
-      const { data, error } = await query;
-      
-      if (error) throw error;
-      dispatch({ type: 'SET_EXPEDIENTES', payload: data || [] });
+      // Usar mock data por ahora
+      dispatch({ type: 'SET_EXPEDIENTES', payload: mockExpedientes });
     } catch (error) {
       console.error('Error fetching expedientes:', error);
     } finally {
@@ -123,13 +101,8 @@ export const SGTProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchTramiteTipos = async () => {
     try {
-      const { data, error } = await supabase
-        .from('tramite_tipos')
-        .select('*, organismo:organismos(*)')
-        .eq('is_active', true);
-      
-      if (error) throw error;
-      dispatch({ type: 'SET_TRAMITE_TIPOS', payload: data || [] });
+      // Usar mock data por ahora
+      dispatch({ type: 'SET_TRAMITE_TIPOS', payload: mockTramiteTipos });
     } catch (error) {
       console.error('Error fetching tramite tipos:', error);
     }
@@ -137,13 +110,8 @@ export const SGTProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchOrganismos = async () => {
     try {
-      const { data, error } = await supabase
-        .from('organismos')
-        .select('*')
-        .eq('is_active', true);
-      
-      if (error) throw error;
-      dispatch({ type: 'SET_ORGANISMOS', payload: data || [] });
+      // Usar mock data por ahora
+      dispatch({ type: 'SET_ORGANISMOS', payload: mockOrganismos });
     } catch (error) {
       console.error('Error fetching organismos:', error);
     }
@@ -151,21 +119,26 @@ export const SGTProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchClientes = async () => {
     try {
-      let query = supabase
-        .from('clientes')
-        .select('*')
-        .eq('is_active', true);
-
-      // Apply role-based filtering for despachantes
-      if (usuario?.rol === 'despachante') {
-        // Assuming there's a relationship between despachantes and clientes
-        // This would need to be implemented based on your business logic
-      }
-
-      const { data, error } = await query;
-      
-      if (error) throw error;
-      dispatch({ type: 'SET_CLIENTES', payload: data || [] });
+      // Usar mock data por ahora - crear mock clientes basado en expedientes
+      const mockClientes = [
+        {
+          id: 'cliente-1',
+          razon_social: 'Lácteos del Sur S.A.',
+          cuit: '30-12345678-9',
+          email: 'contacto@lacteosdelsur.com.ar',
+          telefono: '+54 11 4567-8900',
+          contacto_nombre: 'María González'
+        },
+        {
+          id: 'cliente-2',
+          razon_social: 'TechCorp Argentina',
+          cuit: '30-98765432-1',
+          email: 'info@techcorp.com.ar',
+          telefono: '+54 11 9876-5432',
+          contacto_nombre: 'Carlos Rodríguez'
+        }
+      ];
+      dispatch({ type: 'SET_CLIENTES', payload: mockClientes });
     } catch (error) {
       console.error('Error fetching clientes:', error);
     }
