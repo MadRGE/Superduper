@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 import { mockExpedientes, mockOrganismos, mockTramiteTipos } from '../data/mockData';
+import { ExpedienteService } from '../services/ExpedienteService';
 import { expedienteService } from '../services/ExpedienteService';
 import { Expediente, TramiteTipo, Organismo, Cliente } from '../types/database';
 import { useAuth } from '../hooks/use-auth';
@@ -108,6 +109,12 @@ export const SGTProvider = ({ children }: { children: ReactNode }) => {
   const fetchExpedientes = async () => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
+      
+      // Inicializar datos en localStorage si no existen
+      const expedienteService = new ExpedienteService();
+      localStorage.setItem('sgt_tramite_tipos', JSON.stringify(mockTramiteTipos));
+      localStorage.setItem('sgt_organismos', JSON.stringify(mockOrganismos));
+      
       
       // Intentar cargar desde localStorage primero
       const expedientesGuardados = expedienteService.obtenerExpedientes();

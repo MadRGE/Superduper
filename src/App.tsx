@@ -1,4 +1,5 @@
 import React from 'react';
+import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider, useAuth } from './hooks/use-auth.tsx';
 import { Layout } from './components/Layout/Layout';
@@ -13,6 +14,7 @@ import { Reportes } from './pages/Reportes/Reportes';
 import { Notificaciones } from './pages/Notificaciones/Notificaciones';
 import { Login } from './pages/Login/Login';
 import { SGTProvider } from './context/SGTContext';
+import { startAutomations } from './services/AutomationService';
 import { Toaster } from '@/components/ui/toaster';
 
 const AppContent: React.FC = () => {
@@ -32,6 +34,12 @@ const AppContent: React.FC = () => {
   if (!usuario) {
     return <Login />;
   }
+
+  // Iniciar automatizaciones cuando el usuario esté logueado
+  useEffect(() => {
+    startAutomations();
+    return () => {}; // Las automatizaciones se mantienen corriendo
+  }, []);
 
   return (
     <Router>
