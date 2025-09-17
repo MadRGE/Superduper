@@ -267,44 +267,6 @@ export const SGTProvider = ({ children }: { children: ReactNode }) => {
     </SGTContext.Provider>
   );
 };
-        {
-          id: 'cliente-1',
-          razon_social: 'Lácteos del Sur S.A.',
-          cuit: '30-12345678-9',
-          email: 'contacto@lacteosdelsur.com.ar',
-          telefono: '+54 11 4567-8900',
-          contacto_nombre: 'María González'
-        },
-        {
-          id: 'cliente-2',
-          razon_social: 'TechCorp Argentina',
-          cuit: '30-98765432-1',
-          email: 'info@techcorp.com.ar',
-          telefono: '+54 11 9876-5432',
-          contacto_nombre: 'Carlos Rodríguez'
-        }
-      ];
-      dispatch({ type: 'SET_CLIENTES', payload: mockClientes });
-    } catch (error) {
-      console.error('Error fetching clientes:', error);
-    }
-  };
-
-  return (
-    <SGTContext.Provider value={{ 
-      state, 
-      dispatch, 
-      addExpediente,
-      addCliente,
-      fetchExpedientes,
-      fetchTramiteTipos,
-      fetchOrganismos,
-      fetchClientes
-    }}>
-      {children}
-    </SGTContext.Provider>
-  );
-};
 
 export const useSGT = () => {
   const context = useContext(SGTContext);
