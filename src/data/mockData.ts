@@ -62,7 +62,7 @@ export const mockTramiteTipos = [
   }
 ];
 
-export const mockExpedientes = [
+const mockExpedientesOriginal = [
   {
     id: "exp-001",
     codigo: "SGT-2025-ANMAT-00123",
@@ -169,3 +169,18 @@ export const mockExpedientes = [
     notificaciones_pendientes: 2
   }
 ];
+
+// Actualizar mockExpedientes para que coincida con la estructura esperada
+export const mockExpedientesActualizados = mockExpedientesOriginal.map(exp => ({
+  ...exp,
+  tramite_tipo: mockTramiteTipos.find(tt => tt.id === exp.tramite_tipo_id),
+  cliente: {
+    id: 'cliente-' + exp.id.split('-')[1],
+    razon_social: exp.cliente_nombre,
+    cuit: '30-12345678-9',
+    email: 'contacto@empresa.com'
+  }
+}));
+
+// Exportar la versión actualizada como default
+export { mockExpedientesActualizados as mockExpedientes };

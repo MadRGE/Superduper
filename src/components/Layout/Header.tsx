@@ -2,7 +2,7 @@ import React from 'react';
 import { Search, Bell, User, ChevronDown, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSGT } from '../../context/SGTContext';
-import { useAuth } from '../../hooks/AuthProvider';
+import { useAuth } from '../../hooks/use-auth';
 
 export const Header: React.FC = () => {
   const { state } = useSGT();
