@@ -19,6 +19,14 @@ import { Toaster } from '@/components/ui/toaster';
 const AppContent: React.FC = () => {
   const { usuario, loading } = useAuth();
 
+  // Iniciar automatizaciones cuando el usuario esté logueado
+  useEffect(() => {
+    if (usuario) {
+      startAutomations();
+    }
+    return () => {}; // Las automatizaciones se mantienen corriendo
+  }, [usuario]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -33,12 +41,6 @@ const AppContent: React.FC = () => {
   if (!usuario) {
     return <Login />;
   }
-
-  // Iniciar automatizaciones cuando el usuario esté logueado
-  useEffect(() => {
-    startAutomations();
-    return () => {}; // Las automatizaciones se mantienen corriendo
-  }, []);
 
   return (
     <Router>

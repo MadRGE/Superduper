@@ -117,7 +117,7 @@ export const SGTProvider = ({ children }: { children: ReactNode }) => {
       
       
       // Intentar cargar desde localStorage primero
-      const expedientesGuardados = expedienteService.obtenerExpedientes();
+      const expedientesGuardados = expedienteService.getExpedientes();
       
       if (expedientesGuardados.length > 0) {
         dispatch({ type: 'SET_EXPEDIENTES', payload: expedientesGuardados });
@@ -125,7 +125,7 @@ export const SGTProvider = ({ children }: { children: ReactNode }) => {
         // Si no hay datos guardados, usar mock data
         dispatch({ type: 'SET_EXPEDIENTES', payload: mockExpedientes });
         // Guardar mock data en localStorage para futuras sesiones
-        expedienteService.guardarExpedientes(mockExpedientes);
+        localStorage.setItem('sgt_expedientes', JSON.stringify(mockExpedientes));
       }
     } catch (error) {
       console.error('Error fetching expedientes:', error);
