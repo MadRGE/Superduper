@@ -71,7 +71,7 @@ type ToastCloseProps = React.ComponentPropsWithoutRef<typeof ToastPrimitives.Clo
 
 const ToastClose = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Close>,
-  ToastCloseProps
+  ToastCloseProps>
 >(({ className, ...props }, ref) => (
   <ToastPrimitives.Close
     ref={ref}
