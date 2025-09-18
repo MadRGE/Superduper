@@ -32,6 +32,8 @@ export const ExpedienteDetail: React.FC = () => {
   const [expediente, setExpediente] = useState<any>(null);
   const [pasos, setPasos] = useState<any[]>([]);
   const [documentos, setDocumentos] = useState<any[]>([]);
+  const [historial, setHistorial] = useState<any[]>([]);
+  const [tareas, setTareas] = useState<any[]>([]);
   const [showEditObservaciones, setShowEditObservaciones] = useState(false);
   const [showUploadDoc, setShowUploadDoc] = useState(false);
   const [observacionesEdit, setObservacionesEdit] = useState('');
@@ -59,6 +61,14 @@ export const ExpedienteDetail: React.FC = () => {
       const pasosTramite = expedienteService.getPasosPorTramite(expedienteEncontrado.tramite_tipo_id);
       setPasos(pasosTramite);
       
+      // Cargar historial dinámicamente
+      const historialExpediente = expedienteService.getHistorial(expedienteEncontrado.id);
+      setHistorial(historialExpediente);
+      
+      // Cargar tareas dinámicamente
+      const tareasExpediente = expedienteService.getTareasPorExpediente(expedienteEncontrado.id);
+      setTareas(tareasExpediente);
+      
       // Cargar documentos dinámicamente
       const docsExpediente = expedienteService.getDocumentosPorExpediente(expedienteEncontrado.id);
       
@@ -82,6 +92,27 @@ export const ExpedienteDetail: React.FC = () => {
       } else {
         setDocumentos(docsExpediente);
       }
+      
+      // Si no hay historial, crear entrada inicial
+      if (historialExpediente.length === 0) {
+        const historialInicial = [{
+          id: `hist-${expedienteEncontrado.id}-1`,
+          expediente_id: expedienteEncontrado.id,
+          accion: 'expediente_creado',
+          descripcion: 'Expediente creado en el sistema',
+          estado_anterior: null,
+          estado_nuevo: 'iniciado',
+          usuario: 'Sistema',
+          fecha: expedienteEncontrado.fecha_inicio || new Date().toISOString(),
+          detalles: {
+            tramite_tipo: expedienteEncontrado.tramite_nombre,
+            cliente: expedienteEncontrado.cliente_nombre,
+            prioridad: expedienteEncontrado.prioridad
+          }
+        }];
+        localStorage.setItem(`sgt_historial_${expedienteEncontrado.id}`, JSON.stringify(historialInicial));
+        setHistorial(historialInicial);
+      }
     }
   };
 
@@ -89,19 +120,42 @@ export const ExpedienteDetail: React.FC = () => {
     if (!expediente) return;
     
     try {
+      const estadoAnterior = expediente.estado;
       await expedienteService.cambiarEstado(expediente.id, nuevoEstado, 'Cambio manual desde detalle');
       
       // Actualizar expediente local
       const expedienteActualizado = { ...expediente, estado: nuevoEstado };
       setExpediente(expedienteActualizado);
       
+      // Agregar al historial
+      const nuevaEntradaHistorial = {
+        id: `hist-${expediente.id}-${Date.now()}`,
+        expediente_id: expediente.id,
+        accion: 'cambio_estado',
+        descripcion: `Estado cambiado de ${estadoAnterior} a ${nuevoEstado}`,
+        estado_anterior: estadoAnterior,
+        estado_nuevo: nuevoEstado,
+        usuario: 'Usuario Actual',
+        fecha: new Date().toISOString(),
+        detalles: { motivo: 'Cambio manual desde detalle' }
+      };
+      
+      const historialActualizado = [...historial, nuevaEntradaHistorial];
+      setHistorial(historialActualizado);
+      localStorage.setItem(`sgt_historial_${expediente.id}`, JSON.stringify(historialActualizado));
+      
       toast({
         title: "Estado actualizado",
         description: `El expediente cambió a: ${nuevoEstado}`,
       });
       
-      // Recargar datos del contexto
-      window.location.reload();
+      // Actualizar expediente en localStorage
+      const expedientes = JSON.parse(localStorage.getItem('sgt_expedientes') || '[]');
+      const index = expedientes.findIndex((e: any) => e.id === expediente.id);
+      if (index !== -1) {
+        expedientes[index] = expedienteActualizado;
+        localStorage.setItem('sgt_expedientes', JSON.stringify(expedientes));
+      }
     } catch (error: any) {
       toast({
         title: "Error",
@@ -114,6 +168,7 @@ export const ExpedienteDetail: React.FC = () => {
   const avanzarPaso = () => {
     if (!expediente || expediente.paso_actual >= pasos.length) return;
     
+    const pasoAnterior = expediente.paso_actual;
     const nuevoExpediente = {
       ...expediente,
       paso_actual: expediente.paso_actual + 1,
@@ -130,6 +185,28 @@ export const ExpedienteDetail: React.FC = () => {
     
     setExpediente(nuevoExpediente);
     
+    // Agregar al historial
+    const pasoActual = pasos.find(p => p.orden === nuevoExpediente.paso_actual);
+    const nuevaEntradaHistorial = {
+      id: `hist-${expediente.id}-${Date.now()}`,
+      expediente_id: expediente.id,
+      accion: 'paso_avanzado',
+      descripcion: `Paso avanzado: ${pasoActual?.nombre || 'Paso ' + nuevoExpediente.paso_actual}`,
+      estado_anterior: null,
+      estado_nuevo: null,
+      usuario: 'Usuario Actual',
+      fecha: new Date().toISOString(),
+      detalles: { 
+        paso_anterior: pasoAnterior,
+        paso_nuevo: nuevoExpediente.paso_actual,
+        progreso: nuevoExpediente.progreso
+      }
+    };
+    
+    const historialActualizado = [...historial, nuevaEntradaHistorial];
+    setHistorial(historialActualizado);
+    localStorage.setItem(`sgt_historial_${expediente.id}`, JSON.stringify(historialActualizado));
+    
     toast({
       title: "Paso avanzado",
       description: `Paso ${nuevoExpediente.paso_actual} de ${pasos.length}`,
@@ -137,6 +214,9 @@ export const ExpedienteDetail: React.FC = () => {
   };
 
   const cambiarEstadoDocumento = (docId: string, nuevoEstado: string) => {
+    const documento = documentos.find(d => d.id === docId);
+    const estadoAnterior = documento?.estado;
+    
     const nuevosDocumentos = documentos.map(doc => 
       doc.id === docId ? { ...doc, estado: nuevoEstado } : doc
     );
@@ -144,6 +224,28 @@ export const ExpedienteDetail: React.FC = () => {
     
     // Guardar en localStorage
     localStorage.setItem(`sgt_documentos_${expediente.id}`, JSON.stringify(nuevosDocumentos));
+    
+    // Agregar al historial
+    const nuevaEntradaHistorial = {
+      id: `hist-${expediente.id}-${Date.now()}`,
+      expediente_id: expediente.id,
+      accion: 'documento_actualizado',
+      descripcion: `Documento "${documento?.nombre}" cambió de ${estadoAnterior} a ${nuevoEstado}`,
+      estado_anterior: null,
+      estado_nuevo: null,
+      usuario: 'Usuario Actual',
+      fecha: new Date().toISOString(),
+      detalles: { 
+        documento_id: docId,
+        documento_nombre: documento?.nombre,
+        estado_anterior: estadoAnterior,
+        estado_nuevo: nuevoEstado
+      }
+    };
+    
+    const historialActualizado = [...historial, nuevaEntradaHistorial];
+    setHistorial(historialActualizado);
+    localStorage.setItem(`sgt_historial_${expediente.id}`, JSON.stringify(historialActualizado));
     
     toast({
       title: "Documento actualizado",
@@ -154,6 +256,7 @@ export const ExpedienteDetail: React.FC = () => {
   const guardarObservaciones = () => {
     if (!expediente) return;
     
+    const observacionesAnteriores = expediente.observaciones;
     const expedienteActualizado = { ...expediente, observaciones: observacionesEdit };
     
     // Actualizar en localStorage
@@ -166,6 +269,26 @@ export const ExpedienteDetail: React.FC = () => {
     
     setExpediente(expedienteActualizado);
     setShowEditObservaciones(false);
+    
+    // Agregar al historial
+    const nuevaEntradaHistorial = {
+      id: `hist-${expediente.id}-${Date.now()}`,
+      expediente_id: expediente.id,
+      accion: 'observaciones_actualizadas',
+      descripcion: 'Observaciones actualizadas',
+      estado_anterior: null,
+      estado_nuevo: null,
+      usuario: 'Usuario Actual',
+      fecha: new Date().toISOString(),
+      detalles: { 
+        observaciones_anteriores: observacionesAnteriores,
+        observaciones_nuevas: observacionesEdit
+      }
+    };
+    
+    const historialActualizado = [...historial, nuevaEntradaHistorial];
+    setHistorial(historialActualizado);
+    localStorage.setItem(`sgt_historial_${expediente.id}`, JSON.stringify(historialActualizado));
     
     toast({
       title: "Observaciones guardadas",
@@ -199,6 +322,27 @@ export const ExpedienteDetail: React.FC = () => {
     // Guardar en localStorage
     localStorage.setItem(`sgt_documentos_${expediente.id}`, JSON.stringify(nuevosDocumentos));
     
+    // Agregar al historial
+    const nuevaEntradaHistorial = {
+      id: `hist-${expediente.id}-${Date.now()}`,
+      expediente_id: expediente.id,
+      accion: 'documento_agregado',
+      descripcion: `Documento agregado: ${nuevoDocumento.nombre}`,
+      estado_anterior: null,
+      estado_nuevo: null,
+      usuario: 'Usuario Actual',
+      fecha: new Date().toISOString(),
+      detalles: { 
+        documento_nombre: nuevoDocumento.nombre,
+        documento_tipo: nuevoDocumento.tipo,
+        obligatorio: nuevoDocumento.obligatorio
+      }
+    };
+    
+    const historialActualizado = [...historial, nuevaEntradaHistorial];
+    setHistorial(historialActualizado);
+    localStorage.setItem(`sgt_historial_${expediente.id}`, JSON.stringify(historialActualizado));
+    
     toast({
       title: "Documento agregado",
       description: nuevoDocumento.nombre,
@@ -208,6 +352,35 @@ export const ExpedienteDetail: React.FC = () => {
     setShowUploadDoc(false);
   };
 
+  const getIconoAccion = (accion: string) => {
+    switch (accion) {
+      case 'expediente_creado':
+        return <FileText className="w-4 h-4 text-blue-500" />;
+      case 'cambio_estado':
+        return <CheckCircle className="w-4 h-4 text-green-500" />;
+      case 'paso_avanzado':
+        return <Clock className="w-4 h-4 text-orange-500" />;
+      case 'documento_agregado':
+        return <Upload className="w-4 h-4 text-purple-500" />;
+      case 'documento_actualizado':
+        return <FileText className="w-4 h-4 text-indigo-500" />;
+      case 'observaciones_actualizadas':
+        return <Edit className="w-4 h-4 text-gray-500" />;
+      default:
+        return <Info className="w-4 h-4 text-gray-500" />;
+    }
+  };
+
+  const formatearFecha = (fecha: string) => {
+    const date = new Date(fecha);
+    return date.toLocaleDateString('es-AR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
   if (!expediente) {
     return (
       <div className="text-center py-12">
@@ -514,6 +687,60 @@ export const ExpedienteDetail: React.FC = () => {
               )}
             </CardContent>
           </Card>
+
+          {/* Historial Completo */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Historial Completo del Expediente</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4 max-h-96 overflow-y-auto">
+                {historial.length > 0 ? (
+                  historial
+                    .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
+                    .map((entrada) => (
+                      <div key={entrada.id} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
+                        <div className="mt-1">
+                          {getIconoAccion(entrada.accion)}
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-gray-900">
+                            {entrada.descripcion}
+                          </p>
+                          <div className="flex items-center space-x-2 mt-1">
+                            <span className="text-xs text-gray-500">
+                              {formatearFecha(entrada.fecha)}
+                            </span>
+                            <span className="text-xs text-gray-400">•</span>
+                            <span className="text-xs text-gray-500">
+                              {entrada.usuario}
+                            </span>
+                          </div>
+                          {entrada.detalles && (
+                            <div className="mt-2 text-xs text-gray-600 bg-white p-2 rounded border">
+                              {entrada.accion === 'cambio_estado' && (
+                                <p>Motivo: {entrada.detalles.motivo}</p>
+                              )}
+                              {entrada.accion === 'paso_avanzado' && (
+                                <p>Progreso: {entrada.detalles.progreso}%</p>
+                              )}
+                              {entrada.accion === 'documento_actualizado' && (
+                                <p>Estado: {entrada.detalles.estado_anterior} → {entrada.detalles.estado_nuevo}</p>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <Clock className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+                    <p>No hay historial disponible</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Right column - Sidebar */}
@@ -555,6 +782,21 @@ export const ExpedienteDetail: React.FC = () => {
                     <p className="text-sm text-gray-500">Aprobados</p>
                   </div>
                 </div>
+                
+                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-100">
+                  <div>
+                    <p className="text-2xl font-bold text-blue-900">
+                      {historial.length}
+                    </p>
+                    <p className="text-sm text-gray-500">Eventos</p>
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {pasos.filter((_, i) => i < expediente.paso_actual).length}
+                    </p>
+                    <p className="text-sm text-gray-500">Pasos completados</p>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -590,29 +832,31 @@ export const ExpedienteDetail: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* Timeline de cambios */}
+          {/* Resumen de Actividad Reciente */}
           <Card>
             <CardHeader>
-              <CardTitle>Historial de Cambios</CardTitle>
+              <CardTitle>Actividad Reciente</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                  <div>
-                    <p className="text-sm font-medium">Expediente creado</p>
-                    <p className="text-xs text-gray-500">
-                      {new Date(expediente.fecha_inicio).toLocaleDateString('es-AR')}
-                    </p>
+              <div className="space-y-2 max-h-48 overflow-y-auto">
+                {historial.slice(0, 5).map((entrada) => (
+                  <div key={entrada.id} className="flex items-start space-x-2">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900">
+                        {entrada.descripcion}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {formatearFecha(entrada.fecha)}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                  <div>
-                    <p className="text-sm font-medium">Estado: {expediente.estado}</p>
-                    <p className="text-xs text-gray-500">Actualizado hoy</p>
-                  </div>
-                </div>
+                ))}
+                {historial.length === 0 && (
+                  <p className="text-sm text-gray-500 text-center py-4">
+                    Sin actividad reciente
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -621,7 +865,7 @@ export const ExpedienteDetail: React.FC = () => {
 
       {/* Modal Agregar Documento */}
       {showUploadDoc && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
           <Card className="w-full max-w-md">
             <CardHeader>
               <div className="flex items-center justify-between">

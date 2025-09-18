@@ -236,4 +236,32 @@ export class ExpedienteService {
     const data = localStorage.getItem(historialKey);
     return data ? JSON.parse(data) : [];
   }
+
+  getTareasPorExpediente(expedienteId: string): any[] {
+    const tareasKey = `${this.TAREAS_KEY}_${expedienteId}`;
+    const data = localStorage.getItem(tareasKey);
+    return data ? JSON.parse(data) : [];
+  }
+
+  // Agregar entrada al historial
+  agregarHistorial(expedienteId: string, entrada: any): void {
+    const historial = this.getHistorial(expedienteId);
+    historial.push({
+      id: `hist-${expedienteId}-${Date.now()}`,
+      expediente_id: expedienteId,
+      fecha: new Date().toISOString(),
+      ...entrada
+    });
+    localStorage.setItem(`sgt_historial_${expedienteId}`, JSON.stringify(historial));
+  }
+
+  // Actualizar tarea
+  actualizarTarea(expedienteId: string, tareaId: string, cambios: any): void {
+    const tareas = this.getTareasPorExpediente(expedienteId);
+    const index = tareas.findIndex(t => t.id === tareaId);
+    if (index !== -1) {
+      tareas[index] = { ...tareas[index], ...cambios, updated_at: new Date().toISOString() };
+      localStorage.setItem(`${this.TAREAS_KEY}_${expedienteId}`, JSON.stringify(tareas));
+    }
+  }
 }
