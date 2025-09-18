@@ -304,7 +304,7 @@ export const Proveedores: React.FC = () => {
 
       {/* Modal Nuevo Proveedor */}
       {showNuevoProveedor && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
           <Card className="w-full max-w-2xl">
             <CardHeader>
               <CardTitle>Agregar Nuevo Proveedor</CardTitle>
@@ -312,7 +312,7 @@ export const Proveedores: React.FC = () => {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Razón Social *
                   </label>
                   <input
@@ -323,7 +323,7 @@ export const Proveedores: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     CUIT *
                   </label>
                   <input
@@ -334,7 +334,7 @@ export const Proveedores: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Categoría
                   </label>
                   <select
@@ -351,7 +351,7 @@ export const Proveedores: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Ubicación
                   </label>
                   <input
@@ -362,7 +362,7 @@ export const Proveedores: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Teléfono
                   </label>
                   <input
@@ -373,7 +373,7 @@ export const Proveedores: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Email
                   </label>
                   <input
@@ -384,7 +384,7 @@ export const Proveedores: React.FC = () => {
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Especialidades (separadas por coma)
                   </label>
                   <input
@@ -396,7 +396,7 @@ export const Proveedores: React.FC = () => {
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Observaciones
                   </label>
                   <textarea

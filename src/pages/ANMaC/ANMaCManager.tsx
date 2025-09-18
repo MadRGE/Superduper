@@ -550,7 +550,7 @@ export const ANMaCManager: React.FC = () => {
 
       {/* Modal Generar SIGIMAC */}
       {showGenerarSIGIMAC && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
           <Card className="w-full max-w-2xl">
             <CardHeader>
               <CardTitle>Generar Códigos SIGIMAC</CardTitle>
@@ -558,7 +558,7 @@ export const ANMaCManager: React.FC = () => {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Tipo de Material *
                   </label>
                   <select
@@ -582,7 +582,7 @@ export const ANMaCManager: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Cantidad *
                   </label>
                   <input
@@ -596,7 +596,7 @@ export const ANMaCManager: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Marca
                   </label>
                   <input
@@ -607,7 +607,7 @@ export const ANMaCManager: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Modelo
                   </label>
                   <input
@@ -618,7 +618,7 @@ export const ANMaCManager: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Calibre
                   </label>
                   <input
@@ -629,7 +629,7 @@ export const ANMaCManager: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     País Origen
                   </label>
                   <input

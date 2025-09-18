@@ -372,7 +372,7 @@ export const Presupuestos: React.FC = () => {
 
       {/* Modal Nuevo Presupuesto */}
       {showNuevoPresupuesto && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
           <Card className="w-full max-w-4xl max-h-[90vh] overflow-y-auto">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>Nuevo Presupuesto - {presupuesto.numero}</CardTitle>
@@ -384,7 +384,7 @@ export const Presupuestos: React.FC = () => {
               {/* Datos básicos */}
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Cliente
                   </label>
                   <select
@@ -399,7 +399,7 @@ export const Presupuestos: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Fecha
                   </label>
                   <input
@@ -410,7 +410,7 @@ export const Presupuestos: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Validez (días)
                   </label>
                   <input
@@ -557,7 +557,7 @@ export const Presupuestos: React.FC = () => {
               {/* Condiciones */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Condiciones de Pago
                   </label>
                   <input
@@ -568,7 +568,7 @@ export const Presupuestos: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Tiempo de Entrega
                   </label>
                   <input
@@ -581,7 +581,7 @@ export const Presupuestos: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-900 mb-1">
                   Observaciones
                 </label>
                 <textarea

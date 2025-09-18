@@ -865,7 +865,7 @@ export const ExpedienteDetail: React.FC = () => {
 
       {/* Modal Agregar Documento */}
       {showUploadDoc && (
-        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
           <Card className="w-full max-w-md">
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -877,7 +877,7 @@ export const ExpedienteDetail: React.FC = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-900 mb-1">
                   Nombre del Documento *
                 </label>
                 <input
@@ -889,7 +889,7 @@ export const ExpedienteDetail: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-900 mb-1">
                   Tipo de Archivo
                 </label>
                 <select

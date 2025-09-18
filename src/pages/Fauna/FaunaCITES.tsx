@@ -457,7 +457,7 @@ export const FaunaCITES: React.FC = () => {
 
       {/* Modal Generar Permiso */}
       {showGenerarPermiso && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
           <Card className="w-full max-w-2xl">
             <CardHeader>
               <CardTitle>Generar Nuevo Permiso CITES</CardTitle>
@@ -465,7 +465,7 @@ export const FaunaCITES: React.FC = () => {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Especie *
                   </label>
                   <select
@@ -482,7 +482,7 @@ export const FaunaCITES: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Cantidad *
                   </label>
                   <input
@@ -493,7 +493,7 @@ export const FaunaCITES: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Tipo de Operación *
                   </label>
                   <select
@@ -509,7 +509,7 @@ export const FaunaCITES: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     País Destino/Origen
                   </label>
                   <input
@@ -520,7 +520,7 @@ export const FaunaCITES: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Provincia Origen
                   </label>
                   <select
@@ -535,7 +535,7 @@ export const FaunaCITES: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Establecimiento
                   </label>
                   <input
@@ -548,7 +548,7 @@ export const FaunaCITES: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-900 mb-1">
                   Observaciones
                 </label>
                 <textarea

@@ -221,7 +221,7 @@ const Step1TipoTramite: React.FC<{ formData: any; setFormData: any }> = ({ formD
           <select
             value={selectedOrganismo}
             onChange={(e) => setSelectedOrganismo(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
           >
             <option value="">Todos los organismos</option>
             {state.organismos.map(org => (
@@ -236,7 +236,7 @@ const Step1TipoTramite: React.FC<{ formData: any; setFormData: any }> = ({ formD
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Buscar por nombre..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
           />
         </div>
       </div>
