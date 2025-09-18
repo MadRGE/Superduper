@@ -457,7 +457,7 @@ export const FaunaCITES: React.FC = () => {
 
       {/* Modal Generar Permiso */}
       {showGenerarPermiso && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
           <Card className="w-full max-w-2xl">
             <CardHeader>
               <CardTitle>Generar Nuevo Permiso CITES</CardTitle>
