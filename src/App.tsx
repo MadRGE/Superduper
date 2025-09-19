@@ -87,14 +87,6 @@ const AppContent: React.FC = () => {
           </Layout>
         } />
       </Routes>
-              <Route path="/configuracion/tramites" element={<GestionTramites />} />
-              <Route path="/presupuestos" element={<Presupuestos />} />
-              <Route path="/facturacion" element={<Facturacion />} />
-              <Route path="/proveedores" element={<Proveedores />} />
-            </Routes>
-          </Layout>
-        } />
-      </Routes>
     </Router>
   );
 };
