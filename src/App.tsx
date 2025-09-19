@@ -12,6 +12,12 @@ import { Clientes } from './pages/Clientes/Clientes';
 import { Reportes } from './pages/Reportes/Reportes';
 import { Notificaciones } from './pages/Notificaciones/Notificaciones';
 import { Login } from './pages/Login/Login';
+import { LoginCliente } from './pages/PortalCliente/LoginCliente';
+import { DashboardCliente } from './pages/PortalCliente/DashboardCliente';
+import { ExpedientesCliente } from './pages/PortalCliente/ExpedientesCliente';
+import { DocumentosCliente } from './pages/PortalCliente/DocumentosCliente';
+import { LoginCliente } from './pages/PortalCliente/LoginCliente';
+import { DashboardCliente } from './pages/PortalCliente/DashboardCliente';
 import { FaunaCITES } from './pages/Fauna/FaunaCITES';
 import { RENPREManager } from './pages/RENPRE/RENPREManager';
 import { ANMaCManager } from './pages/ANMaC/ANMaCManager';
@@ -51,26 +57,44 @@ const AppContent: React.FC = () => {
 
   return (
     <Router>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/expedientes" element={<Expedientes />} />
-          <Route path="/expedientes/nuevo" element={<NuevoExpediente />} />
-          <Route path="/expedientes/nuevo" element={<NuevoExpediente />} />
-          <Route path="/expedientes/:id" element={<ExpedienteDetail />} />
-          <Route path="/catalogo" element={<Catalogo />} />
-          <Route path="/clientes" element={<Clientes />} />
-          <Route path="/reportes" element={<Reportes />} />
-          <Route path="/notificaciones" element={<Notificaciones />} />
-          <Route path="/fauna-cites" element={<FaunaCITES />} />
-          <Route path="/renpre" element={<RENPREManager />} />
-          <Route path="/anmac" element={<ANMaCManager />} />
-          <Route path="/configuracion/tramites" element={<GestionTramites />} />
-          <Route path="/presupuestos" element={<Presupuestos />} />
-          <Route path="/facturacion" element={<Facturacion />} />
-          <Route path="/proveedores" element={<Proveedores />} />
-        </Routes>
-      </Layout>
+      <Routes>
+        {/* Portal Cliente Routes - Sin Layout principal */}
+        <Route path="/portal-cliente/login" element={<LoginCliente />} />
+        <Route path="/portal-cliente/dashboard" element={<DashboardCliente />} />
+        <Route path="/portal-cliente/expedientes" element={<ExpedientesCliente />} />
+        <Route path="/portal-cliente/documentos" element={<DocumentosCliente />} />
+        
+        {/* Main Application Routes - Con Layout */}
+        <Route path="/*" element={
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/expedientes" element={<Expedientes />} />
+              <Route path="/expedientes/nuevo" element={<NuevoExpediente />} />
+              <Route path="/expedientes/:id" element={<ExpedienteDetail />} />
+              <Route path="/catalogo" element={<Catalogo />} />
+              <Route path="/clientes" element={<Clientes />} />
+              <Route path="/reportes" element={<Reportes />} />
+              <Route path="/notificaciones" element={<Notificaciones />} />
+              <Route path="/fauna-cites" element={<FaunaCITES />} />
+              <Route path="/renpre" element={<RENPREManager />} />
+              <Route path="/anmac" element={<ANMaCManager />} />
+              <Route path="/configuracion/tramites" element={<GestionTramites />} />
+              <Route path="/presupuestos" element={<Presupuestos />} />
+              <Route path="/facturacion" element={<Facturacion />} />
+              <Route path="/proveedores" element={<Proveedores />} />
+            </Routes>
+          </Layout>
+        } />
+      </Routes>
+              <Route path="/configuracion/tramites" element={<GestionTramites />} />
+              <Route path="/presupuestos" element={<Presupuestos />} />
+              <Route path="/facturacion" element={<Facturacion />} />
+              <Route path="/proveedores" element={<Proveedores />} />
+            </Routes>
+          </Layout>
+        } />
+      </Routes>
     </Router>
   );
 };

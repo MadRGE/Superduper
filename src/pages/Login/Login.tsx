@@ -115,6 +115,15 @@ export const Login: React.FC = () => {
               </div>
             </div>
           </div>
+          
+          <div className="mt-4 text-center">
+            <button 
+              onClick={() => window.open('/portal-cliente/login', '_blank')}
+              className="text-sm text-blue-600 hover:text-blue-800"
+            >
+              ¿Es cliente? Acceda al Portal Cliente →
+            </button>
+          </div>
         </CardContent>
       </Card>
     </div>
