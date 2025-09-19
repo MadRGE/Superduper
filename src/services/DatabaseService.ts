@@ -379,6 +379,87 @@ export class DatabaseService {
 
   // ==================== UTILITY METHODS ====================
 
+  async getClienteCompleto(clienteId: string) {
+    try {
+      const { data: cliente, error } = await supabase
+        .from('clientes')
+        .select(`
+          *,
+          expedientes(*),
+          contactos(*),
+          habilitaciones(*)
+        `)
+        .eq('id', clienteId)
+        .single();
+      
+      if (error) {
+        console.error('Error fetching cliente completo:', error);
+        throw error;
+      }
+      return cliente;
+    } catch (error) {
+      // Fallback to localStorage for now
+      const clientes = JSON.parse(localStorage.getItem('sgt_clientes') || '[]');
+      return clientes.find((c: any) => c.id === clienteId) || null;
+    }
+  }
+
+  async getProductosRelacionados(clienteId: string) {
+    try {
+      const { data: productos, error } = await supabase
+        .from('productos')
+        .select('*')
+        .eq('cliente_id', clienteId);
+      
+      if (error) {
+        console.error('Error fetching productos relacionados:', error);
+        throw error;
+      }
+      return productos;
+    } catch (error) {
+      // Return mock data for now
+      return [];
+    }
+  }
+
+  async getComunicacionesByCliente(clienteId: string) {
+    try {
+      const { data: comunicaciones, error } = await supabase
+        .from('comunicaciones')
+        .select('*')
+        .eq('cliente_id', clienteId)
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        console.error('Error fetching comunicaciones:', error);
+        throw error;
+      }
+      return comunicaciones;
+    } catch (error) {
+      // Return mock data for now
+      return [];
+    }
+  }
+
+  async getFacturasByCliente(clienteId: string) {
+    try {
+      const { data: facturas, error } = await supabase
+        .from('facturas')
+        .select('*')
+        .eq('cliente_id', clienteId)
+        .order('fecha', { ascending: false });
+      
+      if (error) {
+        console.error('Error fetching facturas:', error);
+        throw error;
+      }
+      return facturas;
+    } catch (error) {
+      // Return mock data for now
+      return [];
+    }
+  }
+
   async generateExpedienteCodigo(organismoSigla: string): Promise<string> {
     const year = new Date().getFullYear();
     

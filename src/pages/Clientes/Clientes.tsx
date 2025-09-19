@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Search, Plus, Building, User, Mail, Phone } from 'lucide-react';
 
 const mockClientes = [
@@ -89,7 +90,11 @@ export const Clientes: React.FC = () => {
         
         <div className="divide-y divide-gray-100">
           {mockClientes.map((cliente) => (
-            <div key={cliente.id} className="p-6 hover:bg-gray-50 transition-colors">
+            <Link 
+              key={cliente.id} 
+              to={`/clientes/${cliente.id}`}
+              className="block p-6 hover:bg-gray-50 transition-colors cursor-pointer"
+            >
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -127,7 +132,7 @@ export const Clientes: React.FC = () => {
                   <span>{cliente.telefono}</span>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
