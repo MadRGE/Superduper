@@ -16,7 +16,6 @@ import { LoginCliente } from './pages/PortalCliente/LoginCliente';
 import { DashboardCliente } from './pages/PortalCliente/DashboardCliente';
 import { ExpedientesCliente } from './pages/PortalCliente/ExpedientesCliente';
 import { DocumentosCliente } from './pages/PortalCliente/DocumentosCliente';
-import { LoginCliente } from './pages/PortalCliente/LoginCliente';
 import { DashboardCliente } from './pages/PortalCliente/DashboardCliente';
 import { FaunaCITES } from './pages/Fauna/FaunaCITES';
 import { RENPREManager } from './pages/RENPRE/RENPREManager';
