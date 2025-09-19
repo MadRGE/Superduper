@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { useSGT } from '../../context/SGTContext';
 import { ExpedienteService } from '../../services/ExpedienteService';
+import { DocumentacionTramite } from '@/components/DocumentacionTramite';
 
 export const NuevoExpediente: React.FC = () => {
   const navigate = useNavigate();
@@ -468,16 +469,8 @@ const Step2Cliente: React.FC<{ formData: any; setFormData: any }> = ({ formData,
 
 // Step 3: Documentos
 const Step3Documentos: React.FC<{ formData: any; setFormData: any }> = ({ formData, setFormData }) => {
-  const getChecklistPorTramite = (tramiteId: string) => {
-    // Aquí deberías obtener el checklist específico del trámite
-    return [
-      { item: 'Documento de identidad', obligatorio: true, tipo: 'pdf' },
-      { item: 'Poder legal', obligatorio: false, tipo: 'pdf' },
-      { item: 'Documentación técnica', obligatorio: true, tipo: 'pdf' }
-    ];
-  };
-
-  const checklist = getChecklistPorTramite(formData.tramite_tipo_id);
+  const expedienteService = new ExpedienteService();
+  const checklist = expedienteService.generarChecklistAutomatico(formData.tramite_tipo_id);
 
   return (
     <div className="space-y-6">
@@ -497,8 +490,17 @@ const Step3Documentos: React.FC<{ formData: any; setFormData: any }> = ({ formDa
         </div>
       </div>
 
+      {/* Usar el nuevo componente de documentación */}
+      {formData.tramite_tipo_id && (
+        <DocumentacionTramite 
+          tramiteTipoId={formData.tramite_tipo_id}
+          readOnly={true}
+        />
+      )}
+
+      {/* Checklist para selección */}
       <div className="space-y-3">
-        <h3 className="font-medium">Documentos requeridos para {formData.tramite_tipo?.nombre}</h3>
+        <h3 className="font-medium">Confirmar documentos a preparar</h3>
         {checklist.map((doc, index) => (
           <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
             <div className="flex items-center space-x-3">
@@ -520,9 +522,14 @@ const Step3Documentos: React.FC<{ formData: any; setFormData: any }> = ({ formDa
                 {doc.item} {doc.obligatorio && <span className="text-red-500">*</span>}
               </label>
             </div>
-            <Badge variant={doc.obligatorio ? "destructive" : "secondary"}>
-              {doc.obligatorio ? 'Obligatorio' : 'Opcional'}
-            </Badge>
+            <div className="flex items-center space-x-2">
+              <Badge variant={doc.obligatorio ? "destructive" : "secondary"}>
+                {doc.obligatorio ? 'Obligatorio' : 'Opcional'}
+              </Badge>
+              <Badge variant="outline" className="text-xs">
+                {doc.tipo}
+              </Badge>
+            </div>
           </div>
         ))}
       </div>

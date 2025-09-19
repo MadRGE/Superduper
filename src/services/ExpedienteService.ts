@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import { catalogoTramitesArgentina, buscarTramitePorId } from '@/data/catalogoTramitesCompleto';
 
 export interface Cliente {
   id: string;
@@ -263,5 +264,149 @@ export class ExpedienteService {
       tareas[index] = { ...tareas[index], ...cambios, updated_at: new Date().toISOString() };
       localStorage.setItem(`${this.TAREAS_KEY}_${expedienteId}`, JSON.stringify(tareas));
     }
+  }
+
+  // ============= NUEVAS FUNCIONALIDADES =============
+
+  // Validar documentación completa según tipo de trámite
+  validarDocumentacionCompleta(tramiteTipoId: string, documentosSubidos: any[]): {
+    completo: boolean;
+    faltantes: string[];
+    progreso: number;
+  } {
+    // Buscar requisitos del trámite en el catálogo
+    const tramite = buscarTramitePorId(tramiteTipoId);
+    
+    if (!tramite || !tramite.documentacion_obligatoria) {
+      return { completo: false, faltantes: [], progreso: 0 };
+    }
+
+    const requisitos = tramite.documentacion_obligatoria;
+    
+    const faltantes = requisitos.filter(req => 
+      !documentosSubidos.some(doc => 
+        doc.nombre.toLowerCase().includes(req.documento.toLowerCase()) ||
+        doc.documento_requerido === req.documento
+      )
+    ).map(req => req.documento);
+    
+    const progreso = requisitos.length > 0 
+      ? Math.round(((requisitos.length - faltantes.length) / requisitos.length) * 100)
+      : 0;
+    
+    return {
+      completo: faltantes.length === 0,
+      faltantes,
+      progreso
+    };
+  }
+  
+  // Generar checklist automático según trámite
+  generarChecklistAutomatico(tramiteTipoId: string): any[] {
+    const checklist: any[] = [];
+    
+    const tramite = buscarTramitePorId(tramiteTipoId);
+    
+    if (!tramite) return checklist;
+    
+    // Agregar documentos obligatorios
+    if (tramite.documentacion_obligatoria) {
+      tramite.documentacion_obligatoria.forEach((doc: any) => {
+        checklist.push({
+          item: doc.documento,
+          obligatorio: true,
+          tipo: doc.formato.toLowerCase().includes('pdf') ? 'pdf' : 
+                doc.formato.toLowerCase().includes('jpg') || doc.formato.toLowerCase().includes('jpeg') ? 'imagen' :
+                doc.formato.toLowerCase().includes('excel') ? 'excel' :
+                doc.formato.toLowerCase().includes('word') ? 'word' : 'pdf',
+          descripcion: doc.detalle || '',
+          vigencia: doc.vigencia_maxima || null,
+          firma_requerida: doc.firma || null,
+          estado: 'pendiente'
+        });
+      });
+    }
+    
+    // Agregar documentos opcionales
+    if (tramite.documentacion_opcional) {
+      tramite.documentacion_opcional.forEach((doc: any) => {
+        checklist.push({
+          item: doc.documento,
+          obligatorio: false,
+          tipo: doc.formato.toLowerCase().includes('pdf') ? 'pdf' : 
+                doc.formato.toLowerCase().includes('jpg') || doc.formato.toLowerCase().includes('jpeg') ? 'imagen' :
+                doc.formato.toLowerCase().includes('excel') ? 'excel' :
+                doc.formato.toLowerCase().includes('word') ? 'word' : 'pdf',
+          descripcion: doc.detalle || '',
+          condicion: doc.cuando || '',
+          estado: 'pendiente'
+        });
+      });
+    }
+    
+    return checklist;
+  }
+  
+  // Calcular vencimientos de documentos
+  calcularVencimientoDocumentos(documentos: any[]): any[] {
+    const alertas = [];
+    const hoy = new Date();
+    
+    documentos.forEach(doc => {
+      if (doc.fecha_vencimiento) {
+        const vencimiento = new Date(doc.fecha_vencimiento);
+        const diasRestantes = Math.ceil((vencimiento.getTime() - hoy.getTime()) / (1000 * 60 * 60 * 24));
+        
+        if (diasRestantes < 0) {
+          alertas.push({
+            documento: doc.nombre,
+            expediente_id: doc.expediente_id,
+            estado: 'vencido',
+            dias: Math.abs(diasRestantes),
+            prioridad: 'alta',
+            fecha_vencimiento: doc.fecha_vencimiento
+          });
+        } else if (diasRestantes <= 30) {
+          alertas.push({
+            documento: doc.nombre,
+            expediente_id: doc.expediente_id,
+            estado: 'por_vencer',
+            dias: diasRestantes,
+            prioridad: diasRestantes <= 7 ? 'alta' : 'media',
+            fecha_vencimiento: doc.fecha_vencimiento
+          });
+        }
+      }
+    });
+    
+    return alertas.sort((a, b) => a.dias - b.dias);
+  }
+
+  // Obtener información detallada del trámite
+  obtenerInfoTramite(tramiteTipoId: string): any {
+    return buscarTramitePorId(tramiteTipoId);
+  }
+
+  // Calcular costo estimado del trámite
+  calcularCostoEstimado(tramiteTipoId: string): {
+    arancel: string;
+    costo_estimado?: number;
+    moneda: string;
+  } {
+    const tramite = buscarTramitePorId(tramiteTipoId);
+    
+    if (!tramite) {
+      return { arancel: 'No disponible', moneda: 'ARS' };
+    }
+
+    // Extraer monto si está en formato numérico
+    const arancelText = tramite.arancel;
+    const montoMatch = arancelText.match(/\$([0-9.,]+)/);
+    
+    return {
+      arancel: arancelText,
+      costo_estimado: montoMatch ? parseFloat(montoMatch[1].replace(/[.,]/g, '')) : undefined,
+      moneda: 'ARS'
+    };
   }
 }

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 import { mockExpedientes, mockOrganismos, mockTramiteTipos } from '../data/mockData';
+import { catalogoTramitesArgentina, buscarTramitePorCodigo, obtenerTramitesPorOrganismo } from '../data/catalogoTramitesCompleto';
 import { ExpedienteService } from '../services/ExpedienteService';
 import { expedienteService } from '../services/ExpedienteService';
 import { Expediente, TramiteTipo, Organismo, Cliente } from '../types/database';
@@ -88,6 +89,9 @@ const sgtReducer = (state: SGTState, action: SGTAction): SGTState => {
 const SGTContext = createContext<{
   state: SGTState;
   dispatch: React.Dispatch<SGTAction>;
+  catalogoTramites: typeof catalogoTramitesArgentina;
+  buscarTramitePorCodigo: (codigo: string) => any;
+  obtenerTramitesPorOrganismo: (sigla: string) => any[];
   addExpediente: (expediente: Expediente) => void;
   addCliente: (cliente: Cliente) => void;
   fetchExpedientes: () => Promise<void>;
@@ -266,6 +270,9 @@ export const SGTProvider = ({ children }: { children: ReactNode }) => {
     <SGTContext.Provider value={{ 
       state, 
       dispatch, 
+      catalogoTramites: catalogoTramitesArgentina,
+      buscarTramitePorCodigo,
+      obtenerTramitesPorOrganismo,
       addExpediente,
       addCliente: addClienteWithPersistence,
       fetchExpedientes,
