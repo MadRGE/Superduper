@@ -23,6 +23,8 @@ import { GestionTramites } from './pages/Configuracion/GestionTramites';
 import { Presupuestos } from './pages/Comercial/Presupuestos';
 import { Facturacion } from './pages/Comercial/Facturacion';
 import { Proveedores } from './pages/Comercial/Proveedores';
+import { GestionIntegral } from './pages/Admin/GestionIntegral';
+import { PortalDespachante } from './pages/Despachantes/PortalDespachante';
 import { SGTProvider } from './context/SGTContext';
 import { startAutomations } from './services/AutomationService';
 import { Toaster } from '@/components/ui/toaster';
@@ -81,6 +83,8 @@ const AppContent: React.FC = () => {
               <Route path="/presupuestos" element={<Presupuestos />} />
               <Route path="/facturacion" element={<Facturacion />} />
               <Route path="/proveedores" element={<Proveedores />} />
+              <Route path="/admin/gestion-integral" element={<GestionIntegral />} />
+              <Route path="/despachantes/portal" element={<PortalDespachante />} />
             </Routes>
           </Layout>
         } />

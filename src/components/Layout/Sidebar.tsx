@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { usePermissions } from '@/hooks/usePermissions';
 import { 
   Home, 
   FileText, 
@@ -12,7 +13,9 @@ import {
   Shield,
   Beaker,
   DollarSign,
-  ChevronDown
+  ChevronDown,
+  UserCheck,
+  Crown
 } from 'lucide-react';
 
 interface NavigationItem {
@@ -20,21 +23,39 @@ interface NavigationItem {
   href?: string;
   icon: React.ComponentType<any>;
   subItems?: { name: string; href: string }[];
+  permission?: string;
+  adminOnly?: boolean;
 }
 
 const navigation: NavigationItem[] = [
   { name: 'Dashboard', href: '/', icon: Home },
   { name: 'Expedientes', href: '/expedientes', icon: FileText },
   { name: 'Catálogo', href: '/catalogo', icon: BookOpen },
-  { name: 'Clientes', href: '/clientes', icon: Users },
-  { name: 'Reportes', href: '/reportes', icon: BarChart3 },
+  { name: 'Clientes', href: '/clientes', icon: Users, permission: 'ver_todos_clientes' },
+  { name: 'Reportes', href: '/reportes', icon: BarChart3, permission: 'ver_reportes' },
   { name: 'Notificaciones', href: '/notificaciones', icon: Bell },
   { name: 'FAUNA/CITES', href: '/fauna-cites', icon: Shield },
   { name: 'RENPRE', href: '/renpre', icon: Beaker },
   { name: 'ANMaC', href: '/anmac', icon: Shield },
   { 
+    name: 'Administración', 
+    icon: Crown,
+    adminOnly: true,
+    subItems: [
+      { name: 'Gestión Integral', href: '/admin/gestion-integral' },
+      { name: 'Gestión Usuarios', href: '/admin/usuarios' }
+    ]
+  },
+  { 
+    name: 'Portal Despachante', 
+    href: '/despachantes/portal',
+    icon: UserCheck,
+    permission: 'ver_clientes_asignados'
+  },
+  { 
     name: 'Comercial', 
     icon: DollarSign,
+    permission: 'gestionar_facturacion',
     subItems: [
       { name: 'Presupuestos', href: '/presupuestos' },
       { name: 'Facturación', href: '/facturacion' },
@@ -44,6 +65,7 @@ const navigation: NavigationItem[] = [
   { 
     name: 'Configuración', 
     icon: Settings,
+    adminOnly: true,
     subItems: [
       { name: 'Gestión Trámites', href: '/configuracion/tramites' }
     ]
@@ -52,6 +74,7 @@ const navigation: NavigationItem[] = [
 
 export const Sidebar: React.FC = () => {
   const location = useLocation();
+  const { hasPermission, userRole } = usePermissions();
   const [expandedItems, setExpandedItems] = React.useState<string[]>([]);
 
   const toggleExpanded = (itemName: string) => {
@@ -64,6 +87,20 @@ export const Sidebar: React.FC = () => {
 
   const isSubItemActive = (subItems: { name: string; href: string }[]) => {
     return subItems.some(subItem => location.pathname === subItem.href);
+  };
+
+  const shouldShowItem = (item: NavigationItem): boolean => {
+    // Si es solo para admin y el usuario no es admin
+    if (item.adminOnly && !hasPermission('*')) {
+      return false;
+    }
+    
+    // Si tiene permiso específico requerido
+    if (item.permission && !hasPermission(item.permission)) {
+      return false;
+    }
+    
+    return true;
   };
 
   return (
@@ -83,7 +120,7 @@ export const Sidebar: React.FC = () => {
 
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-1">
-        {navigation.map((item) => {
+        {navigation.filter(shouldShowItem).map((item) => {
           if (item.subItems) {
             const isExpanded = expandedItems.includes(item.name);
             const hasActiveSubItem = isSubItemActive(item.subItems);
@@ -106,7 +143,10 @@ export const Sidebar: React.FC = () => {
                 </button>
                 {isExpanded && (
                   <div className="ml-8 mt-1 space-y-1">
-                    {item.subItems.map((subItem) => {
+                    {item.subItems.filter(subItem => {
+                      // Filtrar sub-items según permisos si es necesario
+                      return true; // Por ahora mostrar todos los sub-items
+                    }).map((subItem) => {
                       const isSubActive = location.pathname === subItem.href;
                       return (
                         <Link

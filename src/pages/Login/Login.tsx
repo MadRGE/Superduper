@@ -111,6 +111,7 @@ export const Login: React.FC = () => {
               <div className="space-y-1 text-xs">
                 <p><strong>Admin:</strong> admin@sgt.gov.ar / admin123</p>
                 <p><strong>Gestor:</strong> gestor@sgt.gov.ar / gestor123</p>
+                <p><strong>Despachante:</strong> despachante@sgt.gov.ar / despachante123</p>
                 <p><strong>Cliente:</strong> cliente@empresa.com / cliente123</p>
               </div>
             </div>
