@@ -1,14 +1,30 @@
 import React, { useState } from 'react';
 import { Search, Filter, BookOpen, Building2, Tag, Clock } from 'lucide-react';
 import { useSGT } from '../../context/SGTContext';
+import { catalogoTramitesArgentina } from '@/data/catalogoTramitesCompleto';
 
 export const Catalogo: React.FC = () => {
-  const { state } = useSGT();
+  const { state, catalogoTramites } = useSGT();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRubro, setSelectedRubro] = useState('');
   const [selectedOrganismo, setSelectedOrganismo] = useState('');
+  const [showDetailed, setShowDetailed] = useState(false);
 
-  const filteredTramites = state.tramiteTipos.filter(tramite => {
+  // Combinar trámites del estado con el catálogo completo
+  const allTramites = [
+    ...state.tramiteTipos,
+    ...Object.values(catalogoTramites).flatMap(org => 
+      org.tramites.map(t => ({
+        ...t,
+        rubro: org.organismo,
+        organismo_id: org.sigla,
+        sla_total_dias: t.sla_dias,
+        tags: [org.sigla, t.sistema]
+      }))
+    )
+  ];
+
+  const filteredTramites = allTramites.filter(tramite => {
     if (searchTerm && !tramite.nombre.toLowerCase().includes(searchTerm.toLowerCase()) &&
         !tramite.codigo.toLowerCase().includes(searchTerm.toLowerCase())) {
       return false;
@@ -18,11 +34,11 @@ export const Catalogo: React.FC = () => {
     return true;
   });
 
-  const rubros = [...new Set(state.tramiteTipos.map(t => t.rubro))];
+  const rubros = [...new Set(allTramites.map(t => t.rubro))];
 
   const getOrganismoName = (organismoId: string) => {
     const organismo = state.organismos.find(o => o.id === organismoId);
-    return organismo?.sigla || '';
+    return organismo?.sigla || organismoId;
   };
 
   return (
@@ -32,6 +48,18 @@ export const Catalogo: React.FC = () => {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Catálogo de Trámites</h1>
           <p className="text-gray-600">Consulta todos los trámites disponibles</p>
+        </div>
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={() => setShowDetailed(!showDetailed)}
+            className={`px-3 py-2 text-sm font-medium rounded-lg border ${
+              showDetailed 
+                ? 'bg-blue-50 text-blue-700 border-blue-200' 
+                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+            }`}
+          >
+            {showDetailed ? 'Vista Simple' : 'Vista Detallada'}
+          </button>
         </div>
       </div>
 
@@ -77,7 +105,7 @@ export const Catalogo: React.FC = () => {
 
       {/* Results */}
       <div className="text-sm text-gray-600 mb-4">
-        Mostrando {filteredTramites.length} de {state.tramiteTipos.length} trámites
+        Mostrando {filteredTramites.length} de {allTramites.length} trámites
       </div>
 
       {/* Tramites Grid */}
@@ -100,7 +128,7 @@ export const Catalogo: React.FC = () => {
               </h3>
               
               <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                {tramite.alcance}
+                {tramite.alcance || tramite.descripcion}
               </p>
               
               <div className="space-y-2">
@@ -111,8 +139,24 @@ export const Catalogo: React.FC = () => {
                 
                 <div className="flex items-center space-x-2 text-sm text-gray-500">
                   <Clock className="w-4 h-4" />
-                  <span>{tramite.sla_total_dias} días hábiles</span>
+                  <span>{tramite.sla_total_dias || tramite.sla_dias} días hábiles</span>
                 </div>
+                
+                {/* Mostrar información adicional en vista detallada */}
+                {showDetailed && tramite.sistema && (
+                  <div className="flex items-center space-x-2 text-sm text-gray-500">
+                    <Tag className="w-4 h-4" />
+                    <span>Sistema: {tramite.sistema}</span>
+                  </div>
+                )}
+                
+                {showDetailed && tramite.arancel && (
+                  <div className="flex items-center space-x-2 text-sm text-gray-500">
+                    <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+                      {tramite.arancel}
+                    </span>
+                  </div>
+                )}
                 
                 {tramite.tags && tramite.tags.length > 0 && (
                   <div className="flex items-center space-x-2">
