@@ -46,6 +46,66 @@ import { useSGT } from '../../context/SGTContext';
 import { ExpedienteService } from '../../services/ExpedienteService';
 import { formatDate, getDaysRemaining } from '@/lib/utils';
 
+// Componente Productos Registrados con Fichas
+const ProductosRegistrados: React.FC<{
+  clienteId: string;
+  productos: any[];
+  onShowFicha: (producto: any) => void;
+}> = ({ clienteId, productos, onShowFicha }) => {
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {productos.map((producto) => (
+        <div key={producto.id} className="p-4 border rounded-lg hover:border-blue-300 transition-colors">
+          <div className="flex items-start justify-between mb-3">
+            <div>
+              <h4 className="font-medium text-gray-900">{producto.nombre}</h4>
+              <p className="text-sm text-gray-600">{producto.marca} • {producto.rnpa}</p>
+              <p className="text-xs text-gray-500">{producto.categoria}</p>
+            </div>
+            <Badge variant={
+              producto.estado === 'vigente' ? 'default' :
+              producto.estado === 'por_renovar' ? 'destructive' :
+              'secondary'
+            }>
+              {producto.estado.replace('_', ' ')}
+            </Badge>
+          </div>
+          
+          <div className="space-y-2 text-sm">
+            <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
+              <div>Peso: {producto.peso_neto}</div>
+              <div>Vida útil: {producto.vida_util}</div>
+              <div>EAN: {producto.codigo_ean}</div>
+              {producto.vencimiento && (
+                <div className={
+                  new Date(producto.vencimiento) < new Date(Date.now() + 90 * 24 * 60 * 60 * 1000) 
+                    ? 'text-orange-600 font-medium' : ''
+                }>
+                  Vence: {formatDate(producto.vencimiento)}
+                </div>
+              )}
+            </div>
+          </div>
+          
+          <div className="flex space-x-2 mt-3">
+            <Button size="sm" variant="outline" onClick={() => onShowFicha(producto)}>
+              <Eye className="w-4 h-4 mr-1" />
+              Ver Ficha
+            </Button>
+            {producto.estado === 'por_renovar' && (
+              <Button size="sm">
+                <Plus className="w-4 h-4 mr-1" />
+                Renovar
+              </Button>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 export const ClienteDetailEnhanced: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -72,6 +132,13 @@ export const ClienteDetailEnhanced: React.FC = () => {
   });
 
   const expedienteService = new ExpedienteService();
+
+  const onShowFichaProducto = (producto: any) => {
+    toast({
+      title: "Ficha de producto",
+      description: `Mostrando ficha de ${producto.nombre}`,
+    });
+  };
 
   useEffect(() => {
     // Asegurar que los datos del contexto estén cargados
@@ -561,55 +628,11 @@ export const ClienteDetailEnhanced: React.FC = () => {
             </CardHeader>
             {expandedSections.productos && (
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {productosCliente.map((producto) => (
-                    <div key={producto.id} className="p-4 border rounded-lg hover:border-blue-300 transition-colors">
-                      <div className="flex items-start justify-between mb-3">
-                        <div>
-                          <h4 className="font-medium text-gray-900">{producto.nombre}</h4>
-                          <p className="text-sm text-gray-600">{producto.marca} • {producto.rnpa}</p>
-                          <p className="text-xs text-gray-500">{producto.categoria}</p>
-                        </div>
-                        <Badge variant={
-                          producto.estado === 'vigente' ? 'default' :
-                          producto.estado === 'por_renovar' ? 'destructive' :
-                          'secondary'
-                        }>
-                          {producto.estado.replace('_', ' ')}
-                        </Badge>
-                      </div>
-                      
-                      <div className="space-y-2 text-sm">
-                        <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
-                          <div>Peso: {producto.peso_neto}</div>
-                          <div>Vida útil: {producto.vida_util}</div>
-                          <div>EAN: {producto.codigo_ean}</div>
-                          {producto.vencimiento && (
-                            <div className={
-                              new Date(producto.vencimiento) < new Date(Date.now() + 90 * 24 * 60 * 60 * 1000) 
-                                ? 'text-orange-600 font-medium' : ''
-                            }>
-                              Vence: {formatDate(producto.vencimiento)}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      
-                      <div className="flex space-x-2 mt-3">
-                        <Button size="sm" variant="outline">
-                          <Eye className="w-4 h-4 mr-1" />
-                          Ver Ficha
-                        </Button>
-                        {producto.estado === 'por_renovar' && (
-                          <Button size="sm">
-                            <Plus className="w-4 h-4 mr-1" />
-                            Renovar
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <ProductosRegistrados 
+                  clienteId={cliente.id}
+                  productos={productosCliente}
+                  onShowFicha={onShowFichaProducto}
+                />
               </CardContent>
             )}
           </Card>
