@@ -19,7 +19,10 @@ export const Expedientes: React.FC = () => {
     const { estado, organismo, prioridad, search } = state.filters;
     
     if (estado && expediente.estado !== estado) return false;
-    if (organismo && expediente.tramite_tipo?.organismo?.sigla !== organismo) return false;
+    if (organismo) {
+      const organismoData = state.organismos.find(org => org.id === expediente.tramite_tipo_id);
+      if (!organismoData || organismoData.sigla !== organismo) return false;
+    }
     if (prioridad && expediente.prioridad !== prioridad) return false;
     if (search && !expediente.alias?.toLowerCase().includes(search.toLowerCase()) && 
         !expediente.codigo.toLowerCase().includes(search.toLowerCase()) &&

@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { SemaforoIndicator } from '@/components/expedientes/SemaforoIndicator';
 import { EstadoBadge } from '@/components/expedientes/EstadoBadge';
 import type { Expediente } from '../../types/database';
+import { useSGT } from '../../context/SGTContext';
 
 interface ExpedienteCardProps {
   expediente: Expediente;
@@ -16,6 +17,8 @@ export const ExpedienteCard: React.FC<ExpedienteCardProps> = ({
   expediente, 
   view = 'grid' 
 }) => {
+  const { state } = useSGT();
+  
   const diasRestantes = Math.ceil(
     (new Date(expediente.fecha_limite).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
   );
@@ -28,6 +31,17 @@ export const ExpedienteCard: React.FC<ExpedienteCardProps> = ({
       case 'baja': return 'bg-gray-100 text-gray-800';
       default: return 'bg-gray-100 text-gray-800';
     }
+  };
+
+  // Get organismo name from state.organismos using tramite_tipo_id
+  const getOrganismoName = () => {
+    if (expediente.organismo) return expediente.organismo; // Fallback to direct property
+    const tramiteTipo = state.tramiteTipos.find(tt => tt.id === expediente.tramite_tipo_id);
+    if (tramiteTipo?.organismo_id) {
+      const organismo = state.organismos.find(org => org.id === tramiteTipo.organismo_id);
+      return organismo?.sigla || 'N/A';
+    }
+    return 'N/A';
   };
 
   if (view === 'list') {
@@ -52,7 +66,7 @@ export const ExpedienteCard: React.FC<ExpedienteCardProps> = ({
                 <p>{expediente.cliente?.razon_social}</p>
               </div>
               <div className="text-sm text-gray-600">
-                <p>{expediente.tramite_tipo?.nombre}</p>
+                <p>{expediente.tramite_nombre || expediente.tramite_tipo?.nombre}</p>
               </div>
               <EstadoBadge estado={expediente.estado} />
               <Badge className={getPriorityColor(expediente.prioridad)}>
@@ -102,7 +116,7 @@ export const ExpedienteCard: React.FC<ExpedienteCardProps> = ({
           
           <div className="flex items-center text-sm text-gray-600">
             <Building className="w-4 h-4 mr-2" />
-            <span>{expediente.tramite_tipo?.nombre}</span>
+            <span>{getOrganismoName()}</span>
           </div>
           
           <div className="flex items-center justify-between">
