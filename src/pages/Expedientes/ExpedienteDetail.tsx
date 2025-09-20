@@ -27,7 +27,7 @@ import { DocumentacionTramite } from '@/components/DocumentacionTramite';
 
 export const ExpedienteDetail: React.FC = () => {
   const { id } = useParams();
-  const { state } = useSGT();
+  const { state, fetchExpedientes } = useSGT();
   const { toast } = useToast();
   const [expediente, setExpediente] = useState<any>(null);
   const [pasos, setPasos] = useState<any[]>([]);
