@@ -410,6 +410,7 @@ export const DocumentacionTramite: React.FC<DocumentacionTramiteProps> = ({
                   Seleccionar archivo
                 </label>
                 <input
+                  key={selectedDoc?.documento || 'file-input'}
                   type="file"
                   onChange={handleFileUpload}
                   accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx"
