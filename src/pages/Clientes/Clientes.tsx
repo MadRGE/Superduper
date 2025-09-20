@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Plus, Building, User, Mail, Phone } from 'lucide-react';
+import { Search, Plus, Building, User, Mail, Phone, Eye } from 'lucide-react';
 
 const mockClientes = [
   {
