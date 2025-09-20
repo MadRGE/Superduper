@@ -80,6 +80,11 @@ export const DocumentacionTramite: React.FC<DocumentacionTramiteProps> = ({
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+    
+    // Always close the modal first, regardless of file selection
+    setShowUploadModal(false);
+    setSelectedDoc(null);
+    
     if (!file || !selectedDoc) return;
 
     const nuevoDocumento = {
@@ -104,9 +109,6 @@ export const DocumentacionTramite: React.FC<DocumentacionTramiteProps> = ({
     if (onDocumentUpload) {
       onDocumentUpload(nuevoDocumento);
     }
-
-    setShowUploadModal(false);
-    setSelectedDoc(null);
   };
 
   return (
