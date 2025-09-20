@@ -50,6 +50,7 @@ export const ClienteDetailEnhanced: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { state } = useSGT();
+  const { fetchClientes, fetchExpedientes } = useSGT();
   const { toast } = useToast();
   
   const [cliente, setCliente] = useState<any>(null);
@@ -73,10 +74,14 @@ export const ClienteDetailEnhanced: React.FC = () => {
   const expedienteService = new ExpedienteService();
 
   useEffect(() => {
+    // Asegurar que los datos del contexto estén cargados
+    fetchClientes();
+    fetchExpedientes();
+    
     if (id) {
       cargarDatosCompletos();
     }
-  }, [id]);
+  }, [id, fetchClientes, fetchExpedientes]);
 
   const cargarDatosCompletos = async () => {
     try {

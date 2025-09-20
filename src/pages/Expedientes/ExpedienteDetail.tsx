@@ -46,10 +46,13 @@ export const ExpedienteDetail: React.FC = () => {
   const expedienteService = new ExpedienteService();
 
   useEffect(() => {
+    // Asegurar que los datos estén cargados
+    fetchExpedientes();
+    
     if (id) {
       cargarExpediente();
     }
-  }, [id]);
+  }, [id, fetchExpedientes]);
 
   const cargarExpediente = () => {
     const expedienteEncontrado = state.expedientes.find(exp => exp.id === id);

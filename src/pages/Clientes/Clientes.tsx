@@ -1,61 +1,37 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Plus, Building, User, Mail, Phone, Eye } from 'lucide-react';
-
-const mockClientes = [
-  {
-    id: 1,
-    razon_social: 'Lácteos del Sur S.A.',
-    cuit: '30-12345678-9',
-    email: 'contacto@lacteosdelsur.com.ar',
-    telefono: '+54 11 4567-8900',
-    contacto_nombre: 'María González',
-    expedientes_activos: 3,
-    ultimo_tramite: 'RNPA Yogur Natural'
-  },
-  {
-    id: 2,
-    razon_social: 'TechCorp Argentina',
-    cuit: '30-98765432-1',
-    email: 'info@techcorp.com.ar',
-    telefono: '+54 11 9876-5432',
-    contacto_nombre: 'Carlos Rodríguez',
-    expedientes_activos: 1,
-    ultimo_tramite: 'Homologación Router WiFi'
-  },
-  {
-    id: 3,
-    razon_social: 'BeautyTech Imports',
-    cuit: '30-11223344-5',
-    email: 'ventas@beautytech.com.ar',
-    telefono: '+54 11 2233-4455',
-    contacto_nombre: 'Laura Martínez',
-    expedientes_activos: 0,
-    ultimo_tramite: 'Certificación Plancha'
-  },
-  {
-    id: 4,
-    razon_social: 'NutriLife S.A.',
-    cuit: '30-55667788-9',
-    email: 'contacto@nutrilife.com.ar',
-    telefono: '+54 11 5566-7788',
-    contacto_nombre: 'Roberto Silva',
-    expedientes_activos: 2,
-    ultimo_tramite: 'RNPA Cereal Integral'
-  },
-  {
-    id: 5,
-    razon_social: 'PetCare Argentina',
-    cuit: '30-99887766-3',
-    email: 'info@petcare.com.ar',
-    telefono: '+54 11 9988-7766',
-    contacto_nombre: 'Ana Fernández',
-    expedientes_activos: 1,
-    ultimo_tramite: 'Registro Pet Food'
-  }
-];
+import { useSGT } from '../../context/SGTContext';
 
 export const Clientes: React.FC = () => {
+  const { state, fetchClientes, fetchExpedientes } = useSGT();
+
+  React.useEffect(() => {
+    fetchClientes();
+    fetchExpedientes();
+  }, []);
+
+  // Enriquecer clientes con datos de expedientes
+  const clientesEnriquecidos = state.clientes.map(cliente => {
+    const expedientesCliente = state.expedientes.filter(exp => 
+      exp.cliente_id === cliente.id || 
+      exp.cliente?.razon_social === cliente.razon_social
+    );
+    
+    const expedientesActivos = expedientesCliente.filter(exp => 
+      !['completado', 'cancelado'].includes(exp.estado)
+    ).length;
+    
+    const ultimoExpediente = expedientesCliente
+      .sort((a, b) => new Date(b.created_at || b.fecha_inicio).getTime() - new Date(a.created_at || a.fecha_inicio).getTime())[0];
+    
+    return {
+      ...cliente,
+      expedientes_activos: expedientesActivos,
+      ultimo_tramite: ultimoExpediente?.alias || ultimoExpediente?.tramite_tipo?.nombre || 'Sin trámites'
+    };
+  });
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -89,7 +65,7 @@ export const Clientes: React.FC = () => {
         </div>
         
         <div className="divide-y divide-gray-100">
-          {mockClientes.map((cliente) => (
+          {clientesEnriquecidos.map((cliente) => (
             <div
               key={cliente.id} 
               className="p-6 hover:bg-gray-50 transition-colors"
