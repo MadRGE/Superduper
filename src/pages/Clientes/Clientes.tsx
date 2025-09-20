@@ -90,10 +90,9 @@ export const Clientes: React.FC = () => {
         
         <div className="divide-y divide-gray-100">
           {mockClientes.map((cliente) => (
-            <Link 
+            <div
               key={cliente.id} 
-              to={`/clientes/${cliente.id}`}
-              className="block p-6 hover:bg-gray-50 transition-colors cursor-pointer"
+              className="p-6 hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
@@ -114,6 +113,15 @@ export const Clientes: React.FC = () => {
                   <div className="text-right">
                     <p className="text-sm font-medium text-gray-900">Último trámite:</p>
                     <p className="text-sm text-gray-600">{cliente.ultimo_tramite}</p>
+                    <div className="mt-2">
+                      <Link 
+                        to={`/clientes/${cliente.id}`}
+                        className="inline-flex items-center px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
+                      >
+                        <Eye className="w-4 h-4 mr-2" />
+                        Ver Vista 360°
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -132,7 +140,7 @@ export const Clientes: React.FC = () => {
                   <span>{cliente.telefono}</span>
                 </div>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       </div>

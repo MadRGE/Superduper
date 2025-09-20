@@ -266,6 +266,107 @@ export class ExpedienteService {
     }
   }
 
+  // ============= MÉTODOS PARA VISTA 360° DE CLIENTES =============
+
+  // Obtener información completa del cliente
+  getClienteCompleto(clienteId: string): any {
+    const clientes = this.getClientes();
+    const cliente = clientes.find(c => c.id === clienteId);
+    
+    if (!cliente) return null;
+    
+    // Enriquecer con datos adicionales
+    return {
+      ...cliente,
+      categoria: 'Premium',
+      satisfaccion: 4.5,
+      credito_disponible: 500000,
+      credito_utilizado: 125000,
+      dias_promedio_pago: 15,
+      direccion: 'Av. Corrientes 1234, CABA',
+      contactos: [
+        {
+          id: 1,
+          nombre: cliente.contacto_nombre || 'Contacto Principal',
+          cargo: 'Gerente de Operaciones',
+          email: cliente.email,
+          telefono: cliente.telefono,
+          principal: true
+        }
+      ]
+    };
+  }
+
+  // Obtener expedientes por cliente
+  getExpedientesByCliente(clienteId: string): any[] {
+    const expedientes = this.getExpedientes();
+    return expedientes.filter(exp => exp.cliente_id === clienteId);
+  }
+
+  // Obtener productos por cliente
+  getProductosByCliente(clienteId: string): any[] {
+    // Por ahora retornar datos mock
+    return [
+      {
+        id: 'prod-1',
+        nombre: 'Yogur Natural 200g',
+        marca: 'DelSur',
+        rnpa: 'RNPA 04-123456',
+        categoria: 'Productos Lácteos',
+        estado: 'vigente',
+        vencimiento: '2026-03-15',
+        peso_neto: '200g',
+        vida_util: '30 días',
+        codigo_ean: '7791234567890'
+      }
+    ];
+  }
+
+  // Obtener habilitaciones por cliente
+  getHabilitacionesByCliente(clienteId: string): any[] {
+    return [
+      {
+        id: 'hab-1',
+        tipo: 'RNE',
+        numero: '04-000123',
+        establecimiento: 'Planta Elaboradora Sur',
+        direccion: 'Av. Industrial 1234, Quilmes',
+        vencimiento: '2027-05-15',
+        estado: 'vigente',
+        actividades: ['Elaboración', 'Fraccionamiento', 'Depósito']
+      }
+    ];
+  }
+
+  // Obtener comunicaciones por cliente
+  getComunicacionesByCliente(clienteId: string): any[] {
+    return [
+      {
+        id: 'com-1',
+        fecha: '2025-01-25 10:30',
+        tipo: 'email',
+        asunto: 'Documentación pendiente',
+        destinatario: 'cliente@empresa.com',
+        estado: 'enviado',
+        mensaje: 'Estimado cliente, necesitamos que complete la documentación...'
+      }
+    ];
+  }
+
+  // Obtener facturas por cliente
+  getFacturasByCliente(clienteId: string): any[] {
+    return [
+      {
+        id: 'fact-1',
+        numero: 'FC-A-00001-00000234',
+        fecha: '2025-01-20',
+        concepto: 'RNPA Yogur Natural',
+        total: 544500,
+        estado: 'pagada',
+        fecha_pago: '2025-01-25'
+      }
+    ];
+  }
   // ============= NUEVAS FUNCIONALIDADES =============
 
   // Validar documentación completa según tipo de trámite

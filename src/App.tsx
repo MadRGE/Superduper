@@ -10,6 +10,7 @@ import { NuevoExpediente } from './pages/Expedientes/NuevoExpediente';
 import { Catalogo } from './pages/Catalogo/Catalogo';
 import { Clientes } from './pages/Clientes/Clientes';
 import { ClienteDetailEnhanced } from './pages/Clientes/ClienteDetailEnhanced';
+import { ClienteDetailEnhanced } from './pages/Clientes/ClienteDetailEnhanced';
 import { Reportes } from './pages/Reportes/Reportes';
 import { Notificaciones } from './pages/Notificaciones/Notificaciones';
 import { Login } from './pages/Login/Login';
@@ -75,6 +76,7 @@ const AppContent: React.FC = () => {
               <Route path="/expedientes/:id" element={<ExpedienteDetail />} />
               <Route path="/catalogo" element={<Catalogo />} />
               <Route path="/clientes" element={<Clientes />} />
+              <Route path="/clientes/:id" element={<ClienteDetailEnhanced />} />
               <Route path="/clientes/:id" element={<ClienteDetailEnhanced />} />
               <Route path="/reportes" element={<Reportes />} />
               <Route path="/notificaciones" element={<Notificaciones />} />
