@@ -35,7 +35,8 @@ import {
   Paperclip,
   Award,
   Star,
-  CreditCard
+  CreditCard,
+  FileSpreadsheet
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -360,6 +361,10 @@ export const ClienteDetailEnhanced: React.FC = () => {
             <Button variant="outline" size="sm" onClick={() => enviarComunicacion('llamada')}>
               <Phone className="w-4 h-4 mr-2" />
               Llamar
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => navigate(`/clientes/${cliente.id}/dashboard`)}>
+              <FileSpreadsheet className="w-4 h-4 mr-2" />
+              Dashboard Excel
             </Button>
             <Button size="sm">
               <Plus className="w-4 h-4 mr-2" />
