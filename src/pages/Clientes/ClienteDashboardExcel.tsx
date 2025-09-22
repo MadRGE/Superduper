@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
 import { 
   FileText, 
   Download, 
@@ -28,7 +27,7 @@ import {
   FileSpreadsheet,
   Target,
   Activity,
-  ArrowLeft
+  Activity
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -67,12 +66,18 @@ interface ExpedienteRow {
   alertas: string[];
 }
 
-export const ClienteDashboardExcel: React.FC = () => {
-  const { id: clienteId } = useParams();
-  const navigate = useNavigate();
+interface ClienteExpedientesDashboardProps {
+  clienteId: string;
+  clienteData: any;
+}
+
+export const ClienteExpedientesDashboard: React.FC<ClienteExpedientesDashboardProps> = ({ 
+  clienteId, 
+  clienteData 
+}) => {
   const { toast } = useToast();
   
-  const [cliente, setCliente] = useState<any>(null);
+  const [cliente, setCliente] = useState<any>(clienteData);
   const [expedientes, setExpedientes] = useState<ExpedienteRow[]>([]);
   const [filtros, setFiltros] = useState({
     estado: '',
@@ -88,166 +93,239 @@ export const ClienteDashboardExcel: React.FC = () => {
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
   useEffect(() => {
+    setCliente(clienteData);
     cargarDatosCliente();
-  }, [clienteId]);
+  }, [clienteId, clienteData]);
 
   const cargarDatosCliente = () => {
-    // Simular carga de datos
-    setCliente({
-      id: clienteId,
-      razon_social: 'Luminatec SRL',
-      cuit: '30-71234567-8',
-      rubro: 'Iluminación LED - Importador/Fabricante',
-      direccion: 'Av. Córdoba 1234, CABA',
-      contacto_principal: 'Juan Pérez',
-      email: 'juan.perez@luminatec.com.ar',
-      telefono: '+54 11 4567-8900'
-    });
-
     // Simular expedientes con estructura similar a Excel
     const expedientesSimulados: ExpedienteRow[] = [
       {
         id: '1',
-        codigo: 'SGT-2024-ENACOM-00234',
-        producto: 'Lámpara LED 9W Cálida',
-        marca: 'Luminatec',
-        tipo_tramite: 'Homologación ENACOM',
-        organismo: 'ENACOM',
+        codigo: 'SGT-2025-ANMAT-00123',
+        producto: 'Yogur Natural 200g',
+        marca: 'DelSur',
+        tipo_tramite: 'Registro RNPA',
+        organismo: 'ANMAT/INAL',
         estado: 'en_proceso',
-        fecha_inicio: '2024-01-15',
-        fecha_ingreso_organismo: '2024-01-20',
-        fecha_salida_estimada: '2024-03-20',
+        fecha_inicio: '2025-01-15',
+        fecha_ingreso_organismo: '2025-01-20',
+        fecha_salida_estimada: '2025-03-01',
         fecha_salida_real: undefined,
-        dias_transcurridos: 45,
-        dias_restantes: 15,
-        progreso: 75,
+        dias_transcurridos: 12,
+        dias_restantes: 12,
+        progreso: 50,
         responsable_interno: 'María González',
-        despachante: 'Despachos García',
-        observaciones: 'Esperando certificado de laboratorio',
+        despachante: 'Juan Pérez',
+        observaciones: 'Documentación en revisión',
         documentos_pendientes: 2,
-        documentos_totales: 8,
-        ultimo_movimiento: 'Documentación enviada a revisión',
-        fecha_ultimo_movimiento: '2024-02-28',
+        documentos_totales: 10,
+        ultimo_movimiento: 'Análisis de laboratorio completado',
+        fecha_ultimo_movimiento: '2025-01-25',
         prioridad: 'alta',
-        costo_estimado: 180000,
-        costo_real: 165000,
-        facturado: 90000,
-        cobrado: 90000,
-        alertas: ['Próximo a vencer', 'Documentos pendientes']
+        costo_estimado: 150000,
+        costo_real: 145000,
+        facturado: 75000,
+        cobrado: 75000,
+        alertas: ['Documentos pendientes']
       },
       {
         id: '2',
-        codigo: 'SGT-2024-SIC-00156',
-        producto: 'Plafón LED 18W',
-        marca: 'Luminatec Pro',
-        tipo_tramite: 'Certificación Seguridad Eléctrica',
-        organismo: 'SIC',
-        estado: 'completado',
-        fecha_inicio: '2024-01-10',
-        fecha_ingreso_organismo: '2024-01-12',
-        fecha_salida_estimada: '2024-02-12',
-        fecha_salida_real: '2024-02-10',
-        dias_transcurridos: 31,
-        dias_restantes: 0,
-        progreso: 100,
-        responsable_interno: 'Carlos Rodríguez',
-        despachante: 'Despachos García',
-        observaciones: 'Certificado emitido',
-        documentos_pendientes: 0,
-        documentos_totales: 10,
-        ultimo_movimiento: 'Certificado entregado al cliente',
-        fecha_ultimo_movimiento: '2024-02-11',
-        prioridad: 'normal',
-        costo_estimado: 95000,
-        costo_real: 95000,
-        facturado: 95000,
-        cobrado: 95000,
-        alertas: []
-      },
-      {
-        id: '3',
-        codigo: 'SGT-2024-INAL-00089',
-        producto: 'Tira LED 5m RGB',
-        marca: 'Luminatec',
+        codigo: 'SGT-2025-ANMAT-00134',
+        producto: 'Cereal Integral 500g',
+        marca: 'NutriLife',
         tipo_tramite: 'Registro RNPA',
         organismo: 'ANMAT/INAL',
-        estado: 'observado',
-        fecha_inicio: '2024-02-01',
-        fecha_ingreso_organismo: '2024-02-05',
-        fecha_salida_estimada: '2024-04-05',
-        fecha_salida_real: undefined,
-        dias_transcurridos: 28,
-        dias_restantes: 36,
-        progreso: 40,
-        responsable_interno: 'Ana Martínez',
-        observaciones: 'Observación en etiquetado',
-        documentos_pendientes: 3,
-        documentos_totales: 12,
-        ultimo_movimiento: 'Respuesta a observaciones',
-        fecha_ultimo_movimiento: '2024-02-25',
-        prioridad: 'alta',
-        costo_estimado: 250000,
-        costo_real: undefined,
-        facturado: 125000,
-        cobrado: 0,
-        alertas: ['Observaciones pendientes', 'Pago pendiente']
-      },
-      {
-        id: '4',
-        codigo: 'SGT-2024-ADUANA-00456',
-        producto: 'Drivers LED 12V/24V',
-        marca: 'Luminatec',
-        tipo_tramite: 'Despacho Importación',
-        organismo: 'ADUANA',
         estado: 'iniciado',
-        fecha_inicio: '2024-02-20',
-        fecha_ingreso_organismo: '2024-02-22',
-        fecha_salida_estimada: '2024-03-10',
+        fecha_inicio: '2025-01-20',
+        fecha_ingreso_organismo: '2025-01-22',
+        fecha_salida_estimada: '2025-03-06',
         fecha_salida_real: undefined,
-        dias_transcurridos: 10,
-        dias_restantes: 10,
-        progreso: 25,
-        responsable_interno: 'Pedro López',
-        despachante: 'Despachante Aduanero SA',
-        observaciones: 'Esperando liberación',
-        documentos_pendientes: 1,
-        documentos_totales: 6,
-        ultimo_movimiento: 'Presentación en Aduana',
-        fecha_ultimo_movimiento: '2024-02-22',
+        dias_transcurridos: 7,
+        dias_restantes: 45,
+        progreso: 12,
+        responsable_interno: 'Carlos Rodríguez',
+        observaciones: 'Preparando documentación inicial',
+        documentos_pendientes: 4,
+        documentos_totales: 10,
+        ultimo_movimiento: 'Expediente creado',
+        fecha_ultimo_movimiento: '2025-01-20',
         prioridad: 'urgente',
-        costo_estimado: 45000,
+        costo_estimado: 150000,
         costo_real: undefined,
         facturado: 0,
         cobrado: 0,
-        alertas: ['Urgente', 'Container en puerto']
+        alertas: ['Urgente', 'Documentos faltantes']
+      },
+      {
+        id: '3',
+        codigo: 'SGT-2024-ENACOM-00087',
+        producto: 'Router WiFi 6 Dual Band',
+        marca: 'TechCorp',
+        tipo_tramite: 'Homologación ENACOM',
+        organismo: 'ENACOM',
+        estado: 'observado',
+        fecha_inicio: '2024-12-08',
+        fecha_ingreso_organismo: '2024-12-15',
+        fecha_salida_estimada: '2025-02-22',
+        fecha_salida_real: undefined,
+        dias_transcurridos: 50,
+        dias_restantes: 8,
+        progreso: 85,
+        responsable_interno: 'Ana Martínez',
+        despachante: 'Despachos García',
+        observaciones: 'Documentación técnica incompleta',
+        documentos_pendientes: 1,
+        documentos_totales: 8,
+        ultimo_movimiento: 'Respuesta a observaciones',
+        fecha_ultimo_movimiento: '2025-01-24',
+        prioridad: 'alta',
+        costo_estimado: 180000,
+        costo_real: 175000,
+        facturado: 90000,
+        cobrado: 90000,
+        alertas: ['Observaciones pendientes', 'Próximo a vencer']
+      },
+      {
+        id: '4',
+        codigo: 'SGT-2024-SIC-00156',
+        producto: 'Plancha de Pelo Cerámica',
+        marca: 'BeautyTech',
+        tipo_tramite: 'Certificación Seguridad Eléctrica',
+        organismo: 'SIC',
+        estado: 'completado',
+        fecha_inicio: '2024-12-01',
+        fecha_ingreso_organismo: '2024-12-05',
+        fecha_salida_estimada: '2025-01-05',
+        fecha_salida_real: '2025-01-03',
+        dias_transcurridos: 33,
+        dias_restantes: 0,
+        progreso: 100,
+        responsable_interno: 'Pedro López',
+        observaciones: 'Certificado emitido',
+        documentos_pendientes: 0,
+        documentos_totales: 7,
+        ultimo_movimiento: 'Certificado entregado al cliente',
+        fecha_ultimo_movimiento: '2025-01-03',
+        prioridad: 'normal',
+        costo_estimado: 65000,
+        costo_real: 65000,
+        facturado: 65000,
+        cobrado: 65000,
+        alertas: []
       },
       {
         id: '5',
-        codigo: 'SGT-2024-SENASA-00123',
-        producto: 'Luminaria Solar Jardín',
-        marca: 'EcoLux',
-        tipo_tramite: 'Certificado Libre Circulación',
+        codigo: 'SGT-2024-SENASA-00089',
+        producto: 'Pet Food Premium 15kg',
+        marca: 'PetCare',
+        tipo_tramite: 'Registro Alimentos Animales',
         organismo: 'SENASA',
-        estado: 'en_proceso',
-        fecha_inicio: '2024-02-15',
-        fecha_ingreso_organismo: '2024-02-18',
-        fecha_salida_estimada: '2024-03-18',
+        estado: 'vencido',
+        fecha_inicio: '2024-11-15',
+        fecha_ingreso_organismo: '2024-11-20',
+        fecha_salida_estimada: '2025-01-10',
         fecha_salida_real: undefined,
-        dias_transcurridos: 15,
-        dias_restantes: 18,
-        progreso: 55,
+        dias_transcurridos: 72,
+        dias_restantes: -15,
+        progreso: 40,
         responsable_interno: 'Laura Díaz',
-        observaciones: 'En revisión técnica',
-        documentos_pendientes: 0,
-        documentos_totales: 7,
-        ultimo_movimiento: 'Análisis técnico en curso',
-        fecha_ultimo_movimiento: '2024-02-26',
+        observaciones: 'Falta respuesta del cliente',
+        documentos_pendientes: 3,
+        documentos_totales: 8,
+        ultimo_movimiento: 'Solicitud de documentos adicionales',
+        fecha_ultimo_movimiento: '2024-12-20',
+        prioridad: 'alta',
+        costo_estimado: 180000,
+        costo_real: undefined,
+        facturado: 90000,
+        cobrado: 0,
+        alertas: ['Vencido', 'Falta respuesta cliente', 'Pago pendiente']
+      },
+      {
+        id: '6',
+        codigo: 'SGT-2025-ENACOM-00045',
+        producto: 'Smartphone 5G',
+        marca: 'TechCorp',
+        tipo_tramite: 'Homologación ENACOM',
+        organismo: 'ENACOM',
+        estado: 'en_proceso',
+        fecha_inicio: '2025-01-10',
+        fecha_ingreso_organismo: '2025-01-15',
+        fecha_salida_estimada: '2025-03-15',
+        fecha_salida_real: undefined,
+        dias_transcurridos: 17,
+        dias_restantes: 43,
+        progreso: 30,
+        responsable_interno: 'Roberto Silva',
+        despachante: 'Despachos Técnicos SA',
+        observaciones: 'Ensayos de laboratorio en curso',
+        documentos_pendientes: 2,
+        documentos_totales: 9,
+        ultimo_movimiento: 'Inicio ensayos EMC',
+        fecha_ultimo_movimiento: '2025-01-22',
         prioridad: 'normal',
-        costo_estimado: 120000,
-        costo_real: 110000,
-        facturado: 60000,
-        cobrado: 60000,
+        costo_estimado: 200000,
+        costo_real: undefined,
+        facturado: 100000,
+        cobrado: 0,
+        alertas: ['Ensayos en curso']
+      },
+      {
+        id: '7',
+        codigo: 'SGT-2025-SIC-00078',
+        producto: 'Cargador USB-C 65W',
+        marca: 'TechCorp',
+        tipo_tramite: 'Certificación Seguridad Eléctrica',
+        organismo: 'SIC',
+        estado: 'en_proceso',
+        fecha_inicio: '2025-01-05',
+        fecha_ingreso_organismo: '2025-01-08',
+        fecha_salida_estimada: '2025-02-12',
+        fecha_salida_real: undefined,
+        dias_transcurridos: 22,
+        dias_restantes: 13,
+        progreso: 65,
+        responsable_interno: 'Ana Fernández',
+        observaciones: 'Certificado de conformidad aprobado',
+        documentos_pendientes: 1,
+        documentos_totales: 7,
+        ultimo_movimiento: 'Revisión final documentación',
+        fecha_ultimo_movimiento: '2025-01-26',
+        prioridad: 'normal',
+        costo_estimado: 85000,
+        costo_real: 80000,
+        facturado: 42500,
+        cobrado: 42500,
         alertas: []
+      },
+      {
+        id: '8',
+        codigo: 'SGT-2025-ANMAT-00167',
+        producto: 'Suplemento Vitamínico',
+        marca: 'NutriLife',
+        tipo_tramite: 'Registro RNPA',
+        organismo: 'ANMAT/INAL',
+        estado: 'iniciado',
+        fecha_inicio: '2025-01-25',
+        fecha_ingreso_organismo: '',
+        fecha_salida_estimada: '2025-03-11',
+        fecha_salida_real: undefined,
+        dias_transcurridos: 2,
+        dias_restantes: 45,
+        progreso: 5,
+        responsable_interno: 'María González',
+        observaciones: 'Preparando carpeta técnica',
+        documentos_pendientes: 8,
+        documentos_totales: 10,
+        ultimo_movimiento: 'Expediente creado',
+        fecha_ultimo_movimiento: '2025-01-25',
+        prioridad: 'normal',
+        costo_estimado: 150000,
+        costo_real: undefined,
+        facturado: 0,
+        cobrado: 0,
+        alertas: ['Recién iniciado']
       }
     ];
 
@@ -377,46 +455,21 @@ export const ClienteDashboardExcel: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header del Cliente */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center space-x-4">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => navigate(`/clientes/${clienteId}`)}
-              className="p-2"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-              <Building2 className="w-8 h-8 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">{cliente?.razon_social}</h1>
-              <p className="text-gray-600">CUIT: {cliente?.cuit} • {cliente?.rubro}</p>
-              <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
-                <span className="flex items-center">
-                  <User className="w-4 h-4 mr-1" />
-                  {cliente?.contacto_principal}
-                </span>
-                <span className="flex items-center">
-                  <Mail className="w-4 h-4 mr-1" />
-                  {cliente?.email}
-                </span>
-              </div>
-            </div>
-          </div>
-          <div className="flex space-x-2">
-            <Button variant="outline" onClick={() => window.print()}>
-              <Printer className="w-4 h-4 mr-2" />
-              Imprimir
-            </Button>
-            <Button onClick={exportarExcel}>
-              <FileSpreadsheet className="w-4 h-4 mr-2" />
-              Exportar Excel
-            </Button>
-          </div>
+      {/* Header de acciones */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900">Dashboard de Expedientes</h3>
+          <p className="text-sm text-gray-600">Vista detallada de todos los expedientes del cliente</p>
+        </div>
+        <div className="flex space-x-2">
+          <Button variant="outline" size="sm" onClick={() => window.print()}>
+            <Printer className="w-4 h-4 mr-2" />
+            Imprimir
+          </Button>
+          <Button size="sm" onClick={exportarExcel}>
+            <FileSpreadsheet className="w-4 h-4 mr-2" />
+            Exportar Excel
+          </Button>
         </div>
       </div>
 
@@ -534,7 +587,6 @@ export const ClienteDashboardExcel: React.FC = () => {
               <option value="SIC">SIC</option>
               <option value="ANMAT/INAL">ANMAT/INAL</option>
               <option value="SENASA">SENASA</option>
-              <option value="ADUANA">ADUANA</option>
             </select>
             
             <select
@@ -556,7 +608,7 @@ export const ClienteDashboardExcel: React.FC = () => {
               Limpiar
             </Button>
             
-            <Button variant="outline" size="sm" onClick={cargarDatosCliente}>
+            <Button variant="outline" size="sm" onClick={() => cargarDatosCliente()}>
               <RefreshCw className="w-4 h-4" />
             </Button>
           </div>
@@ -721,7 +773,7 @@ export const ClienteDashboardExcel: React.FC = () => {
                         </td>
                         <td className="p-2 sticky right-0 bg-inherit">
                           <div className="flex space-x-1 justify-center">
-                            <Button variant="ghost" size="sm" onClick={() => navigate(`/expedientes/${exp.id}`)}>
+                            <Button variant="ghost" size="sm">
                               <Eye className="w-3 h-3" />
                             </Button>
                             <Button variant="ghost" size="sm">
@@ -949,7 +1001,7 @@ export const ClienteDashboardExcel: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center">
             <BarChart3 className="w-5 h-5 mr-2" />
-            Análisis de Tendencias
+            Análisis de Tendencias - {cliente?.razon_social}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -957,26 +1009,29 @@ export const ClienteDashboardExcel: React.FC = () => {
             <div>
               <h4 className="text-sm font-medium mb-3">Expedientes por Mes</h4>
               <div className="space-y-2">
-                {['Enero', 'Febrero', 'Marzo'].map((mes, idx) => (
+                {['Noviembre', 'Diciembre', 'Enero'].map((mes, idx) => {
+                  const cantidad = idx === 0 ? 1 : idx === 1 ? 2 : 4;
+                  return (
                   <div key={mes} className="flex items-center">
                     <span className="text-sm w-20">{mes}</span>
                     <div className="flex-1 bg-gray-200 rounded-full h-6">
                       <div 
                         className="h-6 bg-blue-500 rounded-full flex items-center justify-end pr-2"
-                        style={{ width: `${(idx + 1) * 30}%` }}
+                        style={{ width: `${cantidad * 25}%` }}
                       >
-                        <span className="text-xs text-white font-medium">{(idx + 1) * 4}</span>
+                        <span className="text-xs text-white font-medium">{cantidad}</span>
                       </div>
                     </div>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
             
             <div>
               <h4 className="text-sm font-medium mb-3">Distribución por Organismo</h4>
               <div className="space-y-2">
-                {['ENACOM', 'SIC', 'ANMAT/INAL', 'ADUANA'].map((org, idx) => {
+                {['ANMAT/INAL', 'ENACOM', 'SIC', 'SENASA'].map((org, idx) => {
                   const count = expedientes.filter(e => e.organismo === org).length;
                   const percentage = expedientes.length > 0 ? (count / expedientes.length * 100).toFixed(0) : '0';
                   return count > 0 ? (

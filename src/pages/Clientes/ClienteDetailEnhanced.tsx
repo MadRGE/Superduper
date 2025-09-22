@@ -44,7 +44,8 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { useSGT } from '../../context/SGTContext';
-import { expedienteService } from '../../services/ExpedienteService';
+import { expedienteService, ExpedienteService } from '../../services/ExpedienteService';
+import { ClienteExpedientesDashboard } from './ClienteDashboardExcel';
 import { formatDate, getDaysRemaining } from '@/lib/utils';
 
 // Componente Productos Registrados con Fichas
@@ -125,6 +126,7 @@ export const ClienteDetailEnhanced: React.FC = () => {
   const [expandedSections, setExpandedSections] = useState({
     general: true,
     expedientes: true,
+    dashboard: false,
     productos: false,
     habilitaciones: false,
     comunicaciones: false,
@@ -354,10 +356,6 @@ export const ClienteDetailEnhanced: React.FC = () => {
             <Button variant="outline" size="sm" onClick={() => enviarComunicacion('llamada')}>
               <Phone className="w-4 h-4 mr-2" />
               Llamar
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => navigate(`/clientes/${cliente.id}/dashboard`)}>
-              <FileSpreadsheet className="w-4 h-4 mr-2" />
-              Dashboard Excel
             </Button>
             <Button size="sm">
               <Plus className="w-4 h-4 mr-2" />
@@ -606,6 +604,30 @@ export const ClienteDetailEnhanced: React.FC = () => {
                     </TabsContent>
                   ))}
                 </Tabs>
+              </CardContent>
+            )}
+          </Card>
+
+          {/* Dashboard de Expedientes Integrado */}
+          <Card>
+            <CardHeader 
+              className="cursor-pointer"
+              onClick={() => toggleSection('dashboard')}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <FileSpreadsheet className="w-5 h-5 text-gray-400" />
+                  <CardTitle>Dashboard Detallado de Expedientes</CardTitle>
+                </div>
+                {expandedSections.dashboard ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
+              </div>
+            </CardHeader>
+            {expandedSections.dashboard && (
+              <CardContent>
+                <ClienteExpedientesDashboard 
+                  clienteId={cliente.id}
+                  clienteData={cliente}
+                />
               </CardContent>
             )}
           </Card>
