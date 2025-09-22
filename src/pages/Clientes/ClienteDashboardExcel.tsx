@@ -68,7 +68,7 @@ interface ExpedienteRow {
 }
 
 export const ClienteDashboardExcel: React.FC = () => {
-  const { clienteId } = useParams();
+  const { id: clienteId } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
   
