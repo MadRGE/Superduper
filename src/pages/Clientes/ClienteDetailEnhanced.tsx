@@ -111,7 +111,6 @@ export const ClienteDetailEnhanced: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { state } = useSGT();
-  const { fetchClientes, fetchExpedientes } = useSGT();
   const { toast } = useToast();
   
   const [cliente, setCliente] = useState<any>(null);
@@ -141,17 +140,9 @@ export const ClienteDetailEnhanced: React.FC = () => {
     });
   };
 
-  useEffect(() => {
-    // Asegurar que los datos del contexto estén cargados
-    fetchClientes();
-    fetchExpedientes();
+  const cargarDatosCompletos = React.useCallback(async () => {
+    if (!id) return;
     
-    if (id) {
-      cargarDatosCompletos();
-    }
-  }, [id, fetchClientes, fetchExpedientes]);
-
-  const cargarDatosCompletos = async () => {
     try {
       setLoading(true);
       
@@ -166,6 +157,7 @@ export const ClienteDetailEnhanced: React.FC = () => {
         navigate('/clientes');
         return;
       }
+
 
       // Enriquecer datos del cliente con información adicional
       const clienteEnriquecido = {
@@ -248,8 +240,11 @@ export const ClienteDetailEnhanced: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, state.clientes, expedienteService, toast, navigate]);
 
+  useEffect(() => {
+    cargarDatosCompletos();
+  }, [cargarDatosCompletos]);
   const toggleSection = (section: string) => {
     setExpandedSections(prev => ({
       ...prev,
