@@ -240,7 +240,7 @@ export const ClienteDetailEnhanced: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [id, state.clientes, expedienteService, toast, navigate]);
+  }, [id, expedienteService, toast, navigate]);
 
   useEffect(() => {
     cargarDatosCompletos();
