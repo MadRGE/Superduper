@@ -26,7 +26,7 @@ import { Facturacion } from './pages/Comercial/Facturacion';
 import { Proveedores } from './pages/Comercial/Proveedores';
 import { GestionIntegral } from './pages/Admin/GestionIntegral';
 import { PortalDespachante } from './pages/Despachantes/PortalDespachante';
-import { ClienteDashboardExcel } from './pages/Clientes/ClienteDashboardExcel';
+import { ClienteExpedientesDashboard } from './pages/Clientes/ClienteDashboardExcel';
 import { SGTProvider } from './context/SGTContext';
 import { startAutomations } from './services/AutomationService';
 import { Toaster } from '@/components/ui/toaster';
@@ -77,7 +77,7 @@ const AppContent: React.FC = () => {
               <Route path="/catalogo" element={<Catalogo />} />
               <Route path="/clientes" element={<Clientes />} />
               <Route path="/clientes/:id" element={<ClienteDetailEnhanced />} />
-              <Route path="/clientes/:id/dashboard" element={<ClienteDashboardExcel />} />
+              <Route path="/clientes/:id/dashboard" element={<ClienteExpedientesDashboard />} />
               <Route path="/reportes" element={<Reportes />} />
               <Route path="/notificaciones" element={<Notificaciones />} />
               <Route path="/fauna-cites" element={<FaunaCITES />} />
