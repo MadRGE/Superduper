@@ -44,7 +44,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { useSGT } from '../../context/SGTContext';
-import { ExpedienteService } from '../../services/ExpedienteService';
+import { expedienteService } from '../../services/ExpedienteService';
 import { formatDate, getDaysRemaining } from '@/lib/utils';
 
 // Componente Productos Registrados con Fichas
@@ -130,8 +130,6 @@ export const ClienteDetailEnhanced: React.FC = () => {
     comunicaciones: false,
     financiero: false
   });
-
-  const expedienteService = new ExpedienteService();
 
   const onShowFichaProducto = (producto: any) => {
     toast({
@@ -240,7 +238,7 @@ export const ClienteDetailEnhanced: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [id, expedienteService, toast, navigate]);
+  }, [id, toast, navigate]);
 
   useEffect(() => {
     cargarDatosCompletos();

@@ -511,3 +511,6 @@ export class ExpedienteService {
     };
   }
 }
+
+// Export singleton instance
+export const expedienteService = new ExpedienteService();
