@@ -38,6 +38,12 @@ const navigation: NavigationItem[] = [
   { name: 'RENPRE', href: '/renpre', icon: Beaker },
   { name: 'ANMaC', href: '/anmac', icon: Shield },
   { 
+    name: 'Finanzas', 
+    href: '/finanzas', 
+    icon: DollarSign,
+    permission: 'gestionar_facturacion'
+  },
+  { 
     name: 'Administración', 
     icon: Crown,
     adminOnly: true,

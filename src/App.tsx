@@ -27,6 +27,7 @@ import { Proveedores } from './pages/Comercial/Proveedores';
 import { GestionIntegral } from './pages/Admin/GestionIntegral';
 import { PortalDespachante } from './pages/Despachantes/PortalDespachante';
 import { ClienteExpedientesDashboard } from './pages/Clientes/ClienteDashboardExcel';
+import ModuloFinancieroContable from './pages/Finanzas/ModuloFinancieroContable';
 import { SGTProvider } from './context/SGTContext';
 import { startAutomations } from './services/AutomationService';
 import { Toaster } from '@/components/ui/toaster';
@@ -89,6 +90,7 @@ const AppContent: React.FC = () => {
               <Route path="/proveedores" element={<Proveedores />} />
               <Route path="/admin/gestion-integral" element={<GestionIntegral />} />
               <Route path="/despachantes/portal" element={<PortalDespachante />} />
+              <Route path="/finanzas" element={<ModuloFinancieroContable />} />
             </Routes>
           </Layout>
         } />
