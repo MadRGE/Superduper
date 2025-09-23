@@ -2,6 +2,7 @@ import React from 'react';
 import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider, useAuth } from './hooks/use-auth.tsx';
+import { ThemeProvider } from './context/ThemeContext';
 import { Layout } from './components/Layout/Layout';
 import { Dashboard } from './pages/Dashboard/Dashboard';
 import { Expedientes } from './pages/Expedientes/Expedientes';
@@ -101,12 +102,14 @@ const AppContent: React.FC = () => {
 
 function App() {
   return (
-    <AuthProvider>
-      <SGTProvider>
-        <AppContent />
-        <Toaster />
-      </SGTProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <SGTProvider>
+          <AppContent />
+          <Toaster />
+        </SGTProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

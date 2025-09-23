@@ -184,16 +184,16 @@ export const Sidebar: React.FC = () => {
   }, [location.pathname]);
 
   return (
-    <div className="w-64 bg-white shadow-sm border-r border-gray-200 flex flex-col">
+    <div className="w-64 bg-white dark:bg-gray-800 shadow-sm border-r border-gray-200 dark:border-gray-700 flex flex-col">
       {/* Logo */}
-      <div className="p-6 border-b border-gray-200">
+      <div className="p-6 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
             <Building2 className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">SGT</h1>
-            <p className="text-sm text-gray-500">Gestión de Trámites</p>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">SGT</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Gestión de Trámites</p>
           </div>
         </div>
       </div>
@@ -209,18 +209,18 @@ export const Sidebar: React.FC = () => {
               to={item.href!}
               className={`w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isActive
-                  ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                  : 'text-gray-700 hover:bg-gray-100'
+                  ? 'bg-blue-50 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700'
+                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
-              <item.icon className={`mr-3 w-5 h-5 ${isActive ? 'text-blue-600' : 'text-gray-400'}`} />
+              <item.icon className={`mr-3 w-5 h-5 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500'}`} />
               {item.name}
             </Link>
           );
         })}
 
         {/* Separador */}
-        <div className="my-4 border-t border-gray-200"></div>
+        <div className="my-4 border-t border-gray-200 dark:border-gray-700"></div>
 
         {/* Módulos agrupados */}
         {navigationModules.filter(shouldShowModule).map((module) => {
@@ -234,21 +234,21 @@ export const Sidebar: React.FC = () => {
                 onClick={() => toggleModuleExpanded(module.name)}
                 className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   hasActiveItem
-                    ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-blue-50 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
                 <div className="flex items-center">
-                  <module.icon className={`mr-3 w-5 h-5 ${hasActiveItem ? 'text-blue-600' : 'text-gray-400'}`} />
+                  <module.icon className={`mr-3 w-5 h-5 ${hasActiveItem ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500'}`} />
                   <span>{module.name}</span>
                 </div>
                 <div className="flex items-center space-x-1">
                   {visibleItems.length > 0 && (
-                    <span className="text-xs bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded-full">
+                    <span className="text-xs bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300 px-1.5 py-0.5 rounded-full">
                       {visibleItems.length}
                     </span>
                   )}
-                  <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-4 h-4 text-gray-400 dark:text-gray-500 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
                 </div>
               </button>
               
@@ -262,8 +262,8 @@ export const Sidebar: React.FC = () => {
                         to={item.href}
                         className={`block px-3 py-2 rounded-lg text-sm transition-colors ${
                           isSubActive
-                            ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                            : 'text-gray-600 hover:bg-gray-100'
+                            ? 'bg-blue-50 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700'
+                            : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
                         }`}
                       >
                         {item.name}
@@ -278,8 +278,8 @@ export const Sidebar: React.FC = () => {
       </nav>
 
       {/* Footer con información del usuario */}
-      <div className="p-4 border-t border-gray-200">
-        <div className="text-xs text-gray-500 text-center">
+      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
           <p>Rol: <span className="font-medium capitalize">{userRole}</span></p>
           <p className="mt-1">SGT v2.0</p>
         </div>
