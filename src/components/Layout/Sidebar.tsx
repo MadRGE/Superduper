@@ -15,65 +15,97 @@ import {
   DollarSign,
   ChevronDown,
   UserCheck,
-  Crown
+  Crown,
+  Calculator,
+  Receipt,
+  Briefcase,
+  ChevronRight
 } from 'lucide-react';
+
+interface NavigationSubItem {
+  name: string;
+  href: string;
+  permission?: string;
+  adminOnly?: boolean;
+}
+
+interface NavigationModule {
+  name: string;
+  icon: React.ComponentType<any>;
+  items: NavigationSubItem[];
+  permission?: string;
+  adminOnly?: boolean;
+}
 
 interface NavigationItem {
   name: string;
   href?: string;
   icon: React.ComponentType<any>;
-  subItems?: { name: string; href: string }[];
   permission?: string;
   adminOnly?: boolean;
 }
 
-const navigation: NavigationItem[] = [
+// Elementos de navegación de nivel superior (acceso frecuente)
+const topLevelNavigation: NavigationItem[] = [
   { name: 'Dashboard', href: '/', icon: Home },
-  { name: 'Expedientes', href: '/expedientes', icon: FileText },
-  { name: 'Catálogo', href: '/catalogo', icon: BookOpen },
-  { name: 'Clientes', href: '/clientes', icon: Users, permission: 'ver_todos_clientes' },
-  { name: 'Reportes', href: '/reportes', icon: BarChart3, permission: 'ver_reportes' },
   { name: 'Notificaciones', href: '/notificaciones', icon: Bell },
-  { name: 'FAUNA/CITES', href: '/fauna-cites', icon: Shield },
-  { name: 'RENPRE', href: '/renpre', icon: Beaker },
-  { name: 'ANMaC', href: '/anmac', icon: Shield },
-  { 
-    name: 'Finanzas', 
-    href: '/finanzas', 
-    icon: DollarSign,
-    permission: 'gestionar_facturacion'
+];
+
+// Módulos agrupados
+const navigationModules: NavigationModule[] = [
+  {
+    name: 'Gestión de Trámites',
+    icon: FileText,
+    items: [
+      { name: 'Expedientes', href: '/expedientes' },
+      { name: 'Catálogo', href: '/catalogo' },
+      { name: 'FAUNA/CITES', href: '/fauna-cites' },
+      { name: 'RENPRE', href: '/renpre' },
+      { name: 'ANMaC', href: '/anmac' },
+    ]
   },
-  { 
-    name: 'Administración', 
+  {
+    name: 'Gestión de Clientes',
+    icon: Users,
+    permission: 'ver_todos_clientes',
+    items: [
+      { name: 'Clientes', href: '/clientes', permission: 'ver_todos_clientes' },
+    ]
+  },
+  {
+    name: 'Finanzas y Contabilidad',
+    icon: Calculator,
+    permission: 'gestionar_facturacion',
+    items: [
+      { name: 'Control Financiero', href: '/finanzas', permission: 'gestionar_facturacion' },
+      { name: 'Presupuestos', href: '/presupuestos', permission: 'gestionar_facturacion' },
+      { name: 'Facturación', href: '/facturacion', permission: 'gestionar_facturacion' },
+      { name: 'Proveedores', href: '/proveedores', permission: 'gestionar_facturacion' },
+    ]
+  },
+  {
+    name: 'Reportes y Análisis',
+    icon: BarChart3,
+    permission: 'ver_reportes',
+    items: [
+      { name: 'Reportes', href: '/reportes', permission: 'ver_reportes' },
+    ]
+  },
+  {
+    name: 'Portales de Usuario',
+    icon: UserCheck,
+    items: [
+      { name: 'Portal Despachante', href: '/despachantes/portal', permission: 'ver_clientes_asignados' },
+    ]
+  },
+  {
+    name: 'Administración',
     icon: Crown,
     adminOnly: true,
-    subItems: [
-      { name: 'Gestión Integral', href: '/admin/gestion-integral' },
-      { name: 'Gestión Usuarios', href: '/admin/usuarios' }
-    ]
-  },
-  { 
-    name: 'Portal Despachante', 
-    href: '/despachantes/portal',
-    icon: UserCheck,
-    permission: 'ver_clientes_asignados'
-  },
-  { 
-    name: 'Comercial', 
-    icon: DollarSign,
-    permission: 'gestionar_facturacion',
-    subItems: [
-      { name: 'Presupuestos', href: '/presupuestos' },
-      { name: 'Facturación', href: '/facturacion' },
-      { name: 'Proveedores', href: '/proveedores' }
-    ]
-  },
-  { 
-    name: 'Configuración', 
-    icon: Settings,
-    adminOnly: true,
-    subItems: [
-      { name: 'Gestión Trámites', href: '/configuracion/tramites' }
+    items: [
+      { name: 'Gestión Integral', href: '/admin/gestion-integral', adminOnly: true },
+      { name: 'Gestión Usuarios', href: '/admin/usuarios', adminOnly: true },
+      { name: 'Configuración Trámites', href: '/configuracion/tramites', adminOnly: true },
     ]
   },
 ];
@@ -81,21 +113,32 @@ const navigation: NavigationItem[] = [
 export const Sidebar: React.FC = () => {
   const location = useLocation();
   const { hasPermission, userRole } = usePermissions();
-  const [expandedItems, setExpandedItems] = React.useState<string[]>([]);
+  const [expandedModules, setExpandedModules] = React.useState<string[]>([]);
 
-  const toggleExpanded = (itemName: string) => {
-    setExpandedItems(prev => 
-      prev.includes(itemName) 
-        ? prev.filter(name => name !== itemName)
-        : [...prev, itemName]
+  const toggleModuleExpanded = (moduleName: string) => {
+    setExpandedModules(prev => 
+      prev.includes(moduleName) 
+        ? prev.filter(name => name !== moduleName)
+        : [...prev, moduleName]
     );
   };
 
-  const isSubItemActive = (subItems: { name: string; href: string }[]) => {
-    return subItems.some(subItem => location.pathname === subItem.href);
+  const shouldShowModule = (module: NavigationModule): boolean => {
+    // Si es solo para admin y el usuario no es admin
+    if (module.adminOnly && !hasPermission('*')) {
+      return false;
+    }
+    
+    // Si tiene permiso específico requerido
+    if (module.permission && !hasPermission(module.permission)) {
+      return false;
+    }
+    
+    // Verificar si al menos un item del módulo es visible
+    return module.items.some(item => shouldShowItem(item));
   };
 
-  const shouldShowItem = (item: NavigationItem): boolean => {
+  const shouldShowItem = (item: NavigationSubItem): boolean => {
     // Si es solo para admin y el usuario no es admin
     if (item.adminOnly && !hasPermission('*')) {
       return false;
@@ -108,6 +151,37 @@ export const Sidebar: React.FC = () => {
     
     return true;
   };
+
+  const shouldShowTopLevelItem = (item: NavigationItem): boolean => {
+    // Si es solo para admin y el usuario no es admin
+    if (item.adminOnly && !hasPermission('*')) {
+      return false;
+    }
+    
+    // Si tiene permiso específico requerido
+    if (item.permission && !hasPermission(item.permission)) {
+      return false;
+    }
+    
+    return true;
+  };
+
+  const isModuleActive = (module: NavigationModule): boolean => {
+    return module.items.some(item => location.pathname === item.href);
+  };
+
+  const isItemActive = (href: string): boolean => {
+    return location.pathname === href;
+  };
+
+  // Auto-expandir módulos que tienen items activos
+  React.useEffect(() => {
+    navigationModules.forEach(module => {
+      if (isModuleActive(module) && !expandedModules.includes(module.name)) {
+        setExpandedModules(prev => [...prev, module.name]);
+      }
+    });
+  }, [location.pathname]);
 
   return (
     <div className="w-64 bg-white shadow-sm border-r border-gray-200 flex flex-col">
@@ -125,73 +199,91 @@ export const Sidebar: React.FC = () => {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-1">
-        {navigation.filter(shouldShowItem).map((item) => {
-          if (item.subItems) {
-            const isExpanded = expandedItems.includes(item.name);
-            const hasActiveSubItem = isSubItemActive(item.subItems);
-            
-            return (
-              <div key={item.name}>
-                <button
-                  onClick={() => toggleExpanded(item.name)}
-                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                    hasActiveSubItem
-                      ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  <div className="flex items-center">
-                    <item.icon className={`mr-3 w-5 h-5 ${hasActiveSubItem ? 'text-blue-600' : 'text-gray-400'}`} />
-                    {item.name}
-                  </div>
-                  <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
-                </button>
-                {isExpanded && (
-                  <div className="ml-8 mt-1 space-y-1">
-                    {item.subItems.filter(subItem => {
-                      // Filtrar sub-items según permisos si es necesario
-                      return true; // Por ahora mostrar todos los sub-items
-                    }).map((subItem) => {
-                      const isSubActive = location.pathname === subItem.href;
-                      return (
-                        <Link
-                          key={subItem.href}
-                          to={subItem.href}
-                          className={`block px-3 py-2 rounded-lg text-sm transition-colors ${
-                            isSubActive
-                              ? 'bg-blue-50 text-blue-700'
-                              : 'text-gray-600 hover:bg-gray-100'
-                          }`}
-                        >
-                          {subItem.name}
-                        </Link>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            );
-          } else {
-            const isActive = location.pathname === item.href;
-            return (
-              <Link
-                key={item.name}
-                to={item.href!}
-                className={`w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  isActive
+      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+        {/* Elementos de nivel superior */}
+        {topLevelNavigation.filter(shouldShowTopLevelItem).map((item) => {
+          const isActive = isItemActive(item.href!);
+          return (
+            <Link
+              key={item.name}
+              to={item.href!}
+              className={`w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                isActive
+                  ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              <item.icon className={`mr-3 w-5 h-5 ${isActive ? 'text-blue-600' : 'text-gray-400'}`} />
+              {item.name}
+            </Link>
+          );
+        })}
+
+        {/* Separador */}
+        <div className="my-4 border-t border-gray-200"></div>
+
+        {/* Módulos agrupados */}
+        {navigationModules.filter(shouldShowModule).map((module) => {
+          const isExpanded = expandedModules.includes(module.name);
+          const hasActiveItem = isModuleActive(module);
+          const visibleItems = module.items.filter(shouldShowItem);
+          
+          return (
+            <div key={module.name}>
+              <button
+                onClick={() => toggleModuleExpanded(module.name)}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  hasActiveItem
                     ? 'bg-blue-50 text-blue-700 border border-blue-200'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
-                <item.icon className={`mr-3 w-5 h-5 ${isActive ? 'text-blue-600' : 'text-gray-400'}`} />
-                {item.name}
-              </Link>
-            );
-          }
+                <div className="flex items-center">
+                  <module.icon className={`mr-3 w-5 h-5 ${hasActiveItem ? 'text-blue-600' : 'text-gray-400'}`} />
+                  <span>{module.name}</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  {visibleItems.length > 0 && (
+                    <span className="text-xs bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded-full">
+                      {visibleItems.length}
+                    </span>
+                  )}
+                  <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                </div>
+              </button>
+              
+              {isExpanded && visibleItems.length > 0 && (
+                <div className="ml-8 mt-1 space-y-1">
+                  {visibleItems.map((item) => {
+                    const isSubActive = isItemActive(item.href);
+                    return (
+                      <Link
+                        key={item.href}
+                        to={item.href}
+                        className={`block px-3 py-2 rounded-lg text-sm transition-colors ${
+                          isSubActive
+                            ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                            : 'text-gray-600 hover:bg-gray-100'
+                        }`}
+                      >
+                        {item.name}
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
         })}
       </nav>
 
+      {/* Footer con información del usuario */}
+      <div className="p-4 border-t border-gray-200">
+        <div className="text-xs text-gray-500 text-center">
+          <p>Rol: <span className="font-medium capitalize">{userRole}</span></p>
+          <p className="mt-1">SGT v2.0</p>
+        </div>
+      </div>
     </div>
   );
 };
