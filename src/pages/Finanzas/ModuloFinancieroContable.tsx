@@ -1,41 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  DollarSign, 
-  TrendingUp, 
-  TrendingDown,
-  Calendar,
-  CreditCard,
-  Building2,
-  Receipt,
-  FileText,
-  Download,
-  Plus,
-  Edit,
-  Trash2,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  PiggyBank,
-  Calculator,
-  BarChart3,
-  ArrowUpRight,
-  ArrowDownRight,
-  Wallet,
-  Home,
-  Car,
-  ShoppingCart,
-  Coffee,
-  Briefcase,
-  Heart,
-  Fuel,
-  Smartphone,
-  Users,
-  Target,
-  Eye,
-  Filter,
-  X,
-  Save
-} from 'lucide-react';
+import { DollarSign, TrendingUp, TrendingDown, Calendar, CreditCard, Building2, Receipt, FileText, Download, Plus, CreditCard as Edit, Trash2, AlertTriangle, CheckCircle, Clock, PiggyBank, Calculator, BarChart3, ArrowUpRight, ArrowDownRight, Wallet, Home, Car, ShoppingCart, Coffee, Briefcase, Heart, Fuel, Smartphone, Users, Target, Eye, Filter, X, Save } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
