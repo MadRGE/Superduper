@@ -453,8 +453,8 @@ const ModuloFinancieroContable: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Control Financiero y Contable</h1>
-          <p className="text-gray-600">Gestión integral de finanzas, gastos y contabilidad</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Control Financiero y Contable</h1>
+          <p className="text-gray-600 dark:text-gray-300">Gestión integral de finanzas empresariales</p>
         </div>
         <div className="flex space-x-2">
           <Button variant="outline" onClick={exportarExcel}>

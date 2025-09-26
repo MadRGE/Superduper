@@ -37,8 +37,8 @@ export const Clientes: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Clientes</h1>
-          <p className="text-gray-600">Gestión de clientes y contactos</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Clientes</h1>
+          <p className="text-gray-600 dark:text-gray-300">Gestión de clientes y contactos</p>
         </div>
         <button className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium">
           <Plus className="w-4 h-4 mr-2" />
@@ -61,7 +61,7 @@ export const Clientes: React.FC = () => {
       {/* Clientes List */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Lista de Clientes</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Lista de Clientes</h2>
         </div>
         
         <div className="divide-y divide-gray-100">

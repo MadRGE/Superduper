@@ -57,8 +57,8 @@ export const Expedientes: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Expedientes</h1>
-          <p className="text-gray-600">Gestión de trámites regulatorios</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Expedientes</h1>
+          <p className="text-gray-600 dark:text-gray-300">Gestión de trámites regulatorios</p>
         </div>
         <div className="flex items-center space-x-3">
           <button className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
@@ -125,13 +125,13 @@ export const Expedientes: React.FC = () => {
       </div>
 
       {/* Results summary */}
-      <div className="flex items-center justify-between text-sm text-gray-600">
+      <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-300">
         <span>
           Mostrando {filteredExpedientes.length} de {state.expedientes.length} expedientes
         </span>
         <div className="flex items-center space-x-2">
           <Calendar className="w-4 h-4" />
-          <span>Última actualización: {new Date().toLocaleDateString('es-AR')}</span>
+          <span className="dark:text-gray-300">Última actualización: {new Date().toLocaleDateString('es-AR')}</span>
         </div>
       </div>
 

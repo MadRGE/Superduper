@@ -125,10 +125,10 @@ export const Notificaciones: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Notificaciones</h1>
-          <p className="text-gray-600">Gestión de comunicaciones y alertas</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Notificaciones</h1>
+          <p className="text-gray-600 dark:text-gray-300">Gestión de comunicaciones y alertas</p>
         </div>
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-gray-500 dark:text-gray-400">
           {filteredNotifications.filter(n => !n.leido).length} no leídas de {filteredNotifications.length}
         </div>
       </div>

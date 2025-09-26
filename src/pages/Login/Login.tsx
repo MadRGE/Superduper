@@ -52,7 +52,7 @@ export const Login: React.FC = () => {
                 Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-400 w-5 h-5" />
                 <input
                   id="email"
                   type="email"
@@ -70,7 +70,7 @@ export const Login: React.FC = () => {
                 Contraseña
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-400 w-5 h-5" />
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
@@ -83,7 +83,7 @@ export const Login: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -91,7 +91,7 @@ export const Login: React.FC = () => {
             </div>
 
             {error && (
-              <div className="text-red-600 dark:text-red-400 text-sm bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-700 rounded-lg p-3">
+              <div className="text-red-600 dark:text-red-300 text-sm bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-700 rounded-lg p-3">
                 {error}
               </div>
             )}
@@ -106,7 +106,7 @@ export const Login: React.FC = () => {
           </form>
 
           <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <div className="text-sm text-gray-600 dark:text-gray-400">
+            <div className="text-sm text-gray-600 dark:text-gray-300">
               <p className="font-medium mb-2">Credenciales de prueba:</p>
               <div className="space-y-1 text-xs">
                 <p><strong>Admin:</strong> admin@sgt.gov.ar / admin123</p>
@@ -120,7 +120,7 @@ export const Login: React.FC = () => {
           <div className="mt-4 text-center">
             <button 
               onClick={() => window.open('/portal-cliente/login', '_blank')}
-              className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
+              className="text-sm text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-100"
             >
               ¿Es cliente? Acceda al Portal Cliente →
             </button>

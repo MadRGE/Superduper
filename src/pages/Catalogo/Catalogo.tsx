@@ -46,8 +46,8 @@ export const Catalogo: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Catálogo de Trámites</h1>
-          <p className="text-gray-600">Consulta todos los trámites disponibles</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Catálogo de Trámites</h1>
+          <p className="text-gray-600 dark:text-gray-300">Consulta todos los trámites disponibles</p>
         </div>
         <div className="flex items-center space-x-2">
           <button
@@ -104,7 +104,7 @@ export const Catalogo: React.FC = () => {
       </div>
 
       {/* Results */}
-      <div className="text-sm text-gray-600 mb-4">
+      <div className="text-sm text-gray-600 dark:text-gray-300 mb-4">
         Mostrando {filteredTramites.length} de {allTramites.length} trámites
       </div>
 
