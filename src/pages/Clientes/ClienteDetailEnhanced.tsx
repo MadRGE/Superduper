@@ -171,14 +171,7 @@ export const ClienteDetailEnhanced: React.FC = () => {
       setExpedientesCliente(expedientes);
 
       // Cargar productos usando DatabaseService (con fallback a mock data filtrada)
-      try {
-        const productos = await databaseService.getProductosRelacionados(id);
-        setProductosCliente(productos);
-      } catch (error) {
-        // Fallback a mock data filtrada por clienteId
-        const productos = expedienteService.getProductosByCliente(id);
-        setProductosCliente(productos);
-      }
+      const productos = await databaseService.getProductosRelacionados(id);
       setProductosCliente(productos);
 
       // Cargar habilitaciones usando el servicio actualizado (ahora filtra por clienteId)
