@@ -417,8 +417,36 @@ export class DatabaseService {
       }
       return productos;
     } catch (error) {
-      // Return mock data for now
-      return [];
+      // Return mock data filtrada por clienteId como fallback
+      const productosMock = [
+        {
+          id: 'prod-1',
+          cliente_id: 'cliente-1',
+          nombre: 'Yogur Natural 200g',
+          marca: 'DelSur',
+          rnpa: 'RNPA 04-123456',
+          categoria: 'Productos Lácteos',
+          estado: 'vigente',
+          vencimiento: '2026-03-15',
+          peso_neto: '200g',
+          vida_util: '30 días',
+          codigo_ean: '7791234567890'
+        },
+        {
+          id: 'prod-2',
+          cliente_id: 'cliente-2',
+          nombre: 'Router WiFi 6 Pro',
+          marca: 'TechCorp',
+          rnpa: 'N/A',
+          categoria: 'Equipos de Telecomunicaciones',
+          estado: 'vigente',
+          vencimiento: '2026-08-15',
+          peso_neto: '450g',
+          vida_util: 'N/A',
+          codigo_ean: '7791234567891'
+        }
+      ];
+      return productosMock.filter(producto => producto.cliente_id === clienteId);
     }
   }
 
@@ -436,8 +464,32 @@ export class DatabaseService {
       }
       return comunicaciones;
     } catch (error) {
-      // Return mock data for now
-      return [];
+      // Return mock data filtrada por clienteId como fallback
+      const comunicacionesMock = [
+        {
+          id: 'com-1',
+          cliente_id: 'cliente-1',
+          fecha: '2025-01-25 10:30',
+          tipo: 'email',
+          asunto: 'Documentación pendiente',
+          destinatario: 'contacto@lacteosdelsur.com',
+          estado: 'enviado',
+          mensaje: 'Estimado cliente, necesitamos que complete la documentación...',
+          expediente_relacionado: 'SGT-2025-ANMAT-00123'
+        },
+        {
+          id: 'com-2',
+          cliente_id: 'cliente-2',
+          fecha: '2025-01-24 14:15',
+          tipo: 'whatsapp',
+          asunto: 'Actualización de estado',
+          destinatario: '+54 11 9876-5432',
+          estado: 'enviado',
+          mensaje: 'Su expediente de homologación avanzó al siguiente paso...',
+          expediente_relacionado: 'SGT-2025-ENACOM-00087'
+        }
+      ];
+      return comunicacionesMock.filter(comunicacion => comunicacion.cliente_id === clienteId);
     }
   }
 
@@ -455,8 +507,30 @@ export class DatabaseService {
       }
       return facturas;
     } catch (error) {
-      // Return mock data for now
-      return [];
+      // Return mock data filtrada por clienteId como fallback
+      const facturasMock = [
+        {
+          id: 'fact-1',
+          cliente_id: 'cliente-1',
+          numero: 'FC-A-00001-00000234',
+          fecha: '2025-01-20',
+          concepto: 'RNPA Yogur Natural',
+          total: 544500,
+          estado: 'pagada',
+          fecha_pago: '2025-01-25'
+        },
+        {
+          id: 'fact-2',
+          cliente_id: 'cliente-2',
+          numero: 'FC-A-00001-00000235',
+          fecha: '2025-01-18',
+          concepto: 'Homologación ENACOM Router WiFi',
+          total: 332750,
+          estado: 'pendiente',
+          fecha_pago: null
+        }
+      ];
+      return facturasMock.filter(factura => factura.cliente_id === clienteId);
     }
   }
 

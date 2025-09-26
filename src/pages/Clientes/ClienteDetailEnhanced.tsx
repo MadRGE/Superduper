@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { useSGT } from '../../context/SGTContext';
 import { expedienteService, ExpedienteService } from '../../services/ExpedienteService';
+import { databaseService } from '../../services/DatabaseService';
 import { ClienteExpedientesDashboard } from './ClienteDashboardExcel';
 import { formatDate, getDaysRemaining } from '@/lib/utils';
 
@@ -160,24 +161,50 @@ export const ClienteDetailEnhanced: React.FC = () => {
       };
       setCliente(clienteEnriquecido);
 
-      // Cargar expedientes del cliente usando el servicio
-      const expedientes = expedienteService.getExpedientesByCliente(id);
+      // Cargar expedientes del cliente - filtrar por cliente_id
+      const todosExpedientes = expedienteService.getExpedientes();
+      const expedientes = todosExpedientes.filter(exp => 
+        exp.cliente_id === id || 
+        exp.cliente?.id === id ||
+        exp.cliente?.razon_social === clienteEncontrado.razon_social
+      );
       setExpedientesCliente(expedientes);
 
-      // Cargar productos usando el servicio
-      const productos = expedienteService.getProductosByCliente(id);
+      // Cargar productos usando DatabaseService (con fallback a mock data filtrada)
+      try {
+        const productos = await databaseService.getProductosRelacionados(id);
+        setProductosCliente(productos);
+      } catch (error) {
+        // Fallback a mock data filtrada por clienteId
+        const productos = expedienteService.getProductosByCliente(id);
+        setProductosCliente(productos);
+      }
       setProductosCliente(productos);
 
-      // Cargar habilitaciones usando el servicio
+      // Cargar habilitaciones usando el servicio actualizado (ahora filtra por clienteId)
       const habilitaciones = expedienteService.getHabilitacionesByCliente(id);
       setHabilitacionesCliente(habilitaciones);
 
-      // Cargar comunicaciones usando el servicio
-      const comunicaciones = expedienteService.getComunicacionesByCliente(id);
+      // Cargar comunicaciones usando DatabaseService (con fallback a mock data filtrada)
+      try {
+        const comunicaciones = await databaseService.getComunicacionesByCliente(id);
+        setComunicacionesCliente(comunicaciones);
+      } catch (error) {
+        // Fallback a mock data filtrada por clienteId
+        const comunicaciones = expedienteService.getComunicacionesByCliente(id);
+        setComunicacionesCliente(comunicaciones);
+      }
       setComunicacionesCliente(comunicaciones);
 
-      // Cargar facturas usando el servicio
-      const facturas = expedienteService.getFacturasByCliente(id);
+      // Cargar facturas usando DatabaseService (con fallback a mock data filtrada)
+      try {
+        const facturas = await databaseService.getFacturasByCliente(id);
+        setFacturasCliente(facturas);
+      } catch (error) {
+        // Fallback a mock data filtrada por clienteId
+        const facturas = expedienteService.getFacturasByCliente(id);
+        setFacturasCliente(facturas);
+      }
       setFacturasCliente(facturas);
 
       // Simular despachante asignado

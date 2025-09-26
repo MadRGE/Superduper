@@ -305,10 +305,11 @@ export class ExpedienteService {
 
   // Obtener productos por cliente
   getProductosByCliente(clienteId: string): any[] {
-    // Por ahora retornar datos mock
-    return [
+    // Datos mock base
+    const productosMock = [
       {
         id: 'prod-1',
+        cliente_id: 'cliente-1',
         nombre: 'Yogur Natural 200g',
         marca: 'DelSur',
         rnpa: 'RNPA 04-123456',
@@ -318,15 +319,72 @@ export class ExpedienteService {
         peso_neto: '200g',
         vida_util: '30 días',
         codigo_ean: '7791234567890'
+      },
+      {
+        id: 'prod-2',
+        cliente_id: 'cliente-2',
+        nombre: 'Router WiFi 6 Pro',
+        marca: 'TechCorp',
+        rnpa: 'N/A',
+        categoria: 'Equipos de Telecomunicaciones',
+        estado: 'vigente',
+        vencimiento: '2026-08-15',
+        peso_neto: '450g',
+        vida_util: 'N/A',
+        codigo_ean: '7791234567891'
+      },
+      {
+        id: 'prod-3',
+        cliente_id: 'cliente-3',
+        nombre: 'Plancha de Pelo Cerámica',
+        marca: 'BeautyTech',
+        rnpa: 'N/A',
+        categoria: 'Productos Eléctricos',
+        estado: 'vigente',
+        vencimiento: '2025-12-20',
+        peso_neto: '800g',
+        vida_util: 'N/A',
+        codigo_ean: '7791234567892'
+      },
+      {
+        id: 'prod-4',
+        cliente_id: 'cliente-4',
+        nombre: 'Suplemento Vitamínico',
+        marca: 'NutriLife',
+        rnpa: 'RNPA 04-789012',
+        categoria: 'Suplementos Dietarios',
+        estado: 'vigente',
+        vencimiento: '2026-05-10',
+        peso_neto: '120 cápsulas',
+        vida_util: '24 meses',
+        codigo_ean: '7791234567893'
+      },
+      {
+        id: 'prod-5',
+        cliente_id: 'cliente-5',
+        nombre: 'Pet Food Premium',
+        marca: 'PetCare',
+        rnpa: 'RNPA 04-345678',
+        categoria: 'Alimentos para Animales',
+        estado: 'por_renovar',
+        vencimiento: '2025-06-15',
+        peso_neto: '15kg',
+        vida_util: '18 meses',
+        codigo_ean: '7791234567894'
       }
     ];
+    
+    // Filtrar productos por clienteId
+    return productosMock.filter(producto => producto.cliente_id === clienteId);
   }
 
   // Obtener habilitaciones por cliente
   getHabilitacionesByCliente(clienteId: string): any[] {
-    return [
+    // Datos mock base con cliente_id
+    const habilitacionesMock = [
       {
         id: 'hab-1',
+        cliente_id: 'cliente-1',
         tipo: 'RNE',
         numero: '04-000123',
         establecimiento: 'Planta Elaboradora Sur',
@@ -334,38 +392,180 @@ export class ExpedienteService {
         vencimiento: '2027-05-15',
         estado: 'vigente',
         actividades: ['Elaboración', 'Fraccionamiento', 'Depósito']
+      },
+      {
+        id: 'hab-2',
+        cliente_id: 'cliente-2',
+        tipo: 'Homologación ENACOM',
+        numero: 'ENACOM-2024-456',
+        establecimiento: 'Laboratorio Técnico',
+        direccion: 'Av. Tecnológica 567, CABA',
+        vencimiento: '2026-03-20',
+        estado: 'vigente',
+        actividades: ['Ensayos EMC', 'Certificación']
+      },
+      {
+        id: 'hab-3',
+        cliente_id: 'cliente-3',
+        tipo: 'Certificación CE',
+        numero: 'CE-2024-789',
+        establecimiento: 'Planta de Manufactura',
+        direccion: 'Parque Industrial 890, Córdoba',
+        vencimiento: '2025-11-30',
+        estado: 'vigente',
+        actividades: ['Seguridad Eléctrica', 'EMC']
+      },
+      {
+        id: 'hab-4',
+        cliente_id: 'cliente-4',
+        tipo: 'Habilitación ANMAT',
+        numero: 'ANMAT-2024-012',
+        establecimiento: 'Laboratorio Nutricional',
+        direccion: 'Zona Industrial 123, Mendoza',
+        vencimiento: '2026-07-15',
+        estado: 'vigente',
+        actividades: ['Elaboración Suplementos', 'Control Calidad']
+      },
+      {
+        id: 'hab-5',
+        cliente_id: 'cliente-5',
+        tipo: 'Registro SENASA',
+        numero: 'SENASA-2024-345',
+        establecimiento: 'Planta Alimentos Mascotas',
+        direccion: 'Ruta Nacional 678, Buenos Aires',
+        vencimiento: '2025-09-10',
+        estado: 'por_renovar',
+        actividades: ['Elaboración Pet Food', 'Almacenamiento']
       }
     ];
+    
+    // Filtrar habilitaciones por clienteId
+    return habilitacionesMock.filter(habilitacion => habilitacion.cliente_id === clienteId);
   }
 
   // Obtener comunicaciones por cliente
   getComunicacionesByCliente(clienteId: string): any[] {
-    return [
+    // Datos mock base con cliente_id
+    const comunicacionesMock = [
       {
         id: 'com-1',
+        cliente_id: 'cliente-1',
         fecha: '2025-01-25 10:30',
         tipo: 'email',
         asunto: 'Documentación pendiente',
-        destinatario: 'cliente@empresa.com',
+        destinatario: 'contacto@lacteosdelsur.com',
         estado: 'enviado',
-        mensaje: 'Estimado cliente, necesitamos que complete la documentación...'
+        mensaje: 'Estimado cliente, necesitamos que complete la documentación...',
+        expediente_relacionado: 'SGT-2025-ANMAT-00123'
+      },
+      {
+        id: 'com-2',
+        cliente_id: 'cliente-2',
+        fecha: '2025-01-24 14:15',
+        tipo: 'whatsapp',
+        asunto: 'Actualización de estado',
+        destinatario: '+54 11 9876-5432',
+        estado: 'enviado',
+        mensaje: 'Su expediente de homologación avanzó al siguiente paso...',
+        expediente_relacionado: 'SGT-2025-ENACOM-00087'
+      },
+      {
+        id: 'com-3',
+        cliente_id: 'cliente-3',
+        fecha: '2025-01-23 16:45',
+        tipo: 'email',
+        asunto: 'Certificado emitido',
+        destinatario: 'ventas@beautytech.com.ar',
+        estado: 'enviado',
+        mensaje: 'Su certificado de seguridad eléctrica ha sido emitido...',
+        expediente_relacionado: 'SGT-2025-SIC-00156'
+      },
+      {
+        id: 'com-4',
+        cliente_id: 'cliente-4',
+        fecha: '2025-01-22 11:20',
+        tipo: 'llamada',
+        asunto: 'Consulta sobre documentación',
+        destinatario: '+54 11 5566-7788',
+        estado: 'completado',
+        mensaje: 'Llamada telefónica para aclarar requisitos de documentación...',
+        expediente_relacionado: 'SGT-2025-ANMAT-00167'
+      },
+      {
+        id: 'com-5',
+        cliente_id: 'cliente-5',
+        fecha: '2025-01-21 09:30',
+        tipo: 'email',
+        asunto: 'Expediente vencido - Acción requerida',
+        destinatario: 'info@petcare.com.ar',
+        estado: 'enviado',
+        mensaje: 'Su expediente ha vencido. Necesitamos su respuesta urgente...',
+        expediente_relacionado: 'SGT-2024-SENASA-00089'
       }
     ];
+    
+    // Filtrar comunicaciones por clienteId
+    return comunicacionesMock.filter(comunicacion => comunicacion.cliente_id === clienteId);
   }
 
   // Obtener facturas por cliente
   getFacturasByCliente(clienteId: string): any[] {
-    return [
+    // Datos mock base con cliente_id
+    const facturasMock = [
       {
         id: 'fact-1',
+        cliente_id: 'cliente-1',
         numero: 'FC-A-00001-00000234',
         fecha: '2025-01-20',
         concepto: 'RNPA Yogur Natural',
         total: 544500,
         estado: 'pagada',
         fecha_pago: '2025-01-25'
+      },
+      {
+        id: 'fact-2',
+        cliente_id: 'cliente-2',
+        numero: 'FC-A-00001-00000235',
+        fecha: '2025-01-18',
+        concepto: 'Homologación ENACOM Router WiFi',
+        total: 332750,
+        estado: 'pendiente',
+        fecha_pago: null
+      },
+      {
+        id: 'fact-3',
+        cliente_id: 'cliente-3',
+        numero: 'FC-A-00001-00000236',
+        fecha: '2025-01-15',
+        concepto: 'Certificación Seguridad Eléctrica',
+        total: 275000,
+        estado: 'pagada',
+        fecha_pago: '2025-01-20'
+      },
+      {
+        id: 'fact-4',
+        cliente_id: 'cliente-4',
+        numero: 'FC-A-00001-00000237',
+        fecha: '2025-01-12',
+        concepto: 'RNPA Suplemento Vitamínico',
+        total: 425000,
+        estado: 'pendiente',
+        fecha_pago: null
+      },
+      {
+        id: 'fact-5',
+        cliente_id: 'cliente-5',
+        numero: 'FC-A-00001-00000238',
+        fecha: '2025-01-10',
+        concepto: 'Registro Pet Food Premium',
+        total: 380000,
+        estado: 'vencida',
+        fecha_pago: null
       }
     ];
+    
+    // Filtrar facturas por clienteId
+    return facturasMock.filter(factura => factura.cliente_id === clienteId);
   }
   // ============= NUEVAS FUNCIONALIDADES =============
 
