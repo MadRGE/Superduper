@@ -1,43 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { 
-  ArrowLeft, 
-  Calendar, 
-  Building2, 
-  User, 
-  FileText,
-  Clock,
-  AlertTriangle,
-  CheckCircle,
-  Download,
-  Upload,
-  MessageSquare,
-  Edit,
-  Save,
-  X,
-  Plus,
-  Phone,
-  Mail,
-  MapPin,
-  DollarSign,
-  TrendingUp,
-  Package,
-  Shield,
-  Activity,
-  Users,
-  Briefcase,
-  History,
-  Info,
-  ChevronRight,
-  ChevronDown,
-  Eye,
-  Send,
-  Paperclip,
-  Award,
-  Star,
-  CreditCard,
-  FileSpreadsheet
-} from 'lucide-react';
+import { ArrowLeft, Calendar, Building2, User, FileText, Clock, AlertTriangle, CheckCircle, Download, Upload, MessageSquare, CreditCard as Edit, Save, X, Plus, Phone, Mail, MapPin, DollarSign, TrendingUp, Package, Shield, Activity, Users, Briefcase, History, Info, ChevronRight, ChevronDown, Eye, Send, Paperclip, Award, Star, CreditCard, FileSpreadsheet } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
