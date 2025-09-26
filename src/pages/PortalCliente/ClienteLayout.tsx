@@ -1,15 +1,25 @@
-import React from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Building2, LogOut, Home, FileText, Upload, Bell, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 
 export const ClienteLayout: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+  const [loading, setLoading] = useState(true);
   
   const clienteSession = localStorage.getItem('cliente_session');
   const cliente = clienteSession ? JSON.parse(clienteSession) : null;
+
+  useEffect(() => {
+    if (!cliente) {
+      navigate('/portal-cliente/login');
+      return;
+    }
+    setLoading(false);
+  }, [cliente, navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem('cliente_session');
@@ -20,9 +30,23 @@ export const ClienteLayout: React.FC = () => {
     });
   };
 
+  const isActiveRoute = (path: string) => {
+    return location.pathname === path;
+  };
+
   if (!cliente) {
-    navigate('/portal-cliente/login');
     return null;
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando portal...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -62,35 +86,55 @@ export const ClienteLayout: React.FC = () => {
           <div className="flex space-x-8">
             <button
               onClick={() => navigate('/portal-cliente/dashboard')}
-              className="flex items-center space-x-2 py-4 border-b-2 border-blue-500 text-blue-600"
+              className={`flex items-center space-x-2 py-4 border-b-2 transition-colors ${
+                isActiveRoute('/portal-cliente/dashboard')
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
             >
               <Home className="w-4 h-4" />
               <span>Dashboard</span>
             </button>
             <button
               onClick={() => navigate('/portal-cliente/expedientes')}
-              className="flex items-center space-x-2 py-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700"
+              className={`flex items-center space-x-2 py-4 border-b-2 transition-colors ${
+                isActiveRoute('/portal-cliente/expedientes')
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
             >
               <FileText className="w-4 h-4" />
               <span>Mis Expedientes</span>
             </button>
             <button
               onClick={() => navigate('/portal-cliente/documentos')}
-              className="flex items-center space-x-2 py-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700"
+              className={`flex items-center space-x-2 py-4 border-b-2 transition-colors ${
+                isActiveRoute('/portal-cliente/documentos')
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
             >
               <Upload className="w-4 h-4" />
               <span>Documentos</span>
             </button>
             <button
               onClick={() => navigate('/portal-cliente/notificaciones')}
-              className="flex items-center space-x-2 py-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700"
+              className={`flex items-center space-x-2 py-4 border-b-2 transition-colors ${
+                isActiveRoute('/portal-cliente/notificaciones')
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
             >
               <Bell className="w-4 h-4" />
               <span>Notificaciones</span>
             </button>
             <button
               onClick={() => navigate('/portal-cliente/perfil')}
-              className="flex items-center space-x-2 py-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700"
+              className={`flex items-center space-x-2 py-4 border-b-2 transition-colors ${
+                isActiveRoute('/portal-cliente/perfil')
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
             >
               <User className="w-4 h-4" />
               <span>Mi Perfil</span>

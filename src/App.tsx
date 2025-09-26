@@ -15,9 +15,10 @@ import { Reportes } from './pages/Reportes/Reportes';
 import { Notificaciones } from './pages/Notificaciones/Notificaciones';
 import { Login } from './pages/Login/Login';
 import { LoginCliente } from './pages/PortalCliente/LoginCliente';
-import { DashboardCliente } from './pages/PortalCliente/DashboardCliente';
-import { ExpedientesCliente } from './pages/PortalCliente/ExpedientesCliente';
-import { DocumentosCliente } from './pages/PortalCliente/DocumentosCliente';
+import { ClienteLayout } from './pages/PortalCliente/ClienteLayout';
+import { DashboardClienteContent } from './pages/PortalCliente/DashboardClienteContent';
+import { ExpedientesClienteContent } from './pages/PortalCliente/ExpedientesClienteContent';
+import { DocumentosClienteContent } from './pages/PortalCliente/DocumentosClienteContent';
 import { FaunaCITES } from './pages/Fauna/FaunaCITES';
 import { RENPREManager } from './pages/RENPRE/RENPREManager';
 import { ANMaCManager } from './pages/ANMaC/ANMaCManager';
@@ -64,9 +65,11 @@ const AppContent: React.FC = () => {
       <Routes>
         {/* Portal Cliente Routes - Sin Layout principal */}
         <Route path="/portal-cliente/login" element={<LoginCliente />} />
-        <Route path="/portal-cliente/dashboard" element={<DashboardCliente />} />
-        <Route path="/portal-cliente/expedientes" element={<ExpedientesCliente />} />
-        <Route path="/portal-cliente/documentos" element={<DocumentosCliente />} />
+        <Route path="/portal-cliente/*" element={<ClienteLayout />}>
+          <Route path="dashboard" element={<DashboardClienteContent />} />
+          <Route path="expedientes" element={<ExpedientesClienteContent />} />
+          <Route path="documentos" element={<DocumentosClienteContent />} />
+        </Route>
         
         {/* Main Application Routes - Con Layout */}
         <Route path="/*" element={

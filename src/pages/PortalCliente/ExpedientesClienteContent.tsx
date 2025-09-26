@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { 
   FileText, 
   Clock, 
@@ -11,7 +10,8 @@ import {
   Calendar,
   Building2,
   Search,
-  Filter
+  Filter,
+  User
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,8 +21,7 @@ import { Select } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { formatDate, getDaysRemaining } from '@/lib/utils';
 
-export const ExpedientesCliente: React.FC = () => {
-  const navigate = useNavigate();
+export const ExpedientesClienteContent: React.FC = () => {
   const { toast } = useToast();
   const [expedientes, setExpedientes] = useState<any[]>([]);
   const [filteredExpedientes, setFilteredExpedientes] = useState<any[]>([]);
@@ -34,12 +33,8 @@ export const ExpedientesCliente: React.FC = () => {
   const cliente = clienteSession ? JSON.parse(clienteSession) : null;
 
   useEffect(() => {
-    if (!cliente) {
-      navigate('/portal-cliente/login');
-      return;
-    }
     cargarExpedientes();
-  }, [cliente, navigate]);
+  }, []);
 
   useEffect(() => {
     // Aplicar filtros
@@ -122,22 +117,16 @@ export const ExpedientesCliente: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Mis Expedientes</h1>
-        <p className="text-gray-600 dark:text-gray-200">Consulte el estado de sus trámites regulatorios</p>
-      </div>
-
       {/* Filtros */}
-      <Card className="dark:bg-gray-800 dark:border-gray-700">
+      <Card>
         <CardContent className="p-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <Input
                 type="text"
                 placeholder="Buscar por código, alias o trámite..."
-                className="pl-10 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-300"
+                className="pl-10"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -145,7 +134,6 @@ export const ExpedientesCliente: React.FC = () => {
             <Select
               value={estadoFilter}
               onChange={(e) => setEstadoFilter(e.target.value)}
-              className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
             >
               <option value="">Todos los estados</option>
               <option value="iniciado">Iniciado</option>
@@ -154,7 +142,7 @@ export const ExpedientesCliente: React.FC = () => {
               <option value="completado">Completado</option>
               <option value="vencido">Vencido</option>
             </Select>
-            <Button variant="outline" onClick={() => { setSearchTerm(''); setEstadoFilter(''); }} className="dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">
+            <Button variant="outline" onClick={() => { setSearchTerm(''); setEstadoFilter(''); }}>
               <Filter className="w-4 h-4 mr-2" />
               Limpiar Filtros
             </Button>
@@ -169,15 +157,15 @@ export const ExpedientesCliente: React.FC = () => {
           const progreso = expediente.progreso || Math.round((expediente.paso_actual / 8) * 100);
           
           return (
-            <Card key={expediente.id} className="hover:shadow-md transition-shadow dark:bg-gray-800 dark:border-gray-700">
+            <Card key={expediente.id} className="hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-start space-x-3">
                     {getSemaforoIcon(diasRestantes)}
                     <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-gray-100">{expediente.codigo}</h3>
-                      <p className="text-gray-600 dark:text-gray-300">{expediente.alias}</p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{expediente.tramite_nombre}</p>
+                      <h3 className="font-semibold text-gray-900">{expediente.codigo}</h3>
+                      <p className="text-gray-600">{expediente.alias}</p>
+                      <p className="text-sm text-gray-500 mt-1">{expediente.tramite_nombre}</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
@@ -190,21 +178,21 @@ export const ExpedientesCliente: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600 dark:text-gray-300 mb-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600 mb-4">
                   <div className="flex items-center space-x-1">
                     <Building2 className="w-4 h-4" />
-                    <span className="dark:text-gray-200">{expediente.organismo}</span>
+                    <span>{expediente.organismo}</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Calendar className="w-4 h-4" />
-                    <span className="dark:text-gray-200">Inicio: {formatDate(expediente.fecha_inicio)}</span>
+                    <span>Inicio: {formatDate(expediente.fecha_inicio)}</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Clock className="w-4 h-4" />
-                    <span className="dark:text-gray-200">Límite: {formatDate(expediente.fecha_limite)}</span>
+                    <span>Límite: {formatDate(expediente.fecha_limite)}</span>
                   </div>
                   <div className="flex items-center space-x-1">
-                    <span className={diasRestantes < 0 ? 'text-red-600 dark:text-red-400 font-medium' : 'dark:text-gray-200'}>
+                    <span className={diasRestantes < 0 ? 'text-red-600 font-medium' : ''}>
                       {diasRestantes < 0 
                         ? `Vencido ${Math.abs(diasRestantes)}d` 
                         : `${diasRestantes}d restantes`
@@ -216,10 +204,10 @@ export const ExpedientesCliente: React.FC = () => {
                 {/* Barra de progreso */}
                 <div className="mb-4">
                   <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-700 dark:text-gray-200">Progreso del trámite</span>
-                    <span className="font-medium text-gray-900 dark:text-gray-100">{progreso}%</span>
+                    <span className="text-gray-700">Progreso del trámite</span>
+                    <span className="font-medium text-gray-900">{progreso}%</span>
                   </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                  <div className="w-full bg-gray-200 rounded-full h-2">
                     <div 
                       className={`h-2 rounded-full transition-all ${
                         progreso < 30 ? 'bg-red-500' :
@@ -227,9 +215,6 @@ export const ExpedientesCliente: React.FC = () => {
                       }`}
                       style={{ width: `${progreso}%` }}
                     />
-                  </div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    Paso {expediente.paso_actual} de 8
                   </div>
                 </div>
 
@@ -251,8 +236,8 @@ export const ExpedientesCliente: React.FC = () => {
 
                 {/* Observaciones si las hay */}
                 {expediente.observaciones && (
-                  <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg">
-                    <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                  <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <p className="text-sm text-yellow-800">
                       <strong>Observaciones:</strong> {expediente.observaciones}
                     </p>
                   </div>
@@ -264,13 +249,13 @@ export const ExpedientesCliente: React.FC = () => {
       </div>
 
       {filteredExpedientes.length === 0 && !loading && (
-        <Card className="dark:bg-gray-800 dark:border-gray-700">
+        <Card>
           <CardContent className="p-12 text-center">
-            <FileText className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+            <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
               No se encontraron expedientes
             </h3>
-            <p className="text-gray-500 dark:text-gray-300 mb-6">
+            <p className="text-gray-500 mb-6">
               {searchTerm || estadoFilter 
                 ? 'Intente ajustar los filtros de búsqueda'
                 : 'No tiene expedientes registrados en el sistema'

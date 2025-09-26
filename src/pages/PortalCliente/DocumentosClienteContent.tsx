@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { 
   Upload, 
   FileText, 
@@ -17,14 +16,12 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { formatDate } from '@/lib/utils';
 
-export const DocumentosCliente: React.FC = () => {
-  const navigate = useNavigate();
+export const DocumentosClienteContent: React.FC = () => {
   const { toast } = useToast();
   const [documentos, setDocumentos] = useState<any[]>([]);
   const [expedientes, setExpedientes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showUploadModal, setShowUploadModal] = useState(false);
-  const [selectedExpediente, setSelectedExpediente] = useState('');
   const [uploadData, setUploadData] = useState({
     expediente_id: '',
     nombre: '',
@@ -36,12 +33,8 @@ export const DocumentosCliente: React.FC = () => {
   const cliente = clienteSession ? JSON.parse(clienteSession) : null;
 
   useEffect(() => {
-    if (!cliente) {
-      navigate('/portal-cliente/login');
-      return;
-    }
     cargarDatos();
-  }, [cliente, navigate]);
+  }, []);
 
   const cargarDatos = async () => {
     try {
@@ -161,18 +154,6 @@ export const DocumentosCliente: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Mis Documentos</h1>
-          <p className="text-gray-600">Gestione la documentación de sus expedientes</p>
-        </div>
-        <Button onClick={() => setShowUploadModal(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          Subir Documento
-        </Button>
-      </div>
-
       {/* Estadísticas de documentos */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
@@ -222,6 +203,14 @@ export const DocumentosCliente: React.FC = () => {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Botón para subir documento */}
+      <div className="flex justify-end">
+        <Button onClick={() => setShowUploadModal(true)}>
+          <Plus className="w-4 h-4 mr-2" />
+          Subir Documento
+        </Button>
       </div>
 
       {/* Lista de documentos */}
