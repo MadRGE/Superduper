@@ -102,8 +102,10 @@ export const ExpedienteCard: React.FC<ExpedienteCardProps> = ({
                 <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{expediente.alias}</p>
               )}
             </div>
-            <div className="text-sm text-gray-600 dark:text-gray-300">
-              <p className="dark:text-gray-200">{expediente.cliente?.razon_social}</p>
+          </div>
+          <div className="text-sm text-gray-600 dark:text-gray-300">
+            <p className="dark:text-gray-200">{expediente.cliente?.razon_social}</p>
+          </div>
         </div>
       </CardHeader>
       
@@ -122,26 +124,29 @@ export const ExpedienteCard: React.FC<ExpedienteCardProps> = ({
           <div className="flex items-center justify-between">
             <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
               <p className="dark:text-gray-200">{expediente.tramite_nombre || expediente.tramite_tipo?.nombre}</p>
-              <span className="dark:text-gray-200">{new Date(expediente.fecha_limite).toLocaleDateString('es-AR')}</span>
             </div>
             <Badge className={getPriorityColor(expediente.prioridad)}>
               {expediente.prioridad}
             </Badge>
           </div>
-          <div className="text-right text-sm text-gray-500 dark:text-gray-400">
-            <p className="dark:text-gray-300">{new Date(expediente.fecha_limite).toLocaleDateString('es-AR')}</p>
-            <p className={diasRestantes < 0 ? 'text-red-600 dark:text-red-400 font-medium' : 'dark:text-gray-300'}>
+          
+          <div className="flex items-center justify-between">
+            <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
+              <Calendar className="w-4 h-4 mr-2" />
+              <span className="dark:text-gray-200">{new Date(expediente.fecha_limite).toLocaleDateString('es-AR')}</span>
+            </div>
+            <div className="flex items-center">
+              {diasRestantes <= 3 && diasRestantes >= 0 && (
+                <AlertCircle className="w-4 h-4 text-yellow-500 dark:text-yellow-400 mr-1" />
+              )}
+              {diasRestantes < 0 && (
+                <AlertCircle className="w-4 h-4 text-red-500 dark:text-red-400 mr-1" />
+              )}
               <Clock className="w-4 h-4 mr-1" />
               <span className={diasRestantes < 0 ? 'text-red-600 dark:text-red-400 font-medium' : 'text-gray-600 dark:text-gray-300'}>
                 {diasRestantes < 0 ? `${Math.abs(diasRestantes)} días vencido` : `${diasRestantes} días restantes`}
               </span>
             </div>
-            {diasRestantes <= 3 && diasRestantes >= 0 && (
-              <AlertCircle className="w-4 h-4 text-yellow-500 dark:text-yellow-400" />
-            )}
-            {diasRestantes < 0 && (
-              <AlertCircle className="w-4 h-4 text-red-500 dark:text-red-400" />
-            )}
           </div>
         </div>
       </CardContent>
