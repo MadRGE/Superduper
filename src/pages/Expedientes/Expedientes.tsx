@@ -57,17 +57,17 @@ export const Expedientes: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Expedientes</h1>
-          <p className="text-gray-600 dark:text-gray-300">Gestión de trámites regulatorios</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Expedientes</h1>
+          <p className="text-gray-600 dark:text-gray-200">Gestión de trámites regulatorios</p>
         </div>
         <div className="flex items-center space-x-3">
-          <button className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+          <button className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">
             <Download className="w-4 h-4 mr-2" />
             Exportar
           </button>
           <Link 
             to="/expedientes/nuevo"
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
+            className="inline-flex items-center px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 text-sm font-medium"
           >
             <Plus className="w-4 h-4 mr-2" />
             Nuevo Expediente
@@ -76,14 +76,14 @@ export const Expedientes: React.FC = () => {
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
         <div className="flex items-center space-x-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
             <input
               type="text"
               placeholder="Buscar por código, alias o cliente..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-300"
               value={state.filters.search}
               onChange={(e) => state.dispatch({
                 type: 'UPDATE_FILTERS',
@@ -94,17 +94,17 @@ export const Expedientes: React.FC = () => {
           <button
             onClick={() => setShowFilters(!showFilters)}
             className={`inline-flex items-center px-4 py-2 border rounded-lg text-sm font-medium ${
-              showFilters ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              showFilters ? 'bg-blue-50 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
             }`}
           >
             <Filter className="w-4 h-4 mr-2" />
             Filtros
           </button>
-          <div className="flex bg-gray-100 rounded-lg p-1">
+          <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
             <button
               onClick={() => setView('grid')}
               className={`px-3 py-1 rounded text-sm font-medium ${
-                view === 'grid' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600'
+                view === 'grid' ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm' : 'text-gray-600 dark:text-gray-300'
               }`}
             >
               Tarjetas
@@ -112,7 +112,7 @@ export const Expedientes: React.FC = () => {
             <button
               onClick={() => setView('list')}
               className={`px-3 py-1 rounded text-sm font-medium ${
-                view === 'list' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600'
+                view === 'list' ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm' : 'text-gray-600 dark:text-gray-300'
               }`}
             >
               Lista
@@ -125,13 +125,13 @@ export const Expedientes: React.FC = () => {
       </div>
 
       {/* Results summary */}
-      <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-300">
+      <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-200">
         <span>
           Mostrando {filteredExpedientes.length} de {state.expedientes.length} expedientes
         </span>
         <div className="flex items-center space-x-2">
           <Calendar className="w-4 h-4" />
-          <span className="dark:text-gray-300">Última actualización: {new Date().toLocaleDateString('es-AR')}</span>
+          <span className="dark:text-gray-200">Última actualización: {new Date().toLocaleDateString('es-AR')}</span>
         </div>
       </div>
 
@@ -143,13 +143,13 @@ export const Expedientes: React.FC = () => {
       </div>
 
       {filteredExpedientes.length === 0 && (
-        <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-          <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-            <Search className="w-8 h-8 text-gray-400" />
+        <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="mx-auto w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
+            <Search className="w-8 h-8 text-gray-400 dark:text-gray-500" />
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No se encontraron expedientes</h3>
-          <p className="text-gray-500 mb-6">Intenta ajustar los filtros o crear un nuevo expediente.</p>
-          <button className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No se encontraron expedientes</h3>
+          <p className="text-gray-500 dark:text-gray-300 mb-6">Intenta ajustar los filtros o crear un nuevo expediente.</p>
+          <button className="inline-flex items-center px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 text-sm font-medium">
             <Plus className="w-4 h-4 mr-2" />
             Crear Expediente
           </button>

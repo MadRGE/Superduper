@@ -137,8 +137,8 @@ export const NuevoExpediente: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Nuevo Expediente</h1>
-        <p className="text-gray-600">Complete los pasos para crear un nuevo expediente</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Nuevo Expediente</h1>
+        <p className="text-gray-600 dark:text-gray-200">Complete los pasos para crear un nuevo expediente</p>
       </div>
 
       {/* Progress Steps */}
@@ -152,7 +152,7 @@ export const NuevoExpediente: React.FC = () => {
               <step.icon className="w-5 h-5" />
             </div>
             <div className="ml-2">
-              <p className={`text-sm font-medium ${currentStep >= step.id ? 'text-gray-900' : 'text-gray-500'}`}>
+              <p className={`text-sm font-medium ${currentStep >= step.id ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'}`}>
                 {step.name}
               </p>
             </div>
@@ -164,7 +164,7 @@ export const NuevoExpediente: React.FC = () => {
       </div>
 
       {/* Step Content */}
-      <Card>
+      <Card className="dark:bg-gray-800 dark:border-gray-700">
         <CardContent className="p-6">
           {currentStep === 1 && <Step1TipoTramite formData={formData} setFormData={setFormData} />}
           {currentStep === 2 && <Step2Cliente formData={formData} setFormData={setFormData} />}
@@ -213,16 +213,16 @@ const Step1TipoTramite: React.FC<{ formData: any; setFormData: any }> = ({ formD
 
   return (
     <div className="space-y-6">
-      <h2 className="text-lg font-semibold">Seleccione el tipo de trámite</h2>
+      <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Seleccione el tipo de trámite</h2>
       
       {/* Filters */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Organismo</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Organismo</label>
           <select
             value={selectedOrganismo}
             onChange={(e) => setSelectedOrganismo(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           >
             <option value="">Todos los organismos</option>
             {state.organismos.map(org => (
@@ -231,13 +231,13 @@ const Step1TipoTramite: React.FC<{ formData: any; setFormData: any }> = ({ formD
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Buscar</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Buscar</label>
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Buscar por nombre..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-300"
           />
         </div>
       </div>
@@ -247,9 +247,9 @@ const Step1TipoTramite: React.FC<{ formData: any; setFormData: any }> = ({ formD
         {filteredTramites.map(tramite => (
           <Card 
             key={tramite.id}
-            className={`cursor-pointer transition-all ${
+            className={`cursor-pointer transition-all dark:bg-gray-800 dark:border-gray-700 ${
               formData.tramite_tipo_id === tramite.id 
-                ? 'ring-2 ring-blue-500 bg-blue-50' 
+                ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-900/50' 
                 : 'hover:shadow-md'
             }`}
             onClick={() => setFormData({ 
@@ -260,20 +260,20 @@ const Step1TipoTramite: React.FC<{ formData: any; setFormData: any }> = ({ formD
           >
             <CardContent className="p-4">
               <div className="flex items-start justify-between mb-2">
-                <h3 className="font-medium text-gray-900">{tramite.nombre}</h3>
+                <h3 className="font-medium text-gray-900 dark:text-gray-100">{tramite.nombre}</h3>
                 {formData.tramite_tipo_id === tramite.id && (
-                  <CheckCircle className="w-5 h-5 text-blue-600" />
+                  <CheckCircle className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 )}
               </div>
-              <p className="text-sm text-gray-600 mb-2">{tramite.codigo}</p>
-              <div className="flex items-center space-x-4 text-sm text-gray-500">
+              <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">{tramite.codigo}</p>
+              <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
                 <div className="flex items-center">
                   <Building2 className="w-4 h-4 mr-1" />
-                  {state.organismos.find(o => o.id === tramite.organismo_id)?.sigla}
+                  <span className="dark:text-gray-300">{state.organismos.find(o => o.id === tramite.organismo_id)?.sigla}</span>
                 </div>
                 <div className="flex items-center">
                   <Calendar className="w-4 h-4 mr-1" />
-                  {tramite.sla_total_dias} días
+                  <span className="dark:text-gray-300">{tramite.sla_total_dias} días</span>
                 </div>
               </div>
               {tramite.tags && (
@@ -323,28 +323,28 @@ const Step2Cliente: React.FC<{ formData: any; setFormData: any }> = ({ formData,
 
   return (
     <div className="space-y-6">
-      <h2 className="text-lg font-semibold">Datos del Cliente</h2>
+      <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Datos del Cliente</h2>
 
       {/* Buscar cliente existente */}
-      <div className="p-4 bg-gray-50 rounded-lg">
-        <h3 className="font-medium mb-3">Buscar cliente existente</h3>
+      <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+        <h3 className="font-medium mb-3 text-gray-900 dark:text-gray-100">Buscar cliente existente</h3>
         <div className="flex space-x-2">
           <input
             type="text"
             value={searchCuit}
             onChange={(e) => setSearchCuit(e.target.value)}
             placeholder="Ingrese CUIT (XX-XXXXXXXX-X)"
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
+            className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-300"
           />
           <Button onClick={handleSearchCliente}>Buscar</Button>
         </div>
       </div>
 
       {formData.cliente && !formData.nuevo_cliente && (
-        <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-          <h3 className="font-medium text-green-900">Cliente seleccionado:</h3>
-          <p className="text-green-700">{formData.cliente.razon_social}</p>
-          <p className="text-sm text-green-600">CUIT: {formData.cliente.cuit}</p>
+        <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg">
+          <h3 className="font-medium text-green-900 dark:text-green-300">Cliente seleccionado:</h3>
+          <p className="text-green-700 dark:text-green-200">{formData.cliente.razon_social}</p>
+          <p className="text-sm text-green-600 dark:text-green-300">CUIT: {formData.cliente.cuit}</p>
         </div>
       )}
 
@@ -355,7 +355,7 @@ const Step2Cliente: React.FC<{ formData: any; setFormData: any }> = ({ formData,
           checked={formData.nuevo_cliente}
           onChange={(e) => setFormData({ ...formData, nuevo_cliente: e.target.checked })}
         />
-        <label htmlFor="nuevo_cliente" className="font-medium">
+        <label htmlFor="nuevo_cliente" className="font-medium text-gray-900 dark:text-gray-100">
           Crear nuevo cliente
         </label>
       </div>
@@ -363,7 +363,7 @@ const Step2Cliente: React.FC<{ formData: any; setFormData: any }> = ({ formData,
       {formData.nuevo_cliente && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Razón Social *
             </label>
             <input
@@ -373,11 +373,11 @@ const Step2Cliente: React.FC<{ formData: any; setFormData: any }> = ({ formData,
                 ...formData,
                 cliente_data: { ...formData.cliente_data, razon_social: e.target.value }
               })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               CUIT *
             </label>
             <input
@@ -388,11 +388,11 @@ const Step2Cliente: React.FC<{ formData: any; setFormData: any }> = ({ formData,
                 cliente_data: { ...formData.cliente_data, cuit: e.target.value }
               })}
               placeholder="XX-XXXXXXXX-X"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-300"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Email *
             </label>
             <input
@@ -402,11 +402,11 @@ const Step2Cliente: React.FC<{ formData: any; setFormData: any }> = ({ formData,
                 ...formData,
                 cliente_data: { ...formData.cliente_data, email: e.target.value }
               })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Teléfono
             </label>
             <input
@@ -416,11 +416,11 @@ const Step2Cliente: React.FC<{ formData: any; setFormData: any }> = ({ formData,
                 ...formData,
                 cliente_data: { ...formData.cliente_data, telefono: e.target.value }
               })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
             />
           </div>
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Contacto
             </label>
             <input
@@ -430,7 +430,7 @@ const Step2Cliente: React.FC<{ formData: any; setFormData: any }> = ({ formData,
                 ...formData,
                 cliente_data: { ...formData.cliente_data, contacto_nombre: e.target.value }
               })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
             />
           </div>
         </div>
@@ -438,11 +438,11 @@ const Step2Cliente: React.FC<{ formData: any; setFormData: any }> = ({ formData,
 
       {/* Prioridad */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Prioridad</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Prioridad</label>
         <select
           value={formData.prioridad}
           onChange={(e) => setFormData({ ...formData, prioridad: e.target.value })}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
         >
           <option value="baja">Baja</option>
           <option value="normal">Normal</option>
@@ -453,14 +453,14 @@ const Step2Cliente: React.FC<{ formData: any; setFormData: any }> = ({ formData,
 
       {/* Observaciones */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
           Observaciones iniciales
         </label>
         <textarea
           value={formData.observaciones}
           onChange={(e) => setFormData({ ...formData, observaciones: e.target.value })}
           rows={3}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-300"
         />
       </div>
     </div>
@@ -474,16 +474,16 @@ const Step3Documentos: React.FC<{ formData: any; setFormData: any }> = ({ formDa
 
   return (
     <div className="space-y-6">
-      <h2 className="text-lg font-semibold">Documentación Inicial</h2>
+      <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Documentación Inicial</h2>
       
-      <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+      <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg">
         <div className="flex items-start space-x-2">
-          <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5" />
+          <AlertCircle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 mt-0.5" />
           <div>
-            <p className="text-sm text-yellow-800">
+            <p className="text-sm text-yellow-800 dark:text-yellow-200">
               Los documentos marcados con (*) son obligatorios para iniciar el trámite.
             </p>
-            <p className="text-sm text-yellow-700 mt-1">
+            <p className="text-sm text-yellow-700 dark:text-yellow-300 mt-1">
               Podrá subir documentación adicional una vez creado el expediente.
             </p>
           </div>
@@ -500,9 +500,9 @@ const Step3Documentos: React.FC<{ formData: any; setFormData: any }> = ({ formDa
 
       {/* Checklist para selección */}
       <div className="space-y-3">
-        <h3 className="font-medium">Confirmar documentos a preparar</h3>
+        <h3 className="font-medium text-gray-900 dark:text-gray-100">Confirmar documentos a preparar</h3>
         {checklist.map((doc, index) => (
-          <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+          <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
             <div className="flex items-center space-x-3">
               <input
                 type="checkbox"
@@ -518,8 +518,8 @@ const Step3Documentos: React.FC<{ formData: any; setFormData: any }> = ({ formDa
                   setFormData({ ...formData, documentos: newDocs });
                 }}
               />
-              <label htmlFor={`doc-${index}`} className="text-sm text-gray-700">
-                {doc.item} {doc.obligatorio && <span className="text-red-500">*</span>}
+              <label htmlFor={`doc-${index}`} className="text-sm text-gray-700 dark:text-gray-200">
+                {doc.item} {doc.obligatorio && <span className="text-red-500 dark:text-red-400">*</span>}
               </label>
             </div>
             <div className="flex items-center space-x-2">
@@ -534,9 +534,9 @@ const Step3Documentos: React.FC<{ formData: any; setFormData: any }> = ({ formDa
         ))}
       </div>
 
-      <div className="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center">
-        <Upload className="mx-auto w-12 h-12 text-gray-400 mb-2" />
-        <p className="text-sm text-gray-600">
+      <div className="p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-center">
+        <Upload className="mx-auto w-12 h-12 text-gray-400 dark:text-gray-500 mb-2" />
+        <p className="text-sm text-gray-600 dark:text-gray-300">
           La carga de documentos se realizará después de crear el expediente
         </p>
       </div>
@@ -556,37 +556,37 @@ const Step4Confirmacion: React.FC<{ formData: any }> = ({ formData }) => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-lg font-semibold">Confirmación del Expediente</h2>
+      <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Confirmación del Expediente</h2>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h3 className="font-medium text-blue-900 mb-2">Código de expediente generado:</h3>
-        <p className="text-2xl font-bold text-blue-700">{codigoGenerado}</p>
+      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-4">
+        <h3 className="font-medium text-blue-900 dark:text-blue-300 mb-2">Código de expediente generado:</h3>
+        <p className="text-2xl font-bold text-blue-700 dark:text-blue-200">{codigoGenerado}</p>
       </div>
 
       <div className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <p className="text-sm text-gray-500">Tipo de Trámite</p>
-            <p className="font-medium">{formData.tramite_tipo?.nombre}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Tipo de Trámite</p>
+            <p className="font-medium text-gray-900 dark:text-gray-100">{formData.tramite_tipo?.nombre}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Organismo</p>
-            <p className="font-medium">{formData.tramite_tipo?.organismo?.sigla}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Organismo</p>
+            <p className="font-medium text-gray-900 dark:text-gray-100">{formData.tramite_tipo?.organismo?.sigla}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Cliente</p>
-            <p className="font-medium">
+            <p className="text-sm text-gray-500 dark:text-gray-400">Cliente</p>
+            <p className="font-medium text-gray-900 dark:text-gray-100">
               {formData.cliente?.razon_social || formData.cliente_data.razon_social}
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-500">CUIT</p>
-            <p className="font-medium">
+            <p className="text-sm text-gray-500 dark:text-gray-400">CUIT</p>
+            <p className="font-medium text-gray-900 dark:text-gray-100">
               {formData.cliente?.cuit || formData.cliente_data.cuit}
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Prioridad</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Prioridad</p>
             <Badge className={
               formData.prioridad === 'urgente' ? 'bg-red-100 text-red-800' :
               formData.prioridad === 'alta' ? 'bg-orange-100 text-orange-800' :
@@ -597,8 +597,8 @@ const Step4Confirmacion: React.FC<{ formData: any }> = ({ formData }) => {
             </Badge>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Fecha Límite Estimada</p>
-            <p className="font-medium text-red-600">
+            <p className="text-sm text-gray-500 dark:text-gray-400">Fecha Límite Estimada</p>
+            <p className="font-medium text-red-600 dark:text-red-400">
               {fechaLimite.toLocaleDateString('es-AR')}
             </p>
           </div>
@@ -606,32 +606,32 @@ const Step4Confirmacion: React.FC<{ formData: any }> = ({ formData }) => {
 
         {formData.observaciones && (
           <div>
-            <p className="text-sm text-gray-500">Observaciones</p>
-            <p className="text-gray-700">{formData.observaciones}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Observaciones</p>
+            <p className="text-gray-700 dark:text-gray-200">{formData.observaciones}</p>
           </div>
         )}
 
         <div>
-          <p className="text-sm text-gray-500 mb-2">Documentos a cargar</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Documentos a cargar</p>
           <div className="space-y-1">
             {formData.documentos.map((doc: any, index: number) => (
-              <div key={index} className="flex items-center space-x-2 text-sm">
-                <CheckCircle className="w-4 h-4 text-green-500" />
-                <span>{doc.item}</span>
+              <div key={index} className="flex items-center space-x-2 text-sm text-gray-700 dark:text-gray-200">
+                <CheckCircle className="w-4 h-4 text-green-500 dark:text-green-400" />
+                <span className="dark:text-gray-200">{doc.item}</span>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+      <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg">
         <div className="flex items-start space-x-2">
-          <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
+          <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5" />
           <div>
-            <p className="text-sm font-medium text-green-900">
+            <p className="text-sm font-medium text-green-900 dark:text-green-300">
               El expediente está listo para ser creado
             </p>
-            <p className="text-sm text-green-700 mt-1">
+            <p className="text-sm text-green-700 dark:text-green-200 mt-1">
               Se generarán automáticamente las tareas según el flujo del trámite seleccionado.
             </p>
           </div>

@@ -44,14 +44,14 @@ export const ExpedienteFilters: React.FC = () => {
     <div className="mt-4 pt-4 border-t border-gray-200">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Estado</label>
           <select
             value={state.filters.estado}
             onChange={(e) => dispatch({
               type: 'UPDATE_FILTERS',
               payload: { estado: e.target.value }
             })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           >
             {estados.map((estado) => (
               <option key={estado.value} value={estado.value}>
@@ -62,14 +62,14 @@ export const ExpedienteFilters: React.FC = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Organismo</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Organismo</label>
           <select
             value={state.filters.organismo}
             onChange={(e) => dispatch({
               type: 'UPDATE_FILTERS',
               payload: { organismo: e.target.value }
             })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           >
             {organismos.map((organismo) => (
               <option key={organismo.value} value={organismo.value}>
@@ -80,14 +80,14 @@ export const ExpedienteFilters: React.FC = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Prioridad</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Prioridad</label>
           <select
             value={state.filters.prioridad}
             onChange={(e) => dispatch({
               type: 'UPDATE_FILTERS',
               payload: { prioridad: e.target.value }
             })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           >
             {prioridades.map((prioridad) => (
               <option key={prioridad.value} value={prioridad.value}>
@@ -101,7 +101,7 @@ export const ExpedienteFilters: React.FC = () => {
           {hasActiveFilters && (
             <button
               onClick={clearFilters}
-              className="w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+              className="w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               <X className="w-4 h-4 mr-2" />
               Limpiar filtros

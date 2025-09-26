@@ -317,12 +317,12 @@ export const ClienteDetailEnhanced: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header Principal del Cliente */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Link 
               to="/clientes"
-              className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+              className="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
             >
               <ArrowLeft className="w-6 h-6" />
             </Link>
@@ -330,15 +330,15 @@ export const ClienteDetailEnhanced: React.FC = () => {
               <Building2 className="w-8 h-8 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">{cliente.razon_social}</h1>
-              <p className="text-gray-600">CUIT: {cliente.cuit}</p>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{cliente.razon_social}</h1>
+              <p className="text-gray-600 dark:text-gray-300">CUIT: {cliente.cuit}</p>
               <div className="flex items-center space-x-4 mt-2">
                 <Badge variant="outline" className="text-xs">
                   Categoría: {cliente.categoria}
                 </Badge>
                 <div className="flex items-center space-x-1">
                   <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                  <span className="text-sm font-medium">{cliente.satisfaccion}</span>
+                  <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{cliente.satisfaccion}</span>
                 </div>
               </div>
             </div>
@@ -365,30 +365,30 @@ export const ClienteDetailEnhanced: React.FC = () => {
         </div>
 
         {/* Métricas Rápidas */}
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mt-6 pt-6 border-t border-gray-200">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
           <div className="text-center">
-            <p className="text-2xl font-bold text-blue-600">{stats.expedientesActivos}</p>
-            <p className="text-xs text-gray-500">Expedientes Activos</p>
+            <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.expedientesActivos}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Expedientes Activos</p>
           </div>
           <div className="text-center">
-            <p className="text-2xl font-bold text-green-600">{stats.expedientesCompletados}</p>
-            <p className="text-xs text-gray-500">Completados</p>
+            <p className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.expedientesCompletados}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Completados</p>
           </div>
           <div className="text-center">
-            <p className="text-2xl font-bold text-red-600">{stats.expedientesVencidos}</p>
-            <p className="text-xs text-gray-500">Vencidos</p>
+            <p className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.expedientesVencidos}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Vencidos</p>
           </div>
           <div className="text-center">
-            <p className="text-2xl font-bold text-purple-600">{stats.productosVigentes}</p>
-            <p className="text-xs text-gray-500">Productos Vigentes</p>
+            <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{stats.productosVigentes}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Productos Vigentes</p>
           </div>
           <div className="text-center">
-            <p className="text-2xl font-bold text-orange-600">{stats.habilitacionesVigentes}</p>
-            <p className="text-xs text-gray-500">Habilitaciones</p>
+            <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">{stats.habilitacionesVigentes}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Habilitaciones</p>
           </div>
           <div className="text-center">
-            <p className="text-2xl font-bold text-yellow-600">{stats.facturasPendientes}</p>
-            <p className="text-xs text-gray-500">Facturas Pendientes</p>
+            <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.facturasPendientes}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Facturas Pendientes</p>
           </div>
         </div>
       </div>
@@ -398,7 +398,7 @@ export const ClienteDetailEnhanced: React.FC = () => {
         <div className="lg:col-span-2 space-y-6">
           
           {/* Información General y Contactos */}
-          <Card>
+          <Card className="dark:bg-gray-800 dark:border-gray-700">
             <CardHeader 
               className="cursor-pointer"
               onClick={() => toggleSection('general')}
@@ -406,7 +406,7 @@ export const ClienteDetailEnhanced: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <Users className="w-5 h-5 text-gray-400" />
-                  <CardTitle>Información General y Contactos</CardTitle>
+                  <CardTitle className="dark:text-gray-100">Información General y Contactos</CardTitle>
                 </div>
                 {expandedSections.general ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
               </div>
@@ -417,33 +417,33 @@ export const ClienteDetailEnhanced: React.FC = () => {
                   {/* Datos de la empresa */}
                   <div className="space-y-4">
                     <div>
-                      <h4 className="font-medium text-gray-900 mb-3">Datos de la Empresa</h4>
+                      <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-3">Datos de la Empresa</h4>
                       <div className="space-y-3">
                         <div className="flex items-center space-x-3">
-                          <Building2 className="w-5 h-5 text-gray-400" />
+                          <Building2 className="w-5 h-5 text-gray-400 dark:text-gray-500" />
                           <div>
-                            <p className="text-sm font-medium text-gray-900">Razón Social</p>
-                            <p className="text-sm text-gray-600">{cliente.razon_social}</p>
+                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Razón Social</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-300">{cliente.razon_social}</p>
                           </div>
                         </div>
                         <div className="flex items-center space-x-3">
-                          <FileText className="w-5 h-5 text-gray-400" />
+                          <FileText className="w-5 h-5 text-gray-400 dark:text-gray-500" />
                           <div>
-                            <p className="text-sm font-medium text-gray-900">CUIT</p>
-                            <p className="text-sm text-gray-600">{cliente.cuit}</p>
+                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">CUIT</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-300">{cliente.cuit}</p>
                           </div>
                         </div>
                         <div className="flex items-center space-x-3">
-                          <MapPin className="w-5 h-5 text-gray-400" />
+                          <MapPin className="w-5 h-5 text-gray-400 dark:text-gray-500" />
                           <div>
-                            <p className="text-sm font-medium text-gray-900">Dirección</p>
-                            <p className="text-sm text-gray-600">{cliente.direccion}</p>
+                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Dirección</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-300">{cliente.direccion}</p>
                           </div>
                         </div>
                         <div className="flex items-center space-x-3">
-                          <Shield className="w-5 h-5 text-gray-400" />
+                          <Shield className="w-5 h-5 text-gray-400 dark:text-gray-500" />
                           <div>
-                            <p className="text-sm font-medium text-gray-900">Estado</p>
+                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Estado</p>
                             <Badge variant="default">Activo</Badge>
                           </div>
                         </div>
@@ -454,33 +454,33 @@ export const ClienteDetailEnhanced: React.FC = () => {
                   {/* Contactos */}
                   <div className="space-y-4">
                     <div>
-                      <h4 className="font-medium text-gray-900 mb-3">Contactos Clave</h4>
+                      <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-3">Contactos Clave</h4>
                       <div className="space-y-3">
                         {cliente.contactos?.map((contacto: any) => (
                           <div key={contacto.id} className={`p-3 rounded-lg border ${
-                            contacto.principal ? 'bg-blue-50 border-blue-200' : 'bg-gray-50 border-gray-200'
+                            contacto.principal ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700' : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600'
                           }`}>
                             <div className="flex items-start justify-between">
                               <div>
                                 <div className="flex items-center space-x-2">
-                                  <p className="text-sm font-medium text-gray-900">{contacto.nombre}</p>
+                                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{contacto.nombre}</p>
                                   {contacto.principal && (
                                     <Badge variant="secondary" className="text-xs">Principal</Badge>
                                   )}
                                 </div>
-                                <p className="text-xs text-gray-600">{contacto.cargo}</p>
+                                <p className="text-xs text-gray-600 dark:text-gray-400">{contacto.cargo}</p>
                               </div>
                             </div>
                             <div className="mt-2 space-y-1">
                               <div className="flex items-center space-x-2">
-                                <Mail className="w-3 h-3 text-gray-400" />
-                                <a href={`mailto:${contacto.email}`} className="text-xs text-blue-600 hover:underline">
+                                <Mail className="w-3 h-3 text-gray-400 dark:text-gray-500" />
+                                <a href={`mailto:${contacto.email}`} className="text-xs text-blue-600 dark:text-blue-400 hover:underline">
                                   {contacto.email}
                                 </a>
                               </div>
                               <div className="flex items-center space-x-2">
-                                <Phone className="w-3 h-3 text-gray-400" />
-                                <a href={`tel:${contacto.telefono}`} className="text-xs text-blue-600 hover:underline">
+                                <Phone className="w-3 h-3 text-gray-400 dark:text-gray-500" />
+                                <a href={`tel:${contacto.telefono}`} className="text-xs text-blue-600 dark:text-blue-400 hover:underline">
                                   {contacto.telefono}
                                 </a>
                               </div>
@@ -496,7 +496,7 @@ export const ClienteDetailEnhanced: React.FC = () => {
           </Card>
 
           {/* Expedientes del Cliente */}
-          <Card>
+          <Card className="dark:bg-gray-800 dark:border-gray-700">
             <CardHeader 
               className="cursor-pointer"
               onClick={() => toggleSection('expedientes')}
@@ -504,7 +504,7 @@ export const ClienteDetailEnhanced: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <FileText className="w-5 h-5 text-gray-400" />
-                  <CardTitle>Expedientes del Cliente ({expedientesCliente.length})</CardTitle>
+                  <CardTitle className="dark:text-gray-100">Expedientes del Cliente ({expedientesCliente.length})</CardTitle>
                 </div>
                 {expandedSections.expedientes ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
               </div>
@@ -543,7 +543,7 @@ export const ClienteDetailEnhanced: React.FC = () => {
                             const progreso = expediente.progreso || Math.round((expediente.paso_actual / 8) * 100);
                             
                             return (
-                              <div key={expediente.id} className="p-4 border rounded-lg hover:border-blue-300 transition-colors">
+                              <div key={expediente.id} className="p-4 border dark:border-gray-600 rounded-lg hover:border-blue-300 dark:hover:border-blue-500 transition-colors">
                                 <div className="flex items-start justify-between mb-3">
                                   <div className="flex items-start space-x-3">
                                     <div className={`w-3 h-3 rounded-full mt-2 ${
@@ -553,12 +553,12 @@ export const ClienteDetailEnhanced: React.FC = () => {
                                     <div>
                                       <Link 
                                         to={`/expedientes/${expediente.id}`}
-                                        className="font-medium text-blue-600 hover:text-blue-800"
+                                        className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
                                       >
                                         {expediente.codigo}
                                       </Link>
-                                      <p className="text-sm text-gray-600">{expediente.alias}</p>
-                                      <p className="text-xs text-gray-500">{expediente.tramite_nombre}</p>
+                                      <p className="text-sm text-gray-600 dark:text-gray-300">{expediente.alias}</p>
+                                      <p className="text-xs text-gray-500 dark:text-gray-400">{expediente.tramite_nombre}</p>
                                     </div>
                                   </div>
                                   <div className="flex items-center space-x-2">
@@ -578,10 +578,10 @@ export const ClienteDetailEnhanced: React.FC = () => {
                                 
                                 <div className="space-y-2">
                                   <div className="flex justify-between text-sm">
-                                    <span className="text-gray-500">Progreso:</span>
-                                    <span className="font-medium">{progreso}%</span>
+                                    <span className="text-gray-500 dark:text-gray-400">Progreso:</span>
+                                    <span className="font-medium text-gray-900 dark:text-gray-100">{progreso}%</span>
                                   </div>
-                                  <div className="w-full bg-gray-200 rounded-full h-2">
+                                  <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
                                     <div 
                                       className={`h-2 rounded-full transition-all ${
                                         progreso < 30 ? 'bg-red-500' :
@@ -590,9 +590,9 @@ export const ClienteDetailEnhanced: React.FC = () => {
                                       style={{ width: `${progreso}%` }}
                                     />
                                   </div>
-                                  <div className="flex justify-between text-sm text-gray-500">
-                                    <span>Límite: {formatDate(expediente.fecha_limite)}</span>
-                                    <span className={diasRestantes < 0 ? 'text-red-600 font-medium' : ''}>
+                                  <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
+                                    <span className="dark:text-gray-300">Límite: {formatDate(expediente.fecha_limite)}</span>
+                                    <span className={diasRestantes < 0 ? 'text-red-600 dark:text-red-400 font-medium' : 'dark:text-gray-300'}>
                                       {diasRestantes < 0 ? `Vencido ${Math.abs(diasRestantes)}d` : `${diasRestantes}d restantes`}
                                     </span>
                                   </div>

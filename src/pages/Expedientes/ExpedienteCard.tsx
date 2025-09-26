@@ -86,7 +86,7 @@ export const ExpedienteCard: React.FC<ExpedienteCardProps> = ({
   }
 
   return (
-    <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+    <Card className="hover:shadow-lg transition-shadow cursor-pointer dark:bg-gray-800 dark:border-gray-700">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-2">
@@ -94,53 +94,53 @@ export const ExpedienteCard: React.FC<ExpedienteCardProps> = ({
             <div>
               <Link 
                 to={`/expedientes/${expediente.id}`}
-                className="font-semibold text-gray-900 hover:text-blue-600"
+                className="font-semibold text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400"
               >
                 {expediente.codigo}
               </Link>
               {expediente.alias && (
-                <p className="text-sm text-gray-600 mt-1">{expediente.alias}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{expediente.alias}</p>
               )}
             </div>
-          </div>
-          <EstadoBadge estado={expediente.estado} />
+            <div className="text-sm text-gray-600 dark:text-gray-300">
+              <p className="dark:text-gray-200">{expediente.cliente?.razon_social}</p>
         </div>
       </CardHeader>
       
       <CardContent className="pt-0">
         <div className="space-y-3">
-          <div className="flex items-center text-sm text-gray-600">
+          <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
             <User className="w-4 h-4 mr-2" />
-            <span>{expediente.cliente?.razon_social}</span>
+            <span className="dark:text-gray-200">{expediente.cliente?.razon_social}</span>
           </div>
           
-          <div className="flex items-center text-sm text-gray-600">
+          <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
             <Building className="w-4 h-4 mr-2" />
-            <span>{getOrganismoName()}</span>
+            <span className="dark:text-gray-200">{getOrganismoName()}</span>
           </div>
           
           <div className="flex items-center justify-between">
-            <div className="flex items-center text-sm text-gray-600">
-              <Calendar className="w-4 h-4 mr-2" />
-              <span>{new Date(expediente.fecha_limite).toLocaleDateString('es-AR')}</span>
+            <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
+              <p className="dark:text-gray-200">{expediente.tramite_nombre || expediente.tramite_tipo?.nombre}</p>
+              <span className="dark:text-gray-200">{new Date(expediente.fecha_limite).toLocaleDateString('es-AR')}</span>
             </div>
             <Badge className={getPriorityColor(expediente.prioridad)}>
               {expediente.prioridad}
             </Badge>
           </div>
-          
-          <div className="flex items-center justify-between pt-2 border-t">
-            <div className="flex items-center text-sm">
+          <div className="text-right text-sm text-gray-500 dark:text-gray-400">
+            <p className="dark:text-gray-300">{new Date(expediente.fecha_limite).toLocaleDateString('es-AR')}</p>
+            <p className={diasRestantes < 0 ? 'text-red-600 dark:text-red-400 font-medium' : 'dark:text-gray-300'}>
               <Clock className="w-4 h-4 mr-1" />
-              <span className={diasRestantes < 0 ? 'text-red-600 font-medium' : 'text-gray-600'}>
+              <span className={diasRestantes < 0 ? 'text-red-600 dark:text-red-400 font-medium' : 'text-gray-600 dark:text-gray-300'}>
                 {diasRestantes < 0 ? `${Math.abs(diasRestantes)} días vencido` : `${diasRestantes} días restantes`}
               </span>
             </div>
             {diasRestantes <= 3 && diasRestantes >= 0 && (
-              <AlertCircle className="w-4 h-4 text-yellow-500" />
+              <AlertCircle className="w-4 h-4 text-yellow-500 dark:text-yellow-400" />
             )}
             {diasRestantes < 0 && (
-              <AlertCircle className="w-4 h-4 text-red-500" />
+              <AlertCircle className="w-4 h-4 text-red-500 dark:text-red-400" />
             )}
           </div>
         </div>

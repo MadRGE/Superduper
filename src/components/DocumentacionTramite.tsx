@@ -50,10 +50,10 @@ export const DocumentacionTramite: React.FC<DocumentacionTramiteProps> = ({
 
   if (!tramite) {
     return (
-      <Card>
+      <Card className="dark:bg-gray-800 dark:border-gray-700">
         <CardContent className="p-6 text-center">
-          <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-          <p className="text-gray-500">No se encontró información del trámite</p>
+          <AlertCircle className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-2" />
+          <p className="text-gray-500 dark:text-gray-300">No se encontró información del trámite</p>
         </CardContent>
       </Card>
     );
@@ -114,41 +114,41 @@ export const DocumentacionTramite: React.FC<DocumentacionTramiteProps> = ({
   return (
     <div className="space-y-6">
       {/* Header con información del trámite */}
-      <Card>
+      <Card className="dark:bg-gray-800 dark:border-gray-700">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            <span>{tramite.nombre}</span>
+            <span className="dark:text-gray-100">{tramite.nombre}</span>
             <Badge variant="outline">{tramite.codigo}</Badge>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
-              <p className="text-gray-500">Sistema</p>
-              <p className="font-medium flex items-center">
+              <p className="text-gray-500 dark:text-gray-400">Sistema</p>
+              <p className="font-medium flex items-center text-gray-900 dark:text-gray-100">
                 <ExternalLink className="w-4 h-4 mr-1" />
                 {tramite.sistema}
               </p>
             </div>
             <div>
-              <p className="text-gray-500">Tiempo estimado</p>
-              <p className="font-medium flex items-center">
+              <p className="text-gray-500 dark:text-gray-400">Tiempo estimado</p>
+              <p className="font-medium flex items-center text-gray-900 dark:text-gray-100">
                 <Clock className="w-4 h-4 mr-1" />
                 {tramite.sla_dias} días
               </p>
             </div>
             <div>
-              <p className="text-gray-500">Vigencia</p>
-              <p className="font-medium flex items-center">
+              <p className="text-gray-500 dark:text-gray-400">Vigencia</p>
+              <p className="font-medium flex items-center text-gray-900 dark:text-gray-100">
                 <Calendar className="w-4 h-4 mr-1" />
                 {tramite.vigencia_anos} años
               </p>
             </div>
             <div>
-              <p className="text-gray-500">Arancel</p>
-              <p className="font-medium flex items-center">
+              <p className="text-gray-500 dark:text-gray-400">Arancel</p>
+              <p className="font-medium flex items-center text-gray-900 dark:text-gray-100">
                 <DollarSign className="w-4 h-4 mr-1" />
-                {tramite.arancel}
+                <span className="dark:text-gray-100">{tramite.arancel}</span>
               </p>
             </div>
           </div>
@@ -156,10 +156,10 @@ export const DocumentacionTramite: React.FC<DocumentacionTramiteProps> = ({
           {/* Barra de progreso */}
           <div className="mt-4">
             <div className="flex justify-between text-sm mb-1">
-              <span>Progreso documentación obligatoria</span>
-              <span className="font-medium">{calcularProgreso()}%</span>
+              <span className="text-gray-700 dark:text-gray-200">Progreso documentación obligatoria</span>
+              <span className="font-medium text-gray-900 dark:text-gray-100">{calcularProgreso()}%</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
+            <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
               <div 
                 className={`h-2 rounded-full transition-all ${
                   calcularProgreso() === 100 ? 'bg-green-500' : 
@@ -173,11 +173,11 @@ export const DocumentacionTramite: React.FC<DocumentacionTramiteProps> = ({
       </Card>
 
       {/* Documentación Obligatoria */}
-      <Card>
+      <Card className="dark:bg-gray-800 dark:border-gray-700">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <AlertCircle className="w-5 h-5 text-red-500" />
-            <span className="text-red-600">Documentación Obligatoria</span>
+            <AlertCircle className="w-5 h-5 text-red-500 dark:text-red-400" />
+            <span className="text-red-600 dark:text-red-400">Documentación Obligatoria</span>
             <Badge variant="destructive" className="text-xs">
               {tramite.documentacion_obligatoria.length} documentos
             </Badge>
@@ -188,17 +188,17 @@ export const DocumentacionTramite: React.FC<DocumentacionTramiteProps> = ({
             {tramite.documentacion_obligatoria.map((doc: any, index: number) => {
               const subido = isDocumentoSubido(doc.documento);
               return (
-                <div key={index} className="flex items-start justify-between p-4 bg-gray-50 rounded-lg border-l-4 border-red-300">
+                <div key={index} className="flex items-start justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border-l-4 border-red-300 dark:border-red-600">
                   <div className="flex items-start space-x-3 flex-1">
                     {subido ? (
-                      <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
+                      <CheckCircle className="w-5 h-5 text-green-500 dark:text-green-400 mt-0.5" />
                     ) : (
-                      <AlertCircle className="w-5 h-5 text-red-500 mt-0.5" />
+                      <AlertCircle className="w-5 h-5 text-red-500 dark:text-red-400 mt-0.5" />
                     )}
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900">{doc.documento}</p>
+                      <p className="font-medium text-gray-900 dark:text-gray-100">{doc.documento}</p>
                       {doc.detalle && (
-                        <p className="text-sm text-gray-600 mt-1">{doc.detalle}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{doc.detalle}</p>
                       )}
                       <div className="flex flex-wrap gap-2 mt-2">
                         <Badge variant="outline" className="text-xs">
@@ -226,8 +226,8 @@ export const DocumentacionTramite: React.FC<DocumentacionTramiteProps> = ({
                         )}
                       </div>
                       {doc.incluye && (
-                        <div className="mt-2 p-2 bg-blue-50 rounded text-xs text-blue-700">
-                          <Info className="w-3 h-3 inline mr-1" />
+                        <div className="mt-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded text-xs text-blue-700 dark:text-blue-300">
+                          <Info className="w-3 h-3 inline mr-1 dark:text-blue-400" />
                           Incluye: {doc.incluye}
                         </div>
                       )}
@@ -268,11 +268,11 @@ export const DocumentacionTramite: React.FC<DocumentacionTramiteProps> = ({
 
       {/* Documentación Opcional */}
       {tramite.documentacion_opcional && tramite.documentacion_opcional.length > 0 && (
-        <Card>
+        <Card className="dark:bg-gray-800 dark:border-gray-700">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Info className="w-5 h-5 text-blue-500" />
-              <span className="text-blue-600">Documentación Opcional/Condicional</span>
+              <Info className="w-5 h-5 text-blue-500 dark:text-blue-400" />
+              <span className="text-blue-600 dark:text-blue-400">Documentación Opcional/Condicional</span>
               <Badge variant="secondary" className="text-xs">
                 {tramite.documentacion_opcional.length} documentos
               </Badge>
@@ -283,22 +283,22 @@ export const DocumentacionTramite: React.FC<DocumentacionTramiteProps> = ({
               {tramite.documentacion_opcional.map((doc: any, index: number) => {
                 const subido = isDocumentoSubido(doc.documento);
                 return (
-                  <div key={index} className="flex items-start justify-between p-4 bg-blue-50 rounded-lg border-l-4 border-blue-300">
+                  <div key={index} className="flex items-start justify-between p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-l-4 border-blue-300 dark:border-blue-600">
                     <div className="flex items-start space-x-3 flex-1">
                       {subido ? (
-                        <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
+                        <CheckCircle className="w-5 h-5 text-green-500 dark:text-green-400 mt-0.5" />
                       ) : (
-                        <Clock className="w-5 h-5 text-blue-500 mt-0.5" />
+                        <Clock className="w-5 h-5 text-blue-500 dark:text-blue-400 mt-0.5" />
                       )}
                       <div className="flex-1">
-                        <p className="font-medium text-gray-900">{doc.documento}</p>
+                        <p className="font-medium text-gray-900 dark:text-gray-100">{doc.documento}</p>
                         {doc.cuando && (
-                          <div className="mt-1 p-2 bg-blue-100 rounded text-sm text-blue-800">
+                          <div className="mt-1 p-2 bg-blue-100 dark:bg-blue-800/30 rounded text-sm text-blue-800 dark:text-blue-200">
                             <strong>Requerido cuando:</strong> {doc.cuando}
                           </div>
                         )}
                         {doc.detalle && (
-                          <p className="text-sm text-gray-600 mt-1">{doc.detalle}</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{doc.detalle}</p>
                         )}
                         <div className="flex flex-wrap gap-2 mt-2">
                           <Badge variant="outline" className="text-xs">
@@ -342,30 +342,30 @@ export const DocumentacionTramite: React.FC<DocumentacionTramiteProps> = ({
       )}
 
       {/* Resumen de estado */}
-      <Card>
+      <Card className="dark:bg-gray-800 dark:border-gray-700">
         <CardHeader>
-          <CardTitle>Resumen de Documentación</CardTitle>
+          <CardTitle className="dark:text-gray-100">Resumen de Documentación</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-3 gap-4 text-center">
-            <div className="p-3 bg-red-50 rounded-lg">
-              <p className="text-2xl font-bold text-red-600">
+            <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
+              <p className="text-2xl font-bold text-red-600 dark:text-red-400">
                 {tramite.documentacion_obligatoria.filter((doc: any) => !isDocumentoSubido(doc.documento)).length}
               </p>
-              <p className="text-sm text-red-600">Obligatorios pendientes</p>
+              <p className="text-sm text-red-600 dark:text-red-400">Obligatorios pendientes</p>
             </div>
-            <div className="p-3 bg-green-50 rounded-lg">
-              <p className="text-2xl font-bold text-green-600">
+            <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+              <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                 {tramite.documentacion_obligatoria.filter((doc: any) => isDocumentoSubido(doc.documento)).length}
               </p>
-              <p className="text-sm text-green-600">Obligatorios completos</p>
+              <p className="text-sm text-green-600 dark:text-green-400">Obligatorios completos</p>
             </div>
-            <div className="p-3 bg-blue-50 rounded-lg">
-              <p className="text-2xl font-bold text-blue-600">
+            <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+              <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                 {tramite.documentacion_opcional ? 
                   tramite.documentacion_opcional.filter((doc: any) => isDocumentoSubido(doc.documento)).length : 0}
               </p>
-              <p className="text-sm text-blue-600">Opcionales subidos</p>
+              <p className="text-sm text-blue-600 dark:text-blue-400">Opcionales subidos</p>
             </div>
           </div>
         </CardContent>
@@ -374,10 +374,10 @@ export const DocumentacionTramite: React.FC<DocumentacionTramiteProps> = ({
       {/* Modal de subida de documentos */}
       {showUploadModal && selectedDoc && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-md">
+          <Card className="w-full max-w-md dark:bg-gray-800 dark:border-gray-700">
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
-                <span>Subir Documento</span>
+                <span className="dark:text-gray-100">Subir Documento</span>
                 <Button 
                   variant="ghost" 
                   size="sm" 
@@ -388,10 +388,10 @@ export const DocumentacionTramite: React.FC<DocumentacionTramiteProps> = ({
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="p-3 bg-gray-50 rounded-lg">
-                <p className="font-medium text-sm">{selectedDoc.documento}</p>
+              <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <p className="font-medium text-sm text-gray-900 dark:text-gray-100">{selectedDoc.documento}</p>
                 {selectedDoc.detalle && (
-                  <p className="text-xs text-gray-600 mt-1">{selectedDoc.detalle}</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">{selectedDoc.detalle}</p>
                 )}
                 <div className="flex gap-1 mt-2">
                   <Badge variant="outline" className="text-xs">
@@ -406,7 +406,7 @@ export const DocumentacionTramite: React.FC<DocumentacionTramiteProps> = ({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                   Seleccionar archivo
                 </label>
                 <input
@@ -414,9 +414,9 @@ export const DocumentacionTramite: React.FC<DocumentacionTramiteProps> = ({
                   type="file"
                   onChange={handleFileUpload}
                   accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   Formatos aceptados: {selectedDoc.formato}
                 </p>
               </div>
