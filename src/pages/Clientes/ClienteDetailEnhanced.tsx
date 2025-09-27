@@ -1,26 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { 
-  ArrowLeft, 
-  Building2, 
-  User, 
-  Mail, 
-  Phone, 
-  MapPin,
-  Edit,
-  Plus,
-  Eye,
-  FileText,
-  Calendar,
-  DollarSign,
-  Activity,
-  Briefcase,
-  Package,
-  Shield,
-  MessageSquare,
-  Download,
-  Trash2
-} from 'lucide-react';
+import { ArrowLeft, Building2, User, Mail, Phone, MapPin, CreditCard as Edit, Plus, Eye, FileText, Calendar, DollarSign, Activity, Briefcase, Package, Shield, MessageSquare, Download, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -136,10 +116,6 @@ export const ClienteDetailEnhanced: React.FC = () => {
         variant: "destructive"
       });
     }
-  };
-
-  const handleModalSuccess = () => {
-    cargarDatosCompletos();
   };
 
   const handleModalSuccess = () => {
