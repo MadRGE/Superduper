@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Calendar, Building2, User, FileText, Clock, AlertTriangle, CheckCircle, Download, Upload, MessageSquare, CreditCard as Edit, Save, X, Plus, Briefcase, Activity, History } from 'lucide-react';
+import { ArrowLeft, Calendar, Building2, User, FileText, Clock, AlertTriangle, CheckCircle, Download, Upload, MessageSquare, CreditCard as Edit, Save, X, Plus, Briefcase, Activity, History, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { usePermissions } from '@/hooks/usePermissions';
 import { databaseService } from '@/services/DatabaseService';
+import { CasoLegalFormModal } from '@/components/CasosLegales/CasoLegalFormModal';
 import { formatDate } from '@/lib/utils';
 
 export const CasoLegalDetail: React.FC = () => {
@@ -20,13 +21,7 @@ export const CasoLegalDetail: React.FC = () => {
   const [tareas, setTareas] = useState<any[]>([]);
   const [comunicaciones, setComunicaciones] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [editData, setEditData] = useState({
-    nombre_caso: '',
-    descripcion: '',
-    estado_legal: '',
-    fecha_cierre: ''
-  });
+  const [showFormModal, setShowFormModal] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -169,29 +164,38 @@ export const CasoLegalDetail: React.FC = () => {
     }
   };
 
-  const handleUpdateCaso = async () => {
+  const handleEditCaso = () => {
+    setShowFormModal(true);
+  };
+
+  const handleDeleteCaso = async () => {
+    if (!casoLegal) return;
+    
+    if (!confirm(`¿Está seguro de que desea eliminar el caso "${casoLegal.nombre_caso}"?`)) {
+      return;
+    }
+
     try {
-      // Simular actualización
-      const casoActualizado = {
-        ...casoLegal,
-        ...editData,
-        updated_at: new Date().toISOString()
-      };
-      
-      setCasoLegal(casoActualizado);
-      setShowEditModal(false);
+      await databaseService.updateCasoLegal(casoLegal.id, { is_active: false });
       
       toast({
-        title: "Caso actualizado",
-        description: "Los cambios se guardaron correctamente",
+        title: "Caso eliminado",
+        description: `${casoLegal.nombre_caso} ha sido eliminado`,
       });
+      
+      // Redirigir a la lista
+      window.location.href = '/casos-legales';
     } catch (error) {
       toast({
         title: "Error",
-        description: "No se pudo actualizar el caso",
+        description: "No se pudo eliminar el caso",
         variant: "destructive"
       });
     }
+  };
+
+  const handleModalSuccess = () => {
+    cargarCasoLegal();
   };
 
   const getEstadoColor = (estado: string) => {
@@ -250,9 +254,19 @@ export const CasoLegalDetail: React.FC = () => {
             {casoLegal.estado_legal.replace('_', ' ')}
           </Badge>
           {hasPermission('editar_casos_legales') && (
-            <Button variant="outline" onClick={() => setShowEditModal(true)}>
+            <Button variant="outline" onClick={handleEditCaso}>
               <Edit className="w-4 h-4 mr-2" />
               Editar Caso
+            </Button>
+          )}
+          {hasPermission('*') && (
+            <Button 
+              variant="outline"
+              onClick={handleDeleteCaso}
+              className="text-red-600 hover:text-red-700 border-red-300 hover:border-red-400"
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Eliminar
             </Button>
           )}
         </div>
@@ -496,86 +510,13 @@ export const CasoLegalDetail: React.FC = () => {
         </TabsContent>
       </Tabs>
 
-      {/* Modal de Edición */}
-      {showEditModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-2xl">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Editar Caso Legal</CardTitle>
-                <Button variant="ghost" size="sm" onClick={() => setShowEditModal(false)}>
-                  <X className="w-4 h-4" />
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Nombre del Caso *
-                </label>
-                <input
-                  type="text"
-                  value={editData.nombre_caso}
-                  onChange={(e) => setEditData({...editData, nombre_caso: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Descripción
-                </label>
-                <textarea
-                  value={editData.descripcion}
-                  onChange={(e) => setEditData({...editData, descripcion: e.target.value})}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Estado Legal
-                  </label>
-                  <select
-                    value={editData.estado_legal}
-                    onChange={(e) => setEditData({...editData, estado_legal: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                  >
-                    <option value="abierto">Abierto</option>
-                    <option value="en_litigio">En Litigio</option>
-                    <option value="cerrado">Cerrado</option>
-                    <option value="archivado">Archivado</option>
-                  </select>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Fecha de Cierre
-                  </label>
-                  <input
-                    type="date"
-                    value={editData.fecha_cierre}
-                    onChange={(e) => setEditData({...editData, fecha_cierre: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-end space-x-2">
-                <Button variant="outline" onClick={() => setShowEditModal(false)}>
-                  Cancelar
-                </Button>
-                <Button onClick={handleUpdateCaso}>
-                  <Save className="w-4 h-4 mr-2" />
-                  Guardar Cambios
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+      {/* Modal de Formulario */}
+      <CasoLegalFormModal
+        isOpen={showFormModal}
+        onClose={() => setShowFormModal(false)}
+        casoLegal={casoLegal}
+        onSuccess={handleModalSuccess}
+      />
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Search, Filter, Briefcase, Calendar, User, Building2, Eye, CreditCard as Edit, Clock, CheckCircle, AlertTriangle, FileText } from 'lucide-react';
+import { Plus, Search, Filter, Briefcase, Calendar, User, Building2, Eye, CreditCard as Edit, Clock, CheckCircle, AlertTriangle, FileText, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +9,7 @@ import { Select } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { usePermissions } from '@/hooks/usePermissions';
 import { databaseService } from '@/services/DatabaseService';
+import { CasoLegalFormModal } from '@/components/CasosLegales/CasoLegalFormModal';
 import { formatDate } from '@/lib/utils';
 
 export const CasosLegalesList: React.FC = () => {
@@ -19,6 +20,8 @@ export const CasosLegalesList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [estadoFilter, setEstadoFilter] = useState('');
   const [clienteFilter, setClienteFilter] = useState('');
+  const [showFormModal, setShowFormModal] = useState(false);
+  const [editingCaso, setEditingCaso] = useState<any>(null);
 
   useEffect(() => {
     cargarCasosLegales();
@@ -39,6 +42,41 @@ export const CasosLegalesList: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCreateCaso = () => {
+    setEditingCaso(null);
+    setShowFormModal(true);
+  };
+
+  const handleEditCaso = (caso: any) => {
+    setEditingCaso(caso);
+    setShowFormModal(true);
+  };
+
+  const handleDeleteCaso = async (caso: any) => {
+    if (!confirm(`¿Está seguro de que desea eliminar el caso "${caso.nombre_caso}"?`)) {
+      return;
+    }
+
+    try {
+      await databaseService.updateCasoLegal(caso.id, { is_active: false });
+      toast({
+        title: "Caso eliminado",
+        description: `${caso.nombre_caso} ha sido eliminado`,
+      });
+      cargarCasosLegales();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "No se pudo eliminar el caso",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleModalSuccess = () => {
+    cargarCasosLegales();
   };
 
   const filteredCasos = casosLegales.filter(caso => {
@@ -98,13 +136,13 @@ export const CasosLegalesList: React.FC = () => {
           <p className="text-gray-600">Gestión de archivos de casos y dossiers legales</p>
         </div>
         {hasPermission('crear_casos_legales') && (
-          <Link 
-            to="/casos-legales/nuevo"
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
+          <Button 
+            onClick={handleCreateCaso}
+            className="bg-blue-600 hover:bg-blue-700"
           >
             <Plus className="w-4 h-4 mr-2" />
             Nuevo Caso Legal
-          </Link>
+          </Button>
         )}
       </div>
 
@@ -265,8 +303,22 @@ export const CasosLegalesList: React.FC = () => {
                   Ver
                 </Button>
                 {hasPermission('editar_casos_legales') && (
-                  <Button size="sm" variant="outline">
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => handleEditCaso(caso)}
+                  >
                     <Edit className="w-4 h-4" />
+                  </Button>
+                )}
+                {hasPermission('*') && (
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => handleDeleteCaso(caso)}
+                    className="text-red-600 hover:text-red-700 border-red-300 hover:border-red-400"
+                  >
+                    <Trash2 className="w-4 h-4" />
                   </Button>
                 )}
               </div>
@@ -289,13 +341,13 @@ export const CasosLegalesList: React.FC = () => {
               }
             </p>
             {hasPermission('crear_casos_legales') && !searchTerm && !estadoFilter && !clienteFilter && (
-              <Link 
-                to="/casos-legales/nuevo"
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
+              <Button 
+                onClick={handleCreateCaso}
+                className="bg-blue-600 hover:bg-blue-700"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Crear Primer Caso Legal
-              </Link>
+              </Button>
             )}
           </CardContent>
         </Card>
@@ -317,6 +369,14 @@ export const CasosLegalesList: React.FC = () => {
           ))}
         </div>
       )}
+
+      {/* Modal de Formulario */}
+      <CasoLegalFormModal
+        isOpen={showFormModal}
+        onClose={() => setShowFormModal(false)}
+        casoLegal={editingCaso}
+        onSuccess={handleModalSuccess}
+      />
     </div>
   );
 };

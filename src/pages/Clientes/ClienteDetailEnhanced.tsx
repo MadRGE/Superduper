@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { usePermissions } from '@/hooks/usePermissions';
 import { databaseService } from '@/services/DatabaseService';
 import { ClientFormModal } from '@/components/Clientes/ClientFormModal';
+import { CasoLegalFormModal } from '@/components/CasosLegales/CasoLegalFormModal';
 import { formatDate } from '@/lib/utils';
 
 export const ClienteDetailEnhanced: React.FC = () => {
@@ -24,6 +25,7 @@ export const ClienteDetailEnhanced: React.FC = () => {
   const [casosLegales, setCasosLegales] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showCasoLegalModal, setShowCasoLegalModal] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -119,6 +121,14 @@ export const ClienteDetailEnhanced: React.FC = () => {
   };
 
   const handleModalSuccess = () => {
+    cargarDatosCompletos();
+  };
+
+  const handleCreateCasoLegal = () => {
+    setShowCasoLegalModal(true);
+  };
+
+  const handleCasoLegalSuccess = () => {
     cargarDatosCompletos();
   };
 
@@ -330,7 +340,7 @@ export const ClienteDetailEnhanced: React.FC = () => {
               <div className="flex items-center justify-between">
                 <CardTitle>Casos Legales</CardTitle>
                 {hasPermission('crear_casos_legales') && (
-                  <Button size="sm">
+                  <Button size="sm" onClick={handleCreateCasoLegal}>
                     <Plus className="w-4 h-4 mr-2" />
                     Nuevo Caso Legal
                   </Button>
@@ -424,6 +434,14 @@ export const ClienteDetailEnhanced: React.FC = () => {
         onClose={() => setShowEditModal(false)}
         cliente={cliente}
         onSuccess={handleModalSuccess}
+      />
+
+      {/* Modal de Caso Legal */}
+      <CasoLegalFormModal
+        isOpen={showCasoLegalModal}
+        onClose={() => setShowCasoLegalModal(false)}
+        clienteId={cliente?.id}
+        onSuccess={handleCasoLegalSuccess}
       />
     </div>
   );
