@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Searcimport { Search, Plus, Building, User, Mail, Phone, Eye, CreditCard as Edit, Trash2 } from 'lucide-react'/../context/SGTContext';
+import { Search, Plus, Building, User, Mail, Phone, Eye, Edit, Trash2 } from 'lucide-react';
+import { useSGT } from '../../context/SGTContext';
 
 export const Clientes: React.FC = () => {
   const { state, fetchClientes, fetchExpedientes } = useSGT();
