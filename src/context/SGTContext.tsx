@@ -161,9 +161,17 @@ export const SGTProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchClientes = async () => {
     try {
-      // Intentar cargar desde localStorage primero
-      const clientesGuardados = localStorage.getItem('sgt_clientes');
+      // Intentar cargar desde Supabase primero
+      try {
+        const clientesData = await databaseService.getClientes();
+        dispatch({ type: 'SET_CLIENTES', payload: clientesData });
+        return;
+      } catch (supabaseError) {
+        console.log('Supabase no disponible, usando localStorage:', supabaseError);
+      }
       
+      // Fallback a localStorage
+      const clientesGuardados = localStorage.getItem('sgt_clientes');
       if (clientesGuardados) {
         dispatch({ type: 'SET_CLIENTES', payload: JSON.parse(clientesGuardados) });
       } else {

@@ -175,6 +175,44 @@ export class DatabaseService {
     return data;
   }
 
+  async deleteCliente(id: string) {
+    // Soft delete - marcar como inactivo
+    const { data, error } = await supabase
+      .from('clientes')
+      .update({ 
+        is_active: false,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error deleting cliente:', error);
+      throw error;
+    }
+    return data;
+  }
+
+  async reactivateCliente(id: string) {
+    // Reactivar cliente
+    const { data, error } = await supabase
+      .from('clientes')
+      .update({ 
+        is_active: true,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error reactivating cliente:', error);
+      throw error;
+    }
+    return data;
+  }
+
   // ==================== DOCUMENTOS ====================
 
   async getDocumentosByExpediente(expedienteId: string) {
