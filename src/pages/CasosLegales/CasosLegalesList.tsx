@@ -1,20 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  Plus, 
-  Search, 
-  Filter, 
-  Briefcase, 
-  Calendar, 
-  User,
-  Building2,
-  Eye,
-  Edit,
-  Clock,
-  CheckCircle,
-  AlertTriangle,
-  FileText
-} from 'lucide-react';
+import { Plus, Search, Filter, Briefcase, Calendar, User, Building2, Eye, CreditCard as Edit, Clock, CheckCircle, AlertTriangle, FileText } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';

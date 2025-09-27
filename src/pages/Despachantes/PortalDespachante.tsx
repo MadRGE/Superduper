@@ -1,20 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  Shield, 
-  FileText, 
-  Users,
-  Calendar,
-  Clock,
-  CheckCircle,
-  AlertTriangle,
-  User,
-  Building2,
-  Phone,
-  Mail,
-  Eye,
-  Edit,
-  Plus
-} from 'lucide-react';
+import { Shield, FileText, Users, Calendar, Clock, CheckCircle, AlertTriangle, User, Building2, Phone, Mail, Eye, CreditCard as Edit, Plus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
