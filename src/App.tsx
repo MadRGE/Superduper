@@ -29,6 +29,8 @@ import { Proveedores } from './pages/Comercial/Proveedores';
 import { GestionIntegral } from './pages/Admin/GestionIntegral';
 import { PortalDespachante } from './pages/Despachantes/PortalDespachante';
 import { ClienteExpedientesDashboard } from './pages/Clientes/ClienteDashboardExcel';
+import { CasosLegalesList } from './pages/CasosLegales/CasosLegalesList';
+import { CasoLegalDetail } from './pages/CasosLegales/CasoLegalDetail';
 import ModuloFinancieroContable from './pages/Finanzas/ModuloFinancieroContable';
 import { SGTProvider } from './context/SGTContext';
 import { startAutomations } from './services/AutomationService';
@@ -83,6 +85,8 @@ const AppContent: React.FC = () => {
               <Route path="/clientes" element={<Clientes />} />
               <Route path="/clientes/:id" element={<ClienteDetailEnhanced />} />
               <Route path="/clientes/:id/dashboard" element={<ClienteExpedientesDashboard />} />
+              <Route path="/casos-legales" element={<CasosLegalesList />} />
+              <Route path="/casos-legales/:id" element={<CasoLegalDetail />} />
               <Route path="/reportes" element={<Reportes />} />
               <Route path="/notificaciones" element={<Notificaciones />} />
               <Route path="/fauna-cites" element={<FaunaCITES />} />

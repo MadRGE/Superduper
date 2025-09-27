@@ -59,6 +59,7 @@ const navigationModules: NavigationModule[] = [
     items: [
       { name: 'Expedientes', href: '/expedientes' },
       { name: 'Catálogo', href: '/catalogo' },
+      { name: 'Casos Legales', href: '/casos-legales', permission: 'ver_casos_legales' },
       { name: 'FAUNA/CITES', href: '/fauna-cites' },
       { name: 'RENPRE', href: '/renpre' },
       { name: 'ANMaC', href: '/anmac' },

@@ -38,7 +38,9 @@ export const PortalDespachante: React.FC = () => {
     );
   }
 
-  const clientesAsignados = usuario?.clientes_asignados?.length || 0;
+  // Obtener clientes asignados del usuario actual
+  const clientesAsignadosIds = usuario?.clientes_asignados || [];
+  const clientesAsignados = clientesAsignadosIds.length;
 
   return (
     <div className="space-y-6">
@@ -165,6 +167,10 @@ export const PortalDespachante: React.FC = () => {
 
 // Componente de Clientes para Despachante (vista limitada)
 const MisClientesDespachante: React.FC<{onSelectCliente: (cliente: any) => void}> = ({ onSelectCliente }) => {
+  const { usuario } = useAuth();
+  const { canViewCliente } = usePermissions();
+  
+  // Filtrar solo clientes asignados al despachante actual
   const clientesAsignados = [
     {
       id: 'cliente-1',
@@ -190,7 +196,7 @@ const MisClientesDespachante: React.FC<{onSelectCliente: (cliente: any) => void}
       estado: 'activo',
       prioridad_maxima: 'normal'
     }
-  ];
+  ].filter(cliente => canViewCliente(cliente.id));
 
   return (
     <div className="space-y-3 max-h-96 overflow-y-auto">
@@ -245,6 +251,8 @@ const MisClientesDespachante: React.FC<{onSelectCliente: (cliente: any) => void}
 
 // Componente Detalle Restringido para Despachantes
 const ClienteDetalleRestringido: React.FC<{cliente: any}> = ({ cliente }) => {
+  const { hasPermission } = usePermissions();
+  
   return (
     <div className="space-y-6">
       {/* Header del Cliente */}
@@ -273,10 +281,12 @@ const ClienteDetalleRestringido: React.FC<{cliente: any}> = ({ cliente }) => {
                 <Phone className="w-4 h-4 mr-2" />
                 Contactar
               </Button>
-              <Button size="sm">
-                <Plus className="w-4 h-4 mr-2" />
-                Nueva Tarea
-              </Button>
+              {hasPermission('gestionar_tareas_propias') && (
+                <Button size="sm">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Nueva Tarea
+                </Button>
+              )}
             </div>
           </div>
         </CardContent>
@@ -322,6 +332,8 @@ const ClienteDetalleRestringido: React.FC<{cliente: any}> = ({ cliente }) => {
 
 // Componente Trámites para Vista Despachante
 const TramitesClienteDespachante: React.FC<{clienteId: string}> = ({ clienteId }) => {
+  const { canEditExpediente } = usePermissions();
+  
   const tramites = [
     {
       id: 'exp-001',
@@ -408,10 +420,12 @@ const TramitesClienteDespachante: React.FC<{clienteId: string}> = ({ clienteId }
                     <Eye className="w-4 h-4 mr-2" />
                     Ver Detalle
                   </Button>
-                  <Button size="sm">
-                    <Edit className="w-4 h-4 mr-2" />
-                    Trabajar
-                  </Button>
+                  {canEditExpediente(tramite) && (
+                    <Button size="sm">
+                      <Edit className="w-4 h-4 mr-2" />
+                      Trabajar
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
@@ -424,6 +438,8 @@ const TramitesClienteDespachante: React.FC<{clienteId: string}> = ({ clienteId }
 
 // Componente Tareas del Despachante
 const TareasDespachante: React.FC = () => {
+  const { hasPermission } = usePermissions();
+  
   const tareas = [
     {
       id: 1,
@@ -480,12 +496,23 @@ const TareasDespachante: React.FC = () => {
                 <Badge variant={tarea.estado === 'en_proceso' ? 'default' : 'secondary'}>
                   {tarea.estado.replace('_', ' ')}
                 </Badge>
-                <Button size="sm">
-                  Trabajar
-                </Button>
+                {hasPermission('gestionar_tareas_propias') && (
+                  <Button size="sm">
+                    Trabajar
+                  </Button>
+                )}
               </div>
             </div>
           ))}
+          
+          {hasPermission('gestionar_tareas_propias') && (
+            <div className="mt-4 pt-4 border-t">
+              <Button size="sm" variant="outline" className="w-full">
+                <Plus className="w-4 h-4 mr-2" />
+                Nueva Tarea
+              </Button>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
@@ -551,24 +578,29 @@ const CalendarioDespachante: React.FC = () => {
 
 // Componente Actividad Reciente del Despachante
 const ActividadRecienteDespachante: React.FC = () => {
+  const { usuario } = useAuth();
+  
   const actividades = [
     {
       fecha: '2025-01-25 14:30',
       accion: 'Documento revisado',
       detalle: 'Manual técnico aprobado - Router WiFi 6',
-      expediente: 'SGT-2025-ENACOM-00087'
+      expediente: 'SGT-2025-ENACOM-00087',
+      usuario: usuario?.nombre || 'Usuario'
     },
     {
       fecha: '2025-01-25 10:15',
       accion: 'Tarea completada',
       detalle: 'Preparación carpeta RNPA',
-      expediente: 'SGT-2025-ANMAT-00123'
+      expediente: 'SGT-2025-ANMAT-00123',
+      usuario: usuario?.nombre || 'Usuario'
     },
     {
       fecha: '2025-01-24 16:45',
       accion: 'Observación agregada',
       detalle: 'Falta certificado de libre venta',
-      expediente: 'SGT-2025-ANMAT-00134'
+      expediente: 'SGT-2025-ANMAT-00134',
+      usuario: usuario?.nombre || 'Usuario'
     }
   ];
 
@@ -589,6 +621,8 @@ const ActividadRecienteDespachante: React.FC = () => {
                   <span className="text-xs text-gray-500">{actividad.fecha}</span>
                   <span className="text-xs text-gray-400">•</span>
                   <span className="text-xs text-gray-500">{actividad.expediente}</span>
+                  <span className="text-xs text-gray-400">•</span>
+                  <span className="text-xs text-gray-500">Por: {actividad.usuario}</span>
                 </div>
               </div>
             </div>

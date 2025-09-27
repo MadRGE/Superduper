@@ -6,6 +6,11 @@ import type {
   Organismo, 
   Documento,
   Historial,
+  CasoLegal,
+  Producto,
+  Habilitacion,
+  Comunicacion,
+  Tarea,
   Inserts,
   Updates 
 } from '@/lib/supabase';
@@ -377,6 +382,462 @@ export class DatabaseService {
     return data;
   }
 
+  // ==================== CASOS LEGALES ====================
+
+  async getCasosLegales() {
+    const { data, error } = await supabase
+      .from('casos_legales')
+      .select(`
+        *,
+        cliente:clientes(*),
+        expedientes(count),
+        tareas(count)
+      `)
+      .eq('is_active', true)
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error('Error fetching casos legales:', error);
+      throw error;
+    }
+    return data;
+  }
+
+  async getCasosLegalesByCliente(clienteId: string) {
+    const { data, error } = await supabase
+      .from('casos_legales')
+      .select(`
+        *,
+        expedientes(*),
+        tareas(*),
+        comunicaciones(*)
+      `)
+      .eq('cliente_id', clienteId)
+      .eq('is_active', true)
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error('Error fetching casos legales by cliente:', error);
+      // Fallback to mock data
+      const casosMock = [
+        {
+          id: 'caso-1',
+          cliente_id: 'cliente-1',
+          nombre_caso: 'Registro RNPA Productos Lácteos',
+          descripcion: 'Gestión integral de registros RNPA para línea de productos lácteos',
+          estado_legal: 'abierto',
+          fecha_apertura: '2025-01-15',
+          fecha_cierre: null,
+          abogado_responsable_id: null,
+          metadata: { categoria: 'regulatorio', prioridad: 'alta' },
+          is_active: true,
+          created_at: '2025-01-15T10:00:00Z',
+          updated_at: '2025-01-15T10:00:00Z'
+        },
+        {
+          id: 'caso-2',
+          cliente_id: 'cliente-2',
+          nombre_caso: 'Homologación Equipos Telecomunicaciones',
+          descripcion: 'Proceso de homologación ENACOM para línea de productos tecnológicos',
+          estado_legal: 'abierto',
+          fecha_apertura: '2025-01-10',
+          fecha_cierre: null,
+          abogado_responsable_id: null,
+          metadata: { categoria: 'tecnologia', prioridad: 'normal' },
+          is_active: true,
+          created_at: '2025-01-10T09:00:00Z',
+          updated_at: '2025-01-10T09:00:00Z'
+        }
+      ];
+      return casosMock.filter(caso => caso.cliente_id === clienteId);
+    }
+    return data;
+  }
+
+  async createCasoLegal(casoLegal: Inserts<'casos_legales'>) {
+    const { data, error } = await supabase
+      .from('casos_legales')
+      .insert(casoLegal)
+      .select(`
+        *,
+        cliente:clientes(*)
+      `)
+      .single();
+    
+    if (error) {
+      console.error('Error creating caso legal:', error);
+      throw error;
+    }
+    return data;
+  }
+
+  async updateCasoLegal(id: string, updates: Updates<'casos_legales'>) {
+    const { data, error } = await supabase
+      .from('casos_legales')
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select(`
+        *,
+        cliente:clientes(*)
+      `)
+      .single();
+    
+    if (error) {
+      console.error('Error updating caso legal:', error);
+      throw error;
+    }
+    return data;
+  }
+
+  // ==================== PRODUCTOS ====================
+
+  async getProductosByCliente(clienteId: string) {
+    const { data, error } = await supabase
+      .from('productos')
+      .select('*')
+      .eq('cliente_id', clienteId)
+      .eq('is_active', true)
+      .order('nombre');
+    
+    if (error) {
+      console.error('Error fetching productos:', error);
+      // Fallback to mock data filtered by clienteId
+      const productosMock = [
+        {
+          id: 'prod-1',
+          cliente_id: 'cliente-1',
+          nombre: 'Yogur Natural 200g',
+          marca: 'DelSur',
+          rnpa: 'RNPA 04-123456',
+          categoria: 'Productos Lácteos',
+          estado: 'vigente',
+          vencimiento: '2026-03-15',
+          peso_neto: '200g',
+          vida_util: '30 días',
+          codigo_ean: '7791234567890'
+        },
+        {
+          id: 'prod-2',
+          cliente_id: 'cliente-2',
+          nombre: 'Router WiFi 6 Pro',
+          marca: 'TechCorp',
+          rnpa: 'N/A',
+          categoria: 'Equipos de Telecomunicaciones',
+          estado: 'vigente',
+          vencimiento: '2026-08-15',
+          peso_neto: '450g',
+          vida_util: 'N/A',
+          codigo_ean: '7791234567891'
+        },
+        {
+          id: 'prod-3',
+          cliente_id: 'cliente-3',
+          nombre: 'Plancha de Pelo Cerámica',
+          marca: 'BeautyTech',
+          rnpa: 'N/A',
+          categoria: 'Productos Eléctricos',
+          estado: 'vigente',
+          vencimiento: '2025-12-20',
+          peso_neto: '800g',
+          vida_util: 'N/A',
+          codigo_ean: '7791234567892'
+        }
+      ];
+      return productosMock.filter(producto => producto.cliente_id === clienteId);
+    }
+    return data;
+  }
+
+  async createProducto(producto: Inserts<'productos'>) {
+    const { data, error } = await supabase
+      .from('productos')
+      .insert(producto)
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error creating producto:', error);
+      throw error;
+    }
+    return data;
+  }
+
+  async updateProducto(id: string, updates: Updates<'productos'>) {
+    const { data, error } = await supabase
+      .from('productos')
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error updating producto:', error);
+      throw error;
+    }
+    return data;
+  }
+
+  // ==================== HABILITACIONES ====================
+
+  async getHabilitacionesByCliente(clienteId: string) {
+    const { data, error } = await supabase
+      .from('habilitaciones')
+      .select('*')
+      .eq('cliente_id', clienteId)
+      .eq('is_active', true)
+      .order('vencimiento');
+    
+    if (error) {
+      console.error('Error fetching habilitaciones:', error);
+      // Fallback to mock data filtered by clienteId
+      const habilitacionesMock = [
+        {
+          id: 'hab-1',
+          cliente_id: 'cliente-1',
+          tipo: 'RNE',
+          numero: '04-000123',
+          establecimiento: 'Planta Elaboradora Sur',
+          direccion: 'Av. Industrial 1234, Quilmes',
+          vencimiento: '2027-05-15',
+          estado: 'vigente',
+          actividades: ['Elaboración', 'Fraccionamiento', 'Depósito']
+        },
+        {
+          id: 'hab-2',
+          cliente_id: 'cliente-2',
+          tipo: 'Homologación ENACOM',
+          numero: 'ENACOM-2024-456',
+          establecimiento: 'Laboratorio Técnico',
+          direccion: 'Av. Tecnológica 567, CABA',
+          vencimiento: '2026-03-20',
+          estado: 'vigente',
+          actividades: ['Ensayos EMC', 'Certificación']
+        }
+      ];
+      return habilitacionesMock.filter(habilitacion => habilitacion.cliente_id === clienteId);
+    }
+    return data;
+  }
+
+  async createHabilitacion(habilitacion: Inserts<'habilitaciones'>) {
+    const { data, error } = await supabase
+      .from('habilitaciones')
+      .insert(habilitacion)
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error creating habilitacion:', error);
+      throw error;
+    }
+    return data;
+  }
+
+  async updateHabilitacion(id: string, updates: Updates<'habilitaciones'>) {
+    const { data, error } = await supabase
+      .from('habilitaciones')
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error updating habilitacion:', error);
+      throw error;
+    }
+    return data;
+  }
+
+  // ==================== COMUNICACIONES ====================
+
+  async getComunicacionesByCliente(clienteId: string) {
+    const { data, error } = await supabase
+      .from('comunicaciones')
+      .select(`
+        *,
+        expediente:expedientes(*),
+        caso_legal:casos_legales(*)
+      `)
+      .eq('cliente_id', clienteId)
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error('Error fetching comunicaciones:', error);
+      // Fallback to mock data filtered by clienteId
+      const comunicacionesMock = [
+        {
+          id: 'com-1',
+          cliente_id: 'cliente-1',
+          fecha: '2025-01-25 10:30',
+          tipo: 'email',
+          asunto: 'Documentación pendiente',
+          destinatario: 'contacto@lacteosdelsur.com',
+          estado: 'enviado',
+          mensaje: 'Estimado cliente, necesitamos que complete la documentación...',
+          expediente_relacionado: 'SGT-2025-ANMAT-00123'
+        },
+        {
+          id: 'com-2',
+          cliente_id: 'cliente-2',
+          fecha: '2025-01-24 14:15',
+          tipo: 'whatsapp',
+          asunto: 'Actualización de estado',
+          destinatario: '+54 11 9876-5432',
+          estado: 'enviado',
+          mensaje: 'Su expediente de homologación avanzó al siguiente paso...',
+          expediente_relacionado: 'SGT-2025-ENACOM-00087'
+        }
+      ];
+      return comunicacionesMock.filter(comunicacion => comunicacion.cliente_id === clienteId);
+    }
+    return data;
+  }
+
+  async createComunicacion(comunicacion: Inserts<'comunicaciones'>) {
+    const { data, error } = await supabase
+      .from('comunicaciones')
+      .insert(comunicacion)
+      .select(`
+        *,
+        expediente:expedientes(*),
+        caso_legal:casos_legales(*)
+      `)
+      .single();
+    
+    if (error) {
+      console.error('Error creating comunicacion:', error);
+      throw error;
+    }
+    return data;
+  }
+
+  // ==================== TAREAS ====================
+
+  async getTareasByExpediente(expedienteId: string) {
+    const { data, error } = await supabase
+      .from('tareas')
+      .select(`
+        *,
+        usuario_asignado:usuarios(*),
+        expediente:expedientes(*),
+        caso_legal:casos_legales(*)
+      `)
+      .eq('expediente_id', expedienteId)
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error('Error fetching tareas by expediente:', error);
+      throw error;
+    }
+    return data;
+  }
+
+  async getTareasByCasoLegal(casoLegalId: string) {
+    const { data, error } = await supabase
+      .from('tareas')
+      .select(`
+        *,
+        usuario_asignado:usuarios(*),
+        expediente:expedientes(*),
+        caso_legal:casos_legales(*)
+      `)
+      .eq('caso_legal_id', casoLegalId)
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error('Error fetching tareas by caso legal:', error);
+      throw error;
+    }
+    return data;
+  }
+
+  async getTareasByUsuario(usuarioId: string) {
+    const { data, error } = await supabase
+      .from('tareas')
+      .select(`
+        *,
+        expediente:expedientes(*),
+        caso_legal:casos_legales(*)
+      `)
+      .eq('usuario_asignado_id', usuarioId)
+      .in('estado', ['pendiente', 'en_proceso'])
+      .order('fecha_vencimiento', { ascending: true });
+    
+    if (error) {
+      console.error('Error fetching tareas by usuario:', error);
+      // Fallback to mock data
+      const tareasMock = [
+        {
+          id: 'tarea-1',
+          expediente_id: 'exp-001',
+          caso_legal_id: 'caso-1',
+          usuario_asignado_id: usuarioId,
+          titulo: 'Revisión documentación RNPA',
+          descripcion: 'Revisar y validar documentación técnica',
+          estado: 'pendiente',
+          prioridad: 'alta',
+          fecha_vencimiento: '2025-01-28',
+          fecha_completado: null,
+          created_at: '2025-01-25T10:00:00Z',
+          updated_at: '2025-01-25T10:00:00Z'
+        }
+      ];
+      return tareasMock.filter(tarea => tarea.usuario_asignado_id === usuarioId);
+    }
+    return data;
+  }
+
+  async createTarea(tarea: Inserts<'tareas'>) {
+    const { data, error } = await supabase
+      .from('tareas')
+      .insert(tarea)
+      .select(`
+        *,
+        usuario_asignado:usuarios(*),
+        expediente:expedientes(*),
+        caso_legal:casos_legales(*)
+      `)
+      .single();
+    
+    if (error) {
+      console.error('Error creating tarea:', error);
+      throw error;
+    }
+    return data;
+  }
+
+  async updateTarea(id: string, updates: Updates<'tareas'>) {
+    const { data, error } = await supabase
+      .from('tareas')
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select(`
+        *,
+        usuario_asignado:usuarios(*),
+        expediente:expedientes(*),
+        caso_legal:casos_legales(*)
+      `)
+      .single();
+    
+    if (error) {
+      console.error('Error updating tarea:', error);
+      throw error;
+    }
+    return data;
+  }
+
   // ==================== UTILITY METHODS ====================
 
   async getClienteCompleto(clienteId: string) {
@@ -404,134 +865,9 @@ export class DatabaseService {
     }
   }
 
+  // Use the new dedicated methods instead
   async getProductosRelacionados(clienteId: string) {
-    try {
-      const { data: productos, error } = await supabase
-        .from('productos')
-        .select('*')
-        .eq('cliente_id', clienteId);
-      
-      if (error) {
-        console.error('Error fetching productos relacionados:', error);
-        throw error;
-      }
-      return productos;
-    } catch (error) {
-      // Return mock data filtrada por clienteId como fallback
-      const productosMock = [
-        {
-          id: 'prod-1',
-          cliente_id: 'cliente-1',
-          nombre: 'Yogur Natural 200g',
-          marca: 'DelSur',
-          rnpa: 'RNPA 04-123456',
-          categoria: 'Productos Lácteos',
-          estado: 'vigente',
-          vencimiento: '2026-03-15',
-          peso_neto: '200g',
-          vida_util: '30 días',
-          codigo_ean: '7791234567890'
-        },
-        {
-          id: 'prod-2',
-          cliente_id: 'cliente-2',
-          nombre: 'Router WiFi 6 Pro',
-          marca: 'TechCorp',
-          rnpa: 'N/A',
-          categoria: 'Equipos de Telecomunicaciones',
-          estado: 'vigente',
-          vencimiento: '2026-08-15',
-          peso_neto: '450g',
-          vida_util: 'N/A',
-          codigo_ean: '7791234567891'
-        }
-      ];
-      return productosMock.filter(producto => producto.cliente_id === clienteId);
-    }
-  }
-
-  async getComunicacionesByCliente(clienteId: string) {
-    try {
-      const { data: comunicaciones, error } = await supabase
-        .from('comunicaciones')
-        .select('*')
-        .eq('cliente_id', clienteId)
-        .order('created_at', { ascending: false });
-      
-      if (error) {
-        console.error('Error fetching comunicaciones:', error);
-        throw error;
-      }
-      return comunicaciones;
-    } catch (error) {
-      // Return mock data filtrada por clienteId como fallback
-      const comunicacionesMock = [
-        {
-          id: 'com-1',
-          cliente_id: 'cliente-1',
-          fecha: '2025-01-25 10:30',
-          tipo: 'email',
-          asunto: 'Documentación pendiente',
-          destinatario: 'contacto@lacteosdelsur.com',
-          estado: 'enviado',
-          mensaje: 'Estimado cliente, necesitamos que complete la documentación...',
-          expediente_relacionado: 'SGT-2025-ANMAT-00123'
-        },
-        {
-          id: 'com-2',
-          cliente_id: 'cliente-2',
-          fecha: '2025-01-24 14:15',
-          tipo: 'whatsapp',
-          asunto: 'Actualización de estado',
-          destinatario: '+54 11 9876-5432',
-          estado: 'enviado',
-          mensaje: 'Su expediente de homologación avanzó al siguiente paso...',
-          expediente_relacionado: 'SGT-2025-ENACOM-00087'
-        }
-      ];
-      return comunicacionesMock.filter(comunicacion => comunicacion.cliente_id === clienteId);
-    }
-  }
-
-  async getFacturasByCliente(clienteId: string) {
-    try {
-      const { data: facturas, error } = await supabase
-        .from('facturas')
-        .select('*')
-        .eq('cliente_id', clienteId)
-        .order('fecha', { ascending: false });
-      
-      if (error) {
-        console.error('Error fetching facturas:', error);
-        throw error;
-      }
-      return facturas;
-    } catch (error) {
-      // Return mock data filtrada por clienteId como fallback
-      const facturasMock = [
-        {
-          id: 'fact-1',
-          cliente_id: 'cliente-1',
-          numero: 'FC-A-00001-00000234',
-          fecha: '2025-01-20',
-          concepto: 'RNPA Yogur Natural',
-          total: 544500,
-          estado: 'pagada',
-          fecha_pago: '2025-01-25'
-        },
-        {
-          id: 'fact-2',
-          cliente_id: 'cliente-2',
-          numero: 'FC-A-00001-00000235',
-          fecha: '2025-01-18',
-          concepto: 'Homologación ENACOM Router WiFi',
-          total: 332750,
-          estado: 'pendiente',
-          fecha_pago: null
-        }
-      ];
-      return facturasMock.filter(factura => factura.cliente_id === clienteId);
-    }
+    return this.getProductosByCliente(clienteId);
   }
 
   async generateExpedienteCodigo(organismoSigla: string): Promise<string> {

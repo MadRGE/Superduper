@@ -363,9 +363,343 @@ export interface Database {
   }
 }
 
+  casos_legales: {
+    Row: {
+      id: string
+      cliente_id: string
+      nombre_caso: string
+      descripcion: string | null
+      estado_legal: string | null
+      fecha_apertura: string | null
+      fecha_cierre: string | null
+      abogado_responsable_id: string | null
+      metadata: Json | null
+      is_active: boolean | null
+      created_at: string | null
+      updated_at: string | null
+    }
+    Insert: {
+      id?: string
+      cliente_id: string
+      nombre_caso: string
+      descripcion?: string | null
+      estado_legal?: string | null
+      fecha_apertura?: string | null
+      fecha_cierre?: string | null
+      abogado_responsable_id?: string | null
+      metadata?: Json | null
+      is_active?: boolean | null
+      created_at?: string | null
+      updated_at?: string | null
+    }
+    Update: {
+      id?: string
+      cliente_id?: string
+      nombre_caso?: string
+      descripcion?: string | null
+      estado_legal?: string | null
+      fecha_apertura?: string | null
+      fecha_cierre?: string | null
+      abogado_responsable_id?: string | null
+      metadata?: Json | null
+      is_active?: boolean | null
+      created_at?: string | null
+      updated_at?: string | null
+    }
+  }
+  productos: {
+    Row: {
+      id: string
+      cliente_id: string
+      nombre: string
+      marca: string | null
+      rnpa: string | null
+      categoria: string | null
+      estado: string | null
+      vencimiento: string | null
+      peso_neto: string | null
+      vida_util: string | null
+      codigo_ean: string | null
+      metadata: Json | null
+      is_active: boolean | null
+      created_at: string | null
+      updated_at: string | null
+    }
+    Insert: {
+      id?: string
+      cliente_id: string
+      nombre: string
+      marca?: string | null
+      rnpa?: string | null
+      categoria?: string | null
+      estado?: string | null
+      vencimiento?: string | null
+      peso_neto?: string | null
+      vida_util?: string | null
+      codigo_ean?: string | null
+      metadata?: Json | null
+      is_active?: boolean | null
+      created_at?: string | null
+      updated_at?: string | null
+    }
+    Update: {
+      id?: string
+      cliente_id?: string
+      nombre?: string
+      marca?: string | null
+      rnpa?: string | null
+      categoria?: string | null
+      estado?: string | null
+      vencimiento?: string | null
+      peso_neto?: string | null
+      vida_util?: string | null
+      codigo_ean?: string | null
+      metadata?: Json | null
+      is_active?: boolean | null
+      created_at?: string | null
+      updated_at?: string | null
+    }
+  }
+  habilitaciones: {
+    Row: {
+      id: string
+      cliente_id: string
+      tipo: string
+      numero: string
+      establecimiento: string | null
+      direccion: string | null
+      vencimiento: string
+      estado: string | null
+      actividades: string[] | null
+      metadata: Json | null
+      is_active: boolean | null
+      created_at: string | null
+      updated_at: string | null
+    }
+    Insert: {
+      id?: string
+      cliente_id: string
+      tipo: string
+      numero: string
+      establecimiento?: string | null
+      direccion?: string | null
+      vencimiento: string
+      estado?: string | null
+      actividades?: string[] | null
+      metadata?: Json | null
+      is_active?: boolean | null
+      created_at?: string | null
+      updated_at?: string | null
+    }
+    Update: {
+      id?: string
+      cliente_id?: string
+      tipo?: string
+      numero?: string
+      establecimiento?: string | null
+      direccion?: string | null
+      vencimiento?: string
+      estado?: string | null
+      actividades?: string[] | null
+      metadata?: Json | null
+      is_active?: boolean | null
+      created_at?: string | null
+      updated_at?: string | null
+    }
+  }
+  comunicaciones: {
+    Row: {
+      id: string
+      cliente_id: string
+      expediente_id: string | null
+      caso_legal_id: string | null
+      tipo: string
+      asunto: string
+      mensaje: string
+      destinatario: string
+      estado: string | null
+      fecha_envio: string | null
+      metadata: Json | null
+      created_at: string | null
+    }
+    Insert: {
+      id?: string
+      cliente_id: string
+      expediente_id?: string | null
+      caso_legal_id?: string | null
+      tipo: string
+      asunto: string
+      mensaje: string
+      destinatario: string
+      estado?: string | null
+      fecha_envio?: string | null
+      metadata?: Json | null
+      created_at?: string | null
+    }
+    Update: {
+      id?: string
+      cliente_id?: string
+      expediente_id?: string | null
+      caso_legal_id?: string | null
+      tipo?: string
+      asunto?: string
+      mensaje?: string
+      destinatario?: string
+      estado?: string | null
+      fecha_envio?: string | null
+      metadata?: Json | null
+      created_at?: string | null
+    }
+  }
+  tareas: {
+    Row: {
+      id: string
+      expediente_id: string | null
+      caso_legal_id: string | null
+      usuario_asignado_id: string | null
+      titulo: string
+      descripcion: string | null
+      estado: string | null
+      prioridad: string | null
+      fecha_vencimiento: string | null
+      fecha_completado: string | null
+      metadata: Json | null
+      created_at: string | null
+      updated_at: string | null
+    }
+    Insert: {
+      id?: string
+      expediente_id?: string | null
+      caso_legal_id?: string | null
+      usuario_asignado_id?: string | null
+      titulo: string
+      descripcion?: string | null
+      estado?: string | null
+      prioridad?: string | null
+      fecha_vencimiento?: string | null
+      fecha_completado?: string | null
+      metadata?: Json | null
+      created_at?: string | null
+      updated_at?: string | null
+    }
+    Update: {
+      id?: string
+      expediente_id?: string | null
+      caso_legal_id?: string | null
+      usuario_asignado_id?: string | null
+      titulo?: string
+      descripcion?: string | null
+      estado?: string | null
+      prioridad?: string | null
+      fecha_vencimiento?: string | null
+      fecha_completado?: string | null
+      metadata?: Json | null
+      created_at?: string | null
+      updated_at?: string | null
+    }
+  }
 export type Estado = 'iniciado' | 'en_proceso' | 'observado' | 'aprobado' | 'completado' | 'cancelado'
 export type Prioridad = 'baja' | 'normal' | 'alta' | 'urgente'
 export type Rol = 'admin' | 'gestor' | 'despachante' | 'cliente'
+export type EstadoLegal = 'abierto' | 'en_litigio' | 'cerrado' | 'archivado'
+export type EstadoTarea = 'pendiente' | 'en_proceso' | 'completado' | 'cancelado'
+
+export interface CasoLegal {
+  id: string
+  cliente_id: string
+  nombre_caso: string
+  descripcion?: string
+  estado_legal: EstadoLegal
+  fecha_apertura: Date
+  fecha_cierre?: Date
+  abogado_responsable_id?: string
+  metadata?: any
+  is_active: boolean
+  created_at: Date
+  updated_at: Date
+  // Relations
+  cliente?: Cliente
+  expedientes?: Expediente[]
+  tareas?: Tarea[]
+  comunicaciones?: Comunicacion[]
+}
+
+export interface Producto {
+  id: string
+  cliente_id: string
+  nombre: string
+  marca?: string
+  rnpa?: string
+  categoria?: string
+  estado: string
+  vencimiento?: Date
+  peso_neto?: string
+  vida_util?: string
+  codigo_ean?: string
+  metadata?: any
+  is_active: boolean
+  created_at: Date
+  updated_at: Date
+  // Relations
+  cliente?: Cliente
+}
+
+export interface Habilitacion {
+  id: string
+  cliente_id: string
+  tipo: string
+  numero: string
+  establecimiento?: string
+  direccion?: string
+  vencimiento: Date
+  estado: string
+  actividades?: string[]
+  metadata?: any
+  is_active: boolean
+  created_at: Date
+  updated_at: Date
+  // Relations
+  cliente?: Cliente
+}
+
+export interface Comunicacion {
+  id: string
+  cliente_id: string
+  expediente_id?: string
+  caso_legal_id?: string
+  tipo: string
+  asunto: string
+  mensaje: string
+  destinatario: string
+  estado: string
+  fecha_envio?: Date
+  metadata?: any
+  created_at: Date
+  // Relations
+  cliente?: Cliente
+  expediente?: Expediente
+  caso_legal?: CasoLegal
+}
+
+export interface Tarea {
+  id: string
+  expediente_id?: string
+  caso_legal_id?: string
+  usuario_asignado_id?: string
+  titulo: string
+  descripcion?: string
+  estado: EstadoTarea
+  prioridad: Prioridad
+  fecha_vencimiento?: Date
+  fecha_completado?: Date
+  metadata?: any
+  created_at: Date
+  updated_at: Date
+  // Relations
+  expediente?: Expediente
+  caso_legal?: CasoLegal
+  usuario_asignado?: Usuario
+}
 
 export interface Expediente {
   id: string
@@ -374,6 +708,7 @@ export interface Expediente {
   tramite_tipo_id: string
   cliente_id: string
   despachante_id?: string
+  caso_legal_id?: string
   estado: Estado
   prioridad: Prioridad
   fecha_inicio: Date
@@ -389,6 +724,7 @@ export interface Expediente {
   tramite_tipo?: TramiteTipo
   cliente?: Cliente
   despachante?: Despachante
+  caso_legal?: CasoLegal
   documentos?: Documento[]
 }
 

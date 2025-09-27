@@ -54,6 +54,33 @@ export const usePermissions = () => {
     return hasPermission('*') || hasPermission('crear_expedientes');
   };
 
+  const canViewCasoLegal = (casoLegal: any): boolean => {
+    if (hasPermission('*') || hasPermission('ver_casos_legales')) return true;
+    
+    if (usuario?.rol === 'despachante') {
+      return hasPermission('ver_casos_legales_asignados') && canViewCliente(casoLegal.cliente_id);
+    }
+    
+    if (usuario?.rol === 'cliente') {
+      return hasPermission('ver_casos_legales_propios') && casoLegal.cliente_id === usuario.cliente_id;
+    }
+    
+    return false;
+  };
+
+  const canCreateCasoLegal = (): boolean => {
+    return hasPermission('*') || hasPermission('crear_casos_legales');
+  };
+
+  const canEditCasoLegal = (casoLegal: any): boolean => {
+    if (hasPermission('*') || hasPermission('editar_casos_legales')) return true;
+    
+    if (usuario?.rol === 'despachante') {
+      return canViewCliente(casoLegal.cliente_id);
+    }
+    
+    return false;
+  };
   const canViewReportes = (): boolean => {
     return hasPermission('*') || hasPermission('ver_reportes') || hasPermission('ver_reportes_limitados');
   };
@@ -71,6 +98,9 @@ export const usePermissions = () => {
     canViewCliente,
     canEditExpediente,
     canCreateExpediente,
+    canViewCasoLegal,
+    canCreateCasoLegal,
+    canEditCasoLegal,
     canViewReportes,
     canManageUsers,
     canAccessFinancial,

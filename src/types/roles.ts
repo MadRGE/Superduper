@@ -28,7 +28,10 @@ export const ROLES = {
       'gestionar_tareas',
       'ver_reportes',
       'generar_presupuestos',
-      'gestionar_facturacion'
+      'gestionar_facturacion',
+      'ver_casos_legales',
+      'crear_casos_legales',
+      'editar_casos_legales'
     ]
   },
   DESPACHANTE: {
@@ -44,7 +47,8 @@ export const ROLES = {
       'agregar_notas',
       'ver_calendario',
       'gestionar_tareas_propias',
-      'ver_reportes_limitados'
+      'ver_reportes_limitados',
+      'ver_casos_legales_asignados'
     ]
   },
   CLIENTE: {
@@ -56,7 +60,8 @@ export const ROLES = {
       'ver_documentos_propios',
       'subir_documentos_basicos',
       'ver_estado',
-      'ver_notificaciones'
+      'ver_notificaciones',
+      'ver_casos_legales_propios'
     ]
   },
   COLABORADOR: {
@@ -66,7 +71,8 @@ export const ROLES = {
     permisos: [
       'ver_expedientes_asignados',
       'ejecutar_tareas_asignadas',
-      'subir_documentos_tarea'
+      'subir_documentos_tarea',
+      'ver_tareas_asignadas'
     ]
   }
 };

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
+import { usePermissions } from '@/hooks/usePermissions';
 import { useSGT } from '../../context/SGTContext';
 import { expedienteService, ExpedienteService } from '../../services/ExpedienteService';
 import { databaseService } from '../../services/DatabaseService';
@@ -77,6 +78,7 @@ export const ClienteDetailEnhanced: React.FC = () => {
   const navigate = useNavigate();
   const { state } = useSGT();
   const { toast } = useToast();
+  const { hasPermission, canViewCliente } = usePermissions();
   
   const [cliente, setCliente] = useState<any>(null);
   const [expedientesCliente, setExpedientesCliente] = useState<any[]>([]);
@@ -84,12 +86,14 @@ export const ClienteDetailEnhanced: React.FC = () => {
   const [habilitacionesCliente, setHabilitacionesCliente] = useState<any[]>([]);
   const [comunicacionesCliente, setComunicacionesCliente] = useState<any[]>([]);
   const [facturasCliente, setFacturasCliente] = useState<any[]>([]);
+  const [casosLegalesCliente, setCasosLegalesCliente] = useState<any[]>([]);
   const [despachanteAsignado, setDespachanteAsignado] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   
   const [expandedSections, setExpandedSections] = useState({
     general: true,
     expedientes: true,
+    casos_legales: false,
     dashboard: false,
     productos: false,
     habilitaciones: false,
@@ -106,6 +110,17 @@ export const ClienteDetailEnhanced: React.FC = () => {
 
   const cargarDatosCompletos = React.useCallback(async () => {
     if (!id) return;
+    
+    // Verificar permisos de acceso al cliente
+    if (!hasPermission('*') && !hasPermission('ver_todos_clientes') && !canViewCliente(id)) {
+      toast({
+        title: "Acceso denegado",
+        description: "No tiene permisos para ver este cliente",
+        variant: "destructive"
+      });
+      navigate('/clientes');
+      return;
+    }
     
     try {
       setLoading(true);
@@ -171,34 +186,24 @@ export const ClienteDetailEnhanced: React.FC = () => {
       setExpedientesCliente(expedientes);
 
       // Cargar productos usando DatabaseService (con fallback a mock data filtrada)
-      const productos = await databaseService.getProductosRelacionados(id);
+      const productos = await databaseService.getProductosByCliente(id);
       setProductosCliente(productos);
 
       // Cargar habilitaciones usando el servicio actualizado (ahora filtra por clienteId)
-      const habilitaciones = expedienteService.getHabilitacionesByCliente(id);
+      const habilitaciones = await databaseService.getHabilitacionesByCliente(id);
       setHabilitacionesCliente(habilitaciones);
 
       // Cargar comunicaciones usando DatabaseService (con fallback a mock data filtrada)
-      try {
-        const comunicaciones = await databaseService.getComunicacionesByCliente(id);
-        setComunicacionesCliente(comunicaciones);
-      } catch (error) {
-        // Fallback a mock data filtrada por clienteId
-        const comunicaciones = expedienteService.getComunicacionesByCliente(id);
-        setComunicacionesCliente(comunicaciones);
-      }
+      const comunicaciones = await databaseService.getComunicacionesByCliente(id);
       setComunicacionesCliente(comunicaciones);
 
       // Cargar facturas usando DatabaseService (con fallback a mock data filtrada)
-      try {
-        const facturas = await databaseService.getFacturasByCliente(id);
-        setFacturasCliente(facturas);
-      } catch (error) {
-        // Fallback a mock data filtrada por clienteId
-        const facturas = expedienteService.getFacturasByCliente(id);
-        setFacturasCliente(facturas);
-      }
+      const facturas = await databaseService.getFacturasByCliente(id);
       setFacturasCliente(facturas);
+
+      // Cargar casos legales usando DatabaseService
+      const casosLegales = await databaseService.getCasosLegalesByCliente(id);
+      setCasosLegalesCliente(casosLegales);
 
       // Simular despachante asignado
       const despachante = {
@@ -223,7 +228,7 @@ export const ClienteDetailEnhanced: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [id, toast, navigate]);
+  }, [id, toast, navigate, hasPermission, canViewCliente]);
 
   useEffect(() => {
     cargarDatosCompletos();
@@ -262,6 +267,7 @@ export const ClienteDetailEnhanced: React.FC = () => {
     const productosVigentes = productosCliente.filter(p => p.estado === 'vigente').length;
     const habilitacionesVigentes = habilitacionesCliente.filter(h => h.estado === 'vigente').length;
     const facturasPendientes = facturasCliente.filter(f => f.estado === 'pendiente').length;
+    const casosLegalesAbiertos = casosLegalesCliente.filter(c => c.estado_legal === 'abierto').length;
     
     return {
       expedientesActivos,
@@ -269,7 +275,8 @@ export const ClienteDetailEnhanced: React.FC = () => {
       expedientesVencidos,
       productosVigentes,
       habilitacionesVigentes,
-      facturasPendientes
+      facturasPendientes,
+      casosLegalesAbiertos
     };
   };
 
@@ -340,15 +347,23 @@ export const ClienteDetailEnhanced: React.FC = () => {
               <Phone className="w-4 h-4 mr-2" />
               Llamar
             </Button>
-            <Button size="sm">
-              <Plus className="w-4 h-4 mr-2" />
-              Nuevo Expediente
-            </Button>
+            {hasPermission('crear_expedientes') && (
+              <Button size="sm">
+                <Plus className="w-4 h-4 mr-2" />
+                Nuevo Expediente
+              </Button>
+            )}
+            {hasPermission('crear_casos_legales') && (
+              <Button size="sm" variant="outline">
+                <Briefcase className="w-4 h-4 mr-2" />
+                Nuevo Caso Legal
+              </Button>
+            )}
           </div>
         </div>
 
         {/* Métricas Rápidas */}
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+        <div className="grid grid-cols-2 md:grid-cols-7 gap-4 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
           <div className="text-center">
             <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.expedientesActivos}</p>
             <p className="text-xs text-gray-500 dark:text-gray-400">Expedientes Activos</p>
@@ -372,6 +387,10 @@ export const ClienteDetailEnhanced: React.FC = () => {
           <div className="text-center">
             <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.facturasPendientes}</p>
             <p className="text-xs text-gray-500 dark:text-gray-400">Facturas Pendientes</p>
+          </div>
+          <div className="text-center">
+            <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{stats.casosLegalesAbiertos}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Casos Abiertos</p>
           </div>
         </div>
       </div>
@@ -615,8 +634,90 @@ export const ClienteDetailEnhanced: React.FC = () => {
             )}
           </Card>
 
+          {/* Casos Legales del Cliente */}
+          {hasPermission('ver_casos_legales') && (
+            <Card className="dark:bg-gray-800 dark:border-gray-700">
+              <CardHeader 
+                className="cursor-pointer"
+                onClick={() => toggleSection('casos_legales')}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Briefcase className="w-5 h-5 text-gray-400" />
+                    <CardTitle className="dark:text-gray-100">Casos Legales ({casosLegalesCliente.length})</CardTitle>
+                  </div>
+                  {expandedSections.casos_legales ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
+                </div>
+              </CardHeader>
+              {expandedSections.casos_legales && (
+                <CardContent>
+                  <div className="space-y-4">
+                    {casosLegalesCliente.map((caso) => (
+                      <div key={caso.id} className="p-4 border dark:border-gray-600 rounded-lg hover:border-blue-300 dark:hover:border-blue-500 transition-colors">
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <h4 className="font-medium text-gray-900 dark:text-gray-100">{caso.nombre_caso}</h4>
+                            <p className="text-sm text-gray-600 dark:text-gray-300">{caso.descripcion}</p>
+                          </div>
+                          <Badge variant={
+                            caso.estado_legal === 'abierto' ? 'default' :
+                            caso.estado_legal === 'en_litigio' ? 'destructive' :
+                            caso.estado_legal === 'cerrado' ? 'secondary' :
+                            'outline'
+                          }>
+                            {caso.estado_legal.replace('_', ' ')}
+                          </Badge>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-300">
+                          <div>
+                            <span className="text-gray-500 dark:text-gray-400">Fecha apertura:</span>
+                            <span className="ml-2 dark:text-gray-200">{formatDate(caso.fecha_apertura)}</span>
+                          </div>
+                          {caso.fecha_cierre && (
+                            <div>
+                              <span className="text-gray-500 dark:text-gray-400">Fecha cierre:</span>
+                              <span className="ml-2 dark:text-gray-200">{formatDate(caso.fecha_cierre)}</span>
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div className="flex space-x-2 mt-3">
+                          <Button size="sm" variant="outline">
+                            <Eye className="w-4 h-4 mr-2" />
+                            Ver Detalle
+                          </Button>
+                          {hasPermission('editar_casos_legales') && (
+                            <Button size="sm" variant="outline">
+                              <Edit className="w-4 h-4 mr-2" />
+                              Editar
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                    
+                    {casosLegalesCliente.length === 0 && (
+                      <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                        <Briefcase className="w-12 h-12 mx-auto mb-2 text-gray-300 dark:text-gray-500" />
+                        <p>No hay casos legales registrados</p>
+                      </div>
+                    )}
+                    
+                    {hasPermission('crear_casos_legales') && (
+                      <Button className="w-full mt-3" variant="outline">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Nuevo Caso Legal
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              )}
+            </Card>
+          )}
+
           {/* Productos Registrados */}
-          <Card>
+          <Card className="dark:bg-gray-800 dark:border-gray-700">
             <CardHeader 
               className="cursor-pointer"
               onClick={() => toggleSection('productos')}
@@ -624,7 +725,7 @@ export const ClienteDetailEnhanced: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <Package className="w-5 h-5 text-gray-400" />
-                  <CardTitle>Productos Registrados ({productosCliente.length})</CardTitle>
+                  <CardTitle className="dark:text-gray-100">Productos Registrados ({productosCliente.length})</CardTitle>
                 </div>
                 {expandedSections.productos ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
               </div>
@@ -636,12 +737,18 @@ export const ClienteDetailEnhanced: React.FC = () => {
                   productos={productosCliente}
                   onShowFicha={onShowFichaProducto}
                 />
+                {hasPermission('crear_productos') && (
+                  <Button className="w-full mt-4" variant="outline">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Nuevo Producto
+                  </Button>
+                )}
               </CardContent>
             )}
           </Card>
 
           {/* Habilitaciones */}
-          <Card>
+          <Card className="dark:bg-gray-800 dark:border-gray-700">
             <CardHeader 
               className="cursor-pointer"
               onClick={() => toggleSection('habilitaciones')}
@@ -649,7 +756,7 @@ export const ClienteDetailEnhanced: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <Award className="w-5 h-5 text-gray-400" />
-                  <CardTitle>Habilitaciones y Certificaciones ({habilitacionesCliente.length})</CardTitle>
+                  <CardTitle className="dark:text-gray-100">Habilitaciones y Certificaciones ({habilitacionesCliente.length})</CardTitle>
                 </div>
                 {expandedSections.habilitaciones ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
               </div>
@@ -702,13 +809,27 @@ export const ClienteDetailEnhanced: React.FC = () => {
                       </div>
                     </div>
                   ))}
+                  
+                  {habilitacionesCliente.length === 0 && (
+                    <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                      <Award className="w-12 h-12 mx-auto mb-2 text-gray-300 dark:text-gray-500" />
+                      <p>No hay habilitaciones registradas</p>
+                    </div>
+                  )}
+                  
+                  {hasPermission('crear_habilitaciones') && (
+                    <Button className="w-full mt-3" variant="outline">
+                      <Plus className="w-4 h-4 mr-2" />
+                      Nueva Habilitación
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             )}
           </Card>
 
           {/* Comunicaciones */}
-          <Card>
+          <Card className="dark:bg-gray-800 dark:border-gray-700">
             <CardHeader 
               className="cursor-pointer"
               onClick={() => toggleSection('comunicaciones')}
@@ -716,7 +837,7 @@ export const ClienteDetailEnhanced: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <MessageSquare className="w-5 h-5 text-gray-400" />
-                  <CardTitle>Historial de Comunicaciones ({comunicacionesCliente.length})</CardTitle>
+                  <CardTitle className="dark:text-gray-100">Historial de Comunicaciones ({comunicacionesCliente.length})</CardTitle>
                 </div>
                 {expandedSections.comunicaciones ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
               </div>
@@ -725,7 +846,7 @@ export const ClienteDetailEnhanced: React.FC = () => {
               <CardContent>
                 <div className="space-y-3">
                   {comunicacionesCliente.map((comunicacion) => (
-                    <div key={comunicacion.id} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <div key={comunicacion.id} className="flex items-start space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                         comunicacion.tipo === 'email' ? 'bg-blue-100' :
                         comunicacion.tipo === 'whatsapp' ? 'bg-green-100' :
@@ -740,10 +861,10 @@ export const ClienteDetailEnhanced: React.FC = () => {
                       <div className="flex-1">
                         <div className="flex items-start justify-between">
                           <div>
-                            <p className="font-medium text-sm">{comunicacion.asunto}</p>
-                            <p className="text-xs text-gray-600 mt-1">{comunicacion.mensaje}</p>
+                            <p className="font-medium text-sm text-gray-900 dark:text-gray-100">{comunicacion.asunto}</p>
+                            <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">{comunicacion.mensaje}</p>
                             {comunicacion.expediente_relacionado && (
-                              <p className="text-xs text-blue-600 mt-1">
+                              <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
                                 Relacionado: {comunicacion.expediente_relacionado}
                               </p>
                             )}
@@ -752,7 +873,7 @@ export const ClienteDetailEnhanced: React.FC = () => {
                             {comunicacion.estado}
                           </Badge>
                         </div>
-                        <div className="flex items-center space-x-3 text-xs text-gray-500 mt-2">
+                        <div className="flex items-center space-x-3 text-xs text-gray-500 dark:text-gray-400 mt-2">
                           <span>{comunicacion.fecha}</span>
                           <span>•</span>
                           <span>Para: {comunicacion.destinatario}</span>
@@ -760,6 +881,13 @@ export const ClienteDetailEnhanced: React.FC = () => {
                       </div>
                     </div>
                   ))}
+                  
+                  {comunicacionesCliente.length === 0 && (
+                    <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                      <MessageSquare className="w-12 h-12 mx-auto mb-2 text-gray-300 dark:text-gray-500" />
+                      <p>No hay comunicaciones registradas</p>
+                    </div>
+                  )}
                 </div>
                 <Button className="w-full mt-3" variant="outline">
                   <Plus className="w-4 h-4 mr-2" />
@@ -774,13 +902,14 @@ export const ClienteDetailEnhanced: React.FC = () => {
         <div className="space-y-6">
           
           {/* Resumen Financiero */}
-          <Card>
+          {hasPermission('gestionar_facturacion') && (
+            <Card className="dark:bg-gray-800 dark:border-gray-700">
             <CardHeader 
               className="cursor-pointer"
               onClick={() => toggleSection('financiero')}
             >
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm">Información Financiera</CardTitle>
+                <CardTitle className="text-sm dark:text-gray-100">Información Financiera</CardTitle>
                 {expandedSections.financiero ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
               </div>
             </CardHeader>
@@ -788,38 +917,38 @@ export const ClienteDetailEnhanced: React.FC = () => {
               <CardContent>
                 <div className="space-y-4">
                   {/* Estado crediticio */}
-                  <div className="p-3 bg-green-50 rounded-lg">
-                    <p className="text-sm font-medium text-green-900 mb-2">Estado Crediticio</p>
+                  <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                    <p className="text-sm font-medium text-green-900 dark:text-green-300 mb-2">Estado Crediticio</p>
                     <div className="space-y-1 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Línea de crédito:</span>
-                        <span className="font-medium">${cliente.credito_disponible?.toLocaleString('es-AR')}</span>
+                        <span className="text-gray-600 dark:text-gray-300">Línea de crédito:</span>
+                        <span className="font-medium dark:text-gray-100">${cliente.credito_disponible?.toLocaleString('es-AR')}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Utilizado:</span>
-                        <span className="font-medium">${cliente.credito_utilizado?.toLocaleString('es-AR')}</span>
+                        <span className="text-gray-600 dark:text-gray-300">Utilizado:</span>
+                        <span className="font-medium dark:text-gray-100">${cliente.credito_utilizado?.toLocaleString('es-AR')}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Disponible:</span>
-                        <span className="font-medium text-green-600">
+                        <span className="text-gray-600 dark:text-gray-300">Disponible:</span>
+                        <span className="font-medium text-green-600 dark:text-green-400">
                           ${(cliente.credito_disponible - cliente.credito_utilizado)?.toLocaleString('es-AR')}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Días pago promedio:</span>
-                        <span className="font-medium">{cliente.dias_promedio_pago} días</span>
+                        <span className="text-gray-600 dark:text-gray-300">Días pago promedio:</span>
+                        <span className="font-medium dark:text-gray-100">{cliente.dias_promedio_pago} días</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Resumen de facturación */}
                   <div>
-                    <p className="text-sm font-medium text-gray-700 mb-2">Facturación</p>
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Facturación</p>
                     <div className="space-y-2">
                       {facturasCliente.map((factura) => (
-                        <div key={factura.id} className="p-2 bg-gray-50 rounded text-sm">
+                        <div key={factura.id} className="p-2 bg-gray-50 dark:bg-gray-700 rounded text-sm">
                           <div className="flex justify-between items-center">
-                            <span className="font-medium">{factura.numero}</span>
+                            <span className="font-medium dark:text-gray-100">{factura.numero}</span>
                             <Badge variant={
                               factura.estado === 'pagada' ? 'default' :
                               factura.estado === 'pendiente' ? 'secondary' :
@@ -828,9 +957,9 @@ export const ClienteDetailEnhanced: React.FC = () => {
                               {factura.estado}
                             </Badge>
                           </div>
-                          <div className="flex justify-between text-xs text-gray-600 mt-1">
+                          <div className="flex justify-between text-xs text-gray-600 dark:text-gray-300 mt-1">
                             <span>{formatDate(factura.fecha)}</span>
-                            <span className="font-medium">${factura.total.toLocaleString('es-AR')}</span>
+                            <span className="font-medium dark:text-gray-100">${factura.total.toLocaleString('es-AR')}</span>
                           </div>
                         </div>
                       ))}
@@ -843,13 +972,14 @@ export const ClienteDetailEnhanced: React.FC = () => {
                 </div>
               </CardContent>
             )}
-          </Card>
+            </Card>
+          )}
 
           {/* Despachante Asignado */}
           {despachanteAsignado && (
-            <Card>
+            <Card className="dark:bg-gray-800 dark:border-gray-700">
               <CardHeader>
-                <CardTitle className="text-sm">Despachante Asignado</CardTitle>
+                <CardTitle className="text-sm dark:text-gray-100">Despachante Asignado</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -858,10 +988,10 @@ export const ClienteDetailEnhanced: React.FC = () => {
                       <User className="w-5 h-5 text-blue-600" />
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">{despachanteAsignado.nombre}</p>
+                      <p className="font-medium text-gray-900 dark:text-gray-100">{despachanteAsignado.nombre}</p>
                       <div className="flex items-center space-x-1">
                         <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                        <span className="text-xs text-gray-600">{despachanteAsignado.calificacion}</span>
+                        <span className="text-xs text-gray-600 dark:text-gray-300">{despachanteAsignado.calificacion}</span>
                       </div>
                     </div>
                   </div>
@@ -869,20 +999,20 @@ export const ClienteDetailEnhanced: React.FC = () => {
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center space-x-2">
                       <Mail className="w-4 h-4 text-gray-400" />
-                      <a href={`mailto:${despachanteAsignado.email}`} className="text-blue-600 hover:underline">
+                      <a href={`mailto:${despachanteAsignado.email}`} className="text-blue-600 dark:text-blue-400 hover:underline">
                         {despachanteAsignado.email}
                       </a>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Phone className="w-4 h-4 text-gray-400" />
-                      <a href={`tel:${despachanteAsignado.telefono}`} className="text-blue-600 hover:underline">
+                      <a href={`tel:${despachanteAsignado.telefono}`} className="text-blue-600 dark:text-blue-400 hover:underline">
                         {despachanteAsignado.telefono}
                       </a>
                     </div>
                   </div>
                   
                   <div>
-                    <p className="text-xs text-gray-600 mb-1">Especialidades:</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-300 mb-1">Especialidades:</p>
                     <div className="flex flex-wrap gap-1">
                       {despachanteAsignado.especialidades.map((esp: string) => (
                         <Badge key={esp} variant="secondary" className="text-xs">
@@ -892,13 +1022,13 @@ export const ClienteDetailEnhanced: React.FC = () => {
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-2 text-xs text-gray-600 pt-2 border-t">
+                  <div className="grid grid-cols-2 gap-2 text-xs text-gray-600 dark:text-gray-300 pt-2 border-t border-gray-200 dark:border-gray-600">
                     <div>
-                      <span className="text-gray-500">Clientes:</span>
+                      <span className="text-gray-500 dark:text-gray-400">Clientes:</span>
                       <span className="ml-1 font-medium">{despachanteAsignado.clientes_asignados}</span>
                     </div>
                     <div>
-                      <span className="text-gray-500">Completados:</span>
+                      <span className="text-gray-500 dark:text-gray-400">Completados:</span>
                       <span className="ml-1 font-medium">{despachanteAsignado.expedientes_completados}</span>
                     </div>
                   </div>
@@ -913,20 +1043,24 @@ export const ClienteDetailEnhanced: React.FC = () => {
           )}
 
           {/* Acciones Rápidas */}
-          <Card>
+          <Card className="dark:bg-gray-800 dark:border-gray-700">
             <CardHeader>
-              <CardTitle className="text-sm">Acciones Rápidas</CardTitle>
+              <CardTitle className="text-sm dark:text-gray-100">Acciones Rápidas</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <Button size="sm" variant="outline" className="w-full justify-start">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Nuevo Expediente
-                </Button>
-                <Button size="sm" variant="outline" className="w-full justify-start">
-                  <FileText className="w-4 h-4 mr-2" />
-                  Generar Presupuesto
-                </Button>
+                {hasPermission('crear_expedientes') && (
+                  <Button size="sm" variant="outline" className="w-full justify-start">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Nuevo Expediente
+                  </Button>
+                )}
+                {hasPermission('generar_presupuestos') && (
+                  <Button size="sm" variant="outline" className="w-full justify-start">
+                    <FileText className="w-4 h-4 mr-2" />
+                    Generar Presupuesto
+                  </Button>
+                )}
                 <Button size="sm" variant="outline" className="w-full justify-start">
                   <Upload className="w-4 h-4 mr-2" />
                   Subir Documento
@@ -948,9 +1082,9 @@ export const ClienteDetailEnhanced: React.FC = () => {
           </Card>
 
           {/* Actividad Reciente */}
-          <Card>
+          <Card className="dark:bg-gray-800 dark:border-gray-700">
             <CardHeader>
-              <CardTitle className="text-sm">Actividad Reciente</CardTitle>
+              <CardTitle className="text-sm dark:text-gray-100">Actividad Reciente</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2 max-h-48 overflow-y-auto">
@@ -958,11 +1092,16 @@ export const ClienteDetailEnhanced: React.FC = () => {
                   <div key={actividad.id} className="flex items-start space-x-2">
                     <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">{actividad.asunto}</p>
-                      <p className="text-xs text-gray-500">{actividad.fecha}</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{actividad.asunto}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{actividad.fecha}</p>
                     </div>
                   </div>
                 ))}
+                {comunicacionesCliente.length === 0 && (
+                  <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
+                    Sin actividad reciente
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>
