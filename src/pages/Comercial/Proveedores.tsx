@@ -127,6 +127,7 @@ export const Proveedores: React.FC = () => {
     toast({
       title: "Proveedor agregado",
       description: nuevoProveedor.razon_social,
+      variant: "default"
     });
 
     setShowNuevoProveedor(false);
