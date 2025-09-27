@@ -32,6 +32,10 @@ export const ROLES = {
       'ver_casos_legales',
       'crear_casos_legales',
       'editar_casos_legales'
+      'crear_productos',
+      'editar_productos',
+      'crear_habilitaciones',
+      'editar_habilitaciones'
     ]
   },
   DESPACHANTE: {

@@ -680,7 +680,15 @@ export class DatabaseService {
     
     if (error) {
       console.error('Error updating producto:', error);
-      throw error;
+      // Fallback: actualizar en localStorage
+      const productosStorage = JSON.parse(localStorage.getItem('sgt_productos') || '[]');
+      const index = productosStorage.findIndex((p: any) => p.id === id);
+      if (index !== -1) {
+        productosStorage[index] = { ...productosStorage[index], ...updates, updated_at: new Date().toISOString() };
+        localStorage.setItem('sgt_productos', JSON.stringify(productosStorage));
+        return productosStorage[index];
+      }
+      throw new Error('Producto no encontrado');
     }
     return data;
   }
@@ -754,7 +762,15 @@ export class DatabaseService {
     
     if (error) {
       console.error('Error updating habilitacion:', error);
-      throw error;
+      // Fallback: actualizar en localStorage
+      const habilitacionesStorage = JSON.parse(localStorage.getItem('sgt_habilitaciones') || '[]');
+      const index = habilitacionesStorage.findIndex((h: any) => h.id === id);
+      if (index !== -1) {
+        habilitacionesStorage[index] = { ...habilitacionesStorage[index], ...updates, updated_at: new Date().toISOString() };
+        localStorage.setItem('sgt_habilitaciones', JSON.stringify(habilitacionesStorage));
+        return habilitacionesStorage[index];
+      }
+      throw new Error('Habilitación no encontrada');
     }
     return data;
   }

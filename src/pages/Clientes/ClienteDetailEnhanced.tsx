@@ -9,6 +9,8 @@ import { useToast } from '@/hooks/use-toast';
 import { usePermissions } from '@/hooks/usePermissions';
 import { databaseService } from '@/services/DatabaseService';
 import { ClientFormModal } from '@/components/Clientes/ClientFormModal';
+import { ProductoFormModal } from '@/components/Productos/ProductoFormModal';
+import { HabilitacionFormModal } from '@/components/Habilitaciones/HabilitacionFormModal';
 import { CasoLegalFormModal } from '@/components/CasosLegales/CasoLegalFormModal';
 import { formatDate } from '@/lib/utils';
 
@@ -26,6 +28,10 @@ export const ClienteDetailEnhanced: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showCasoLegalModal, setShowCasoLegalModal] = useState(false);
+  const [showProductoModal, setShowProductoModal] = useState(false);
+  const [showHabilitacionModal, setShowHabilitacionModal] = useState(false);
+  const [editingProducto, setEditingProducto] = useState<any>(null);
+  const [editingHabilitacion, setEditingHabilitacion] = useState<any>(null);
 
   useEffect(() => {
     if (id) {
@@ -132,6 +138,67 @@ export const ClienteDetailEnhanced: React.FC = () => {
     cargarDatosCompletos();
   };
 
+  const handleCreateProducto = () => {
+    setEditingProducto(null);
+    setShowProductoModal(true);
+  };
+
+  const handleEditProducto = (producto: any) => {
+    setEditingProducto(producto);
+    setShowProductoModal(true);
+  };
+
+  const handleDeleteProducto = async (producto: any) => {
+    if (!confirm(`¿Está seguro de que desea eliminar el producto "${producto.nombre}"?`)) {
+      return;
+    }
+
+    try {
+      await databaseService.updateProducto(producto.id, { is_active: false });
+      toast({
+        title: "Producto eliminado",
+        description: `${producto.nombre} ha sido eliminado`,
+      });
+      cargarDatosCompletos();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "No se pudo eliminar el producto",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleCreateHabilitacion = () => {
+    setEditingHabilitacion(null);
+    setShowHabilitacionModal(true);
+  };
+
+  const handleEditHabilitacion = (habilitacion: any) => {
+    setEditingHabilitacion(habilitacion);
+    setShowHabilitacionModal(true);
+  };
+
+  const handleDeleteHabilitacion = async (habilitacion: any) => {
+    if (!confirm(`¿Está seguro de que desea eliminar la habilitación "${habilitacion.tipo}"?`)) {
+      return;
+    }
+
+    try {
+      await databaseService.updateHabilitacion(habilitacion.id, { is_active: false });
+      toast({
+        title: "Habilitación eliminada",
+        description: `${habilitacion.tipo} ha sido eliminada`,
+      });
+      cargarDatosCompletos();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "No se pudo eliminar la habilitación",
+        variant: "destructive"
+      });
+    }
+  };
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -282,6 +349,31 @@ export const ClienteDetailEnhanced: React.FC = () => {
                 </div>
               </div>
             </div>
+            
+            {/* Botones de acción */}
+            <div className="flex space-x-2 mt-4">
+              <Button size="sm" variant="outline">
+                <Eye className="w-4 h-4 mr-2" />
+                Ver Detalle
+              </Button>
+              {hasPermission('editar_habilitaciones') && (
+                <Button size="sm" variant="outline" onClick={() => onEdit(hab)}>
+                  <Edit className="w-4 h-4 mr-2" />
+                  Editar
+                </Button>
+              )}
+              {hasPermission('*') && (
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => onDelete(hab)}
+                  className="text-red-600 hover:text-red-700 border-red-300 hover:border-red-400"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Eliminar
+                </Button>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -359,8 +451,8 @@ export const ClienteDetailEnhanced: React.FC = () => {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Productos Registrados</CardTitle>
-                {hasPermission('*') && (
-                  <Button size="sm">
+                {(hasPermission('*') || hasPermission('crear_productos')) && (
+                  <Button size="sm" onClick={handleCreateProducto}>
                     <Plus className="w-4 h-4 mr-2" />
                     Nuevo Producto
                   </Button>
@@ -368,7 +460,11 @@ export const ClienteDetailEnhanced: React.FC = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <ProductosCliente productos={productos} />
+              <ProductosCliente 
+                productos={productos} 
+                onEdit={handleEditProducto}
+                onDelete={handleDeleteProducto}
+              />
             </CardContent>
           </Card>
         </TabsContent>
@@ -379,8 +475,8 @@ export const ClienteDetailEnhanced: React.FC = () => {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Habilitaciones y Certificaciones</CardTitle>
-                {hasPermission('*') && (
-                  <Button size="sm">
+                {(hasPermission('*') || hasPermission('crear_habilitaciones')) && (
+                  <Button size="sm" onClick={handleCreateHabilitacion}>
                     <Plus className="w-4 h-4 mr-2" />
                     Nueva Habilitación
                   </Button>
@@ -388,7 +484,11 @@ export const ClienteDetailEnhanced: React.FC = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <HabilitacionesCliente habilitaciones={habilitaciones} />
+              <HabilitacionesCliente 
+                habilitaciones={habilitaciones}
+                onEdit={handleEditHabilitacion}
+                onDelete={handleDeleteHabilitacion}
+              />
             </CardContent>
           </Card>
         </TabsContent>
@@ -442,6 +542,24 @@ export const ClienteDetailEnhanced: React.FC = () => {
         onClose={() => setShowCasoLegalModal(false)}
         clienteId={cliente?.id}
         onSuccess={handleCasoLegalSuccess}
+      />
+
+      {/* Modal de Producto */}
+      <ProductoFormModal
+        isOpen={showProductoModal}
+        onClose={() => setShowProductoModal(false)}
+        producto={editingProducto}
+        clienteId={cliente?.id || ''}
+        onSuccess={handleModalSuccess}
+      />
+
+      {/* Modal de Habilitación */}
+      <HabilitacionFormModal
+        isOpen={showHabilitacionModal}
+        onClose={() => setShowHabilitacionModal(false)}
+        habilitacion={editingHabilitacion}
+        clienteId={cliente?.id || ''}
+        onSuccess={handleModalSuccess}
       />
     </div>
   );
@@ -545,7 +663,13 @@ const CasosLegalesCliente: React.FC<{casosLegales: any[]}> = ({ casosLegales }) 
 };
 
 // Componente Productos del Cliente
-const ProductosCliente: React.FC<{productos: any[]}> = ({ productos }) => {
+const ProductosCliente: React.FC<{
+  productos: any[];
+  onEdit: (producto: any) => void;
+  onDelete: (producto: any) => void;
+}> = ({ productos, onEdit, onDelete }) => {
+  const { hasPermission } = usePermissions();
+
   if (productos.length === 0) {
     return (
       <div className="text-center py-8">
@@ -585,6 +709,23 @@ const ProductosCliente: React.FC<{productos: any[]}> = ({ productos }) => {
               <Eye className="w-4 h-4 mr-1" />
               Ver Ficha
             </Button>
+            {hasPermission('editar_productos') && (
+              <Button size="sm" variant="outline" onClick={() => onEdit(producto)}>
+                <Edit className="w-4 h-4 mr-1" />
+                Editar
+              </Button>
+            )}
+            {hasPermission('*') && (
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={() => onDelete(producto)}
+                className="text-red-600 hover:text-red-700 border-red-300 hover:border-red-400"
+              >
+                <Trash2 className="w-4 h-4 mr-1" />
+                Eliminar
+              </Button>
+            )}
           </div>
         </div>
       ))}
@@ -593,7 +734,13 @@ const ProductosCliente: React.FC<{productos: any[]}> = ({ productos }) => {
 };
 
 // Componente Habilitaciones del Cliente
-const HabilitacionesCliente: React.FC<{habilitaciones: any[]}> = ({ habilitaciones }) => {
+const HabilitacionesCliente: React.FC<{
+  habilitaciones: any[];
+  onEdit: (habilitacion: any) => void;
+  onDelete: (habilitacion: any) => void;
+}> = ({ habilitaciones, onEdit, onDelete }) => {
+  const { hasPermission } = usePermissions();
+
   if (habilitaciones.length === 0) {
     return (
       <div className="text-center py-8">
