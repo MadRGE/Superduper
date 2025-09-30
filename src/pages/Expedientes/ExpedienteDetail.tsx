@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, 
   Calendar, 
@@ -25,9 +25,11 @@ import { useToast } from '@/hooks/use-toast';
 import { useSGT } from '../../context/SGTContext';
 import { ExpedienteService } from '../../services/ExpedienteService';
 import { DocumentacionTramite } from '@/components/DocumentacionTramite';
+import { BackButton } from '@/components/ui/BackButton';
 
 export const ExpedienteDetail: React.FC = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { state, fetchExpedientes } = useSGT();
   const { toast } = useToast();
   const [expediente, setExpediente] = useState<any>(null);
@@ -47,13 +49,28 @@ export const ExpedienteDetail: React.FC = () => {
   const expedienteService = new ExpedienteService();
 
   useEffect(() => {
+    console.log('ExpedienteDetail montado con ID:', id);
     // Asegurar que los datos estén cargados
     fetchExpedientes();
-    
+
     if (id) {
       cargarExpediente();
     }
   }, [id, fetchExpedientes]);
+
+  // useEffect para debug de navegación
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      console.log('Usuario intentando salir de la página');
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      console.log('ExpedienteDetail desmontado');
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
 
   const cargarExpediente = () => {
     const expedienteEncontrado = state.expedientes.find(exp => exp.id === id);
@@ -389,9 +406,13 @@ export const ExpedienteDetail: React.FC = () => {
     return (
       <div className="text-center py-12">
         <h2 className="text-xl font-semibold text-gray-900">Expediente no encontrado</h2>
-        <Link to="/expedientes" className="text-blue-600 hover:text-blue-800 mt-2 inline-block">
+        <BackButton
+          to="/expedientes"
+          variant="link"
+          className="mt-2 px-4 py-2 rounded-lg border border-blue-300 hover:bg-blue-50"
+        >
           Volver a expedientes
-        </Link>
+        </BackButton>
       </div>
     );
   }
@@ -430,12 +451,12 @@ export const ExpedienteDetail: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center space-x-4">
-        <Link 
+        <BackButton
           to="/expedientes"
-          className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+          fallbackUrl="/expedientes"
         >
-          <ArrowLeft className="w-6 h-6" />
-        </Link>
+          Volver
+        </BackButton>
         <div className="flex-1">
           <h1 className="text-2xl font-bold text-gray-900">{expediente.alias}</h1>
           <p className="text-gray-600">{expediente.codigo}</p>
