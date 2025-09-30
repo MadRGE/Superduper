@@ -1,0 +1,33 @@
+/* UI Standards & Consistency Rules */
+
+/* Modal & Overlay Standards */
+.modal-overlay {
+  @apply fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50;
+}
+
+.modal-content {
+  @apply bg-white dark:bg-gray-800 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700;
+  @apply max-h-[90vh] overflow-y-auto;
+}
+
+/* Focus States - Consistent across all interactive elements */
+.focus-standard {
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+  @apply dark:focus:ring-blue-400 dark:focus:ring-offset-gray-800;
+}
+
+/* Disabled States - Ensure readability */
+.disabled-standard {
+  @apply disabled:opacity-60 disabled:cursor-not-allowed;
+}
+
+/* Transparency Levels - Standardized */
+.opacity-subtle { opacity: 0.75; }
+.opacity-medium { opacity: 0.60; }
+.opacity-strong { opacity: 0.40; }
+
+/* Loading States */
+.loading-overlay {
+  @apply absolute inset-0 bg-white bg-opacity-80 dark:bg-gray-900 dark:bg-opacity-80;
+  @apply flex items-center justify-center backdrop-blur-sm;
+}
