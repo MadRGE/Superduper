@@ -208,6 +208,7 @@ export const Sidebar: React.FC = () => {
             <Link
               key={item.name}
               to={item.href!}
+              onClick={() => console.log(`Sidebar TopLevel: Navegando a ${item.href}`)}
               className={`w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isActive
                   ? 'bg-blue-50 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700'
@@ -261,6 +262,7 @@ export const Sidebar: React.FC = () => {
                       <Link
                         key={item.href}
                         to={item.href}
+                        onClick={() => console.log(`Sidebar: Navegando a ${item.href}`)}
                         className={`block px-3 py-2 rounded-lg text-sm transition-colors ${
                           isSubActive
                             ? 'bg-blue-50 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700'

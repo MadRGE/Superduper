@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, User, Building, AlertCircle, Clock } from 'lucide-react';
+import { ForceNavigation } from '../../components/ForceNavigation';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { SemaforoIndicator } from '@/components/expedientes/SemaforoIndicator';
@@ -52,12 +53,13 @@ export const ExpedienteCard: React.FC<ExpedienteCardProps> = ({
             <div className="flex items-center space-x-4 flex-1">
               <SemaforoIndicator diasRestantes={diasRestantes} size="sm" />
               <div className="flex-1">
-                <Link 
+                <ForceNavigation
                   to={`/expedientes/${expediente.id}`}
-                  className="font-semibold text-gray-900 hover:text-blue-600"
+                  className="font-semibold text-gray-900 hover:text-blue-600 text-left"
+                  title={`Ver detalles de ${expediente.codigo}`}
                 >
                   {expediente.codigo}
-                </Link>
+                </ForceNavigation>
                 {expediente.alias && (
                   <p className="text-sm text-gray-600">{expediente.alias}</p>
                 )}
@@ -92,12 +94,13 @@ export const ExpedienteCard: React.FC<ExpedienteCardProps> = ({
           <div className="flex items-center space-x-2">
             <SemaforoIndicator diasRestantes={diasRestantes} />
             <div>
-              <Link 
+              <ForceNavigation
                 to={`/expedientes/${expediente.id}`}
-                className="font-semibold text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400"
+                className="font-semibold text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 text-left"
+                title={`Ver detalles de ${expediente.codigo}`}
               >
                 {expediente.codigo}
-              </Link>
+              </ForceNavigation>
               {expediente.alias && (
                 <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{expediente.alias}</p>
               )}

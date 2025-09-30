@@ -72,36 +72,30 @@ const AppContent: React.FC = () => {
           <Route path="expedientes" element={<ExpedientesClienteContent />} />
           <Route path="documentos" element={<DocumentosClienteContent />} />
         </Route>
-        
+
         {/* Main Application Routes - Con Layout */}
-        <Route path="/*" element={
-          <Layout>
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/expedientes" element={<Expedientes />} />
-              <Route path="/expedientes/nuevo" element={<NuevoExpediente />} />
-              <Route path="/expedientes/:id" element={<ExpedienteDetail />} />
-              <Route path="/catalogo" element={<Catalogo />} />
-              <Route path="/clientes" element={<Clientes />} />
-              <Route path="/clientes/:id" element={<ClienteDetailEnhanced />} />
-              <Route path="/clientes/:id/dashboard" element={<ClienteExpedientesDashboard />} />
-              <Route path="/casos-legales" element={<CasosLegalesList />} />
-              <Route path="/casos-legales/:id" element={<CasoLegalDetail />} />
-              <Route path="/reportes" element={<Reportes />} />
-              <Route path="/notificaciones" element={<Notificaciones />} />
-              <Route path="/fauna-cites" element={<FaunaCITES />} />
-              <Route path="/renpre" element={<RENPREManager />} />
-              <Route path="/anmac" element={<ANMaCManager />} />
-              <Route path="/configuracion/tramites" element={<GestionTramites />} />
-              <Route path="/presupuestos" element={<Presupuestos />} />
-              <Route path="/facturacion" element={<Facturacion />} />
-              <Route path="/proveedores" element={<Proveedores />} />
-              <Route path="/admin/gestion-integral" element={<GestionIntegral />} />
-              <Route path="/despachantes/portal" element={<PortalDespachante />} />
-              <Route path="/finanzas" element={<ModuloFinancieroContable />} />
-            </Routes>
-          </Layout>
-        } />
+        <Route path="/" element={<Layout><Dashboard /></Layout>} />
+        <Route path="/expedientes" element={<Layout><Expedientes /></Layout>} />
+        <Route path="/expedientes/nuevo" element={<Layout><NuevoExpediente /></Layout>} />
+        <Route path="/expedientes/:id" element={<Layout><ExpedienteDetail /></Layout>} />
+        <Route path="/catalogo" element={<Layout><Catalogo /></Layout>} />
+        <Route path="/clientes" element={<Layout><Clientes /></Layout>} />
+        <Route path="/clientes/:id" element={<Layout><ClienteDetailEnhanced /></Layout>} />
+        <Route path="/clientes/:id/dashboard" element={<Layout><ClienteExpedientesDashboard /></Layout>} />
+        <Route path="/casos-legales" element={<Layout><CasosLegalesList /></Layout>} />
+        <Route path="/casos-legales/:id" element={<Layout><CasoLegalDetail /></Layout>} />
+        <Route path="/reportes" element={<Layout><Reportes /></Layout>} />
+        <Route path="/notificaciones" element={<Layout><Notificaciones /></Layout>} />
+        <Route path="/fauna-cites" element={<Layout><FaunaCITES /></Layout>} />
+        <Route path="/renpre" element={<Layout><RENPREManager /></Layout>} />
+        <Route path="/anmac" element={<Layout><ANMaCManager /></Layout>} />
+        <Route path="/configuracion/tramites" element={<Layout><GestionTramites /></Layout>} />
+        <Route path="/presupuestos" element={<Layout><Presupuestos /></Layout>} />
+        <Route path="/facturacion" element={<Layout><Facturacion /></Layout>} />
+        <Route path="/proveedores" element={<Layout><Proveedores /></Layout>} />
+        <Route path="/admin/gestion-integral" element={<Layout><GestionIntegral /></Layout>} />
+        <Route path="/despachantes/portal" element={<Layout><PortalDespachante /></Layout>} />
+        <Route path="/finanzas" element={<Layout><ModuloFinancieroContable /></Layout>} />
       </Routes>
     </Router>
   );

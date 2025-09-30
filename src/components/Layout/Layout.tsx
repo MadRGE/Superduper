@@ -2,6 +2,7 @@ import React from 'react';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { NotificationProvider } from '../Notifications/NotificationProvider';
+import { DebugNavigation } from '../DebugNavigation';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -18,6 +19,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             {children}
           </main>
         </div>
+        <DebugNavigation />
       </div>
     </NotificationProvider>
   );

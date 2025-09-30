@@ -17,17 +17,16 @@ export const BackButton: React.FC<BackButtonProps> = ({
   variant = 'button',
   fallbackUrl = '/'
 }) => {
-  const { navigate, goBack } = useRobustNavigation();
-
   const handleBack = () => {
     console.log('BackButton: Iniciando navegación...');
 
     if (to) {
-      console.log(`BackButton: Navegando a ${to}`);
-      navigate(to, { replace: true, fallback: fallbackUrl });
+      console.log(`BackButton: Navegando directamente a ${to}`);
+      // Navegación directa sin complicaciones
+      window.location.href = to;
     } else {
-      console.log('BackButton: Usando goBack');
-      goBack(fallbackUrl);
+      console.log('BackButton: Navegando a fallback');
+      window.location.href = fallbackUrl;
     }
   };
 
