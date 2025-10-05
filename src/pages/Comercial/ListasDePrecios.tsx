@@ -1,15 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  DollarSign,
-  Plus,
-  Edit,
-  Trash2,
-  Search,
-  Filter,
-  Calendar,
-  X,
-  Check
-} from 'lucide-react';
+import { DollarSign, Plus, CreditCard as Edit, Trash2, Search, Filter, Calendar, X, Check } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
