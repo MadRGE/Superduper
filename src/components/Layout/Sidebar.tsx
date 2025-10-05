@@ -82,6 +82,7 @@ const navigationModules: NavigationModule[] = [
       { name: 'Presupuestos', href: '/presupuestos', permission: 'gestionar_facturacion' },
       { name: 'Facturación', href: '/facturacion', permission: 'gestionar_facturacion' },
       { name: 'Proveedores', href: '/proveedores', permission: 'gestionar_facturacion' },
+      { name: 'Listas de Precios', href: '/listas-precios', permission: 'gestionar_facturacion' },
     ]
   },
   {

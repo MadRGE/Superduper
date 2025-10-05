@@ -26,6 +26,7 @@ import { GestionTramites } from './pages/Configuracion/GestionTramites';
 import { Presupuestos } from './pages/Comercial/Presupuestos';
 import { Facturacion } from './pages/Comercial/Facturacion';
 import { Proveedores } from './pages/Comercial/Proveedores';
+import { ListasDePrecios } from './pages/Comercial/ListasDePrecios';
 import { GestionIntegral } from './pages/Admin/GestionIntegral';
 import { PortalDespachante } from './pages/Despachantes/PortalDespachante';
 import { ClienteExpedientesDashboard } from './pages/Clientes/ClienteDashboardExcel';
@@ -93,6 +94,7 @@ const AppContent: React.FC = () => {
         <Route path="/presupuestos" element={<Layout><Presupuestos /></Layout>} />
         <Route path="/facturacion" element={<Layout><Facturacion /></Layout>} />
         <Route path="/proveedores" element={<Layout><Proveedores /></Layout>} />
+        <Route path="/listas-precios" element={<Layout><ListasDePrecios /></Layout>} />
         <Route path="/admin/gestion-integral" element={<Layout><GestionIntegral /></Layout>} />
         <Route path="/despachantes/portal" element={<Layout><PortalDespachante /></Layout>} />
         <Route path="/finanzas" element={<Layout><ModuloFinancieroContable /></Layout>} />

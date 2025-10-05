@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { 
-  Users, 
-  Plus, 
-  Star, 
+import { useNavigate } from 'react-router-dom';
+import {
+  Users,
+  Plus,
+  Star,
   MapPin,
   Phone,
   Mail,
   Globe,
   FileText,
-  DollarSign
+  DollarSign,
+  List
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -17,6 +19,7 @@ import { useToast } from '@/hooks/use-toast';
 
 export const Proveedores: React.FC = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [showNuevoProveedor, setShowNuevoProveedor] = useState(false);
 
   const proveedores = [
@@ -152,13 +155,22 @@ export const Proveedores: React.FC = () => {
           <h1 className="text-2xl font-bold text-gray-900">Proveedores</h1>
           <p className="text-gray-600">Gestión de proveedores y subcontratistas</p>
         </div>
-        <Button 
-          onClick={() => setShowNuevoProveedor(true)}
-          className="bg-blue-600 hover:bg-blue-700"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Nuevo Proveedor
-        </Button>
+        <div className="flex space-x-2">
+          <Button
+            onClick={() => navigate('/listas-precios')}
+            variant="outline"
+          >
+            <List className="w-4 h-4 mr-2" />
+            Ver Listas de Precios
+          </Button>
+          <Button
+            onClick={() => setShowNuevoProveedor(true)}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Nuevo Proveedor
+          </Button>
+        </div>
       </div>
 
       {/* Stats */}

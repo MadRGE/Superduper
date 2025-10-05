@@ -191,6 +191,171 @@ export interface Database {
           updated_at?: string | null
         }
       }
+      proveedores: {
+        Row: {
+          id: string
+          razon_social: string
+          cuit: string
+          categoria: string | null
+          especialidades: string[] | null
+          ubicacion: string | null
+          telefono: string | null
+          email: string | null
+          web: string | null
+          certificaciones: string[] | null
+          calificacion: number | null
+          servicios_completados: number | null
+          monto_facturado: number | null
+          estado: string | null
+          observaciones: string | null
+          metadata: Json | null
+          is_active: boolean | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          razon_social: string
+          cuit: string
+          categoria?: string | null
+          especialidades?: string[] | null
+          ubicacion?: string | null
+          telefono?: string | null
+          email?: string | null
+          web?: string | null
+          certificaciones?: string[] | null
+          calificacion?: number | null
+          servicios_completados?: number | null
+          monto_facturado?: number | null
+          estado?: string | null
+          observaciones?: string | null
+          metadata?: Json | null
+          is_active?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          razon_social?: string
+          cuit?: string
+          categoria?: string | null
+          especialidades?: string[] | null
+          ubicacion?: string | null
+          telefono?: string | null
+          email?: string | null
+          web?: string | null
+          certificaciones?: string[] | null
+          calificacion?: number | null
+          servicios_completados?: number | null
+          monto_facturado?: number | null
+          estado?: string | null
+          observaciones?: string | null
+          metadata?: Json | null
+          is_active?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+      }
+      catalogo_servicios_proveedor: {
+        Row: {
+          id: string
+          proveedor_id: string
+          codigo: string
+          nombre: string
+          descripcion: string | null
+          unidad: string | null
+          categoria: string | null
+          tiempo_entrega_dias: number | null
+          requiere_muestra: boolean | null
+          observaciones: string | null
+          is_active: boolean | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          proveedor_id: string
+          codigo: string
+          nombre: string
+          descripcion?: string | null
+          unidad?: string | null
+          categoria?: string | null
+          tiempo_entrega_dias?: number | null
+          requiere_muestra?: boolean | null
+          observaciones?: string | null
+          is_active?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          proveedor_id?: string
+          codigo?: string
+          nombre?: string
+          descripcion?: string | null
+          unidad?: string | null
+          categoria?: string | null
+          tiempo_entrega_dias?: number | null
+          requiere_muestra?: boolean | null
+          observaciones?: string | null
+          is_active?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+      }
+      lista_precios: {
+        Row: {
+          id: string
+          proveedor_id: string
+          servicio_id: string
+          precio_unitario: number
+          moneda: string | null
+          vigencia_desde: string | null
+          vigencia_hasta: string | null
+          descuento_volumen: Json | null
+          condiciones_comerciales: string | null
+          tiempo_pago_dias: number | null
+          incluye_iva: boolean | null
+          observaciones: string | null
+          is_active: boolean | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          proveedor_id: string
+          servicio_id: string
+          precio_unitario: number
+          moneda?: string | null
+          vigencia_desde?: string | null
+          vigencia_hasta?: string | null
+          descuento_volumen?: Json | null
+          condiciones_comerciales?: string | null
+          tiempo_pago_dias?: number | null
+          incluye_iva?: boolean | null
+          observaciones?: string | null
+          is_active?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          proveedor_id?: string
+          servicio_id?: string
+          precio_unitario?: number
+          moneda?: string | null
+          vigencia_desde?: string | null
+          vigencia_hasta?: string | null
+          descuento_volumen?: Json | null
+          condiciones_comerciales?: string | null
+          tiempo_pago_dias?: number | null
+          incluye_iva?: boolean | null
+          observaciones?: string | null
+          is_active?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+      }
       expedientes: {
         Row: {
           id: string
@@ -759,6 +924,65 @@ export interface Despachante {
   email: string
   telefono?: string
   especialidades?: string[]
+}
+
+export interface Proveedor {
+  id: string
+  razon_social: string
+  cuit: string
+  categoria?: string
+  especialidades?: string[]
+  ubicacion?: string
+  telefono?: string
+  email?: string
+  web?: string
+  certificaciones?: string[]
+  calificacion: number
+  servicios_completados: number
+  monto_facturado: number
+  estado: string
+  observaciones?: string
+  metadata?: any
+  is_active: boolean
+  created_at: Date
+  updated_at: Date
+}
+
+export interface CatalogoServicioProveedor {
+  id: string
+  proveedor_id: string
+  codigo: string
+  nombre: string
+  descripcion?: string
+  unidad: string
+  categoria?: string
+  tiempo_entrega_dias?: number
+  requiere_muestra: boolean
+  observaciones?: string
+  is_active: boolean
+  created_at: Date
+  updated_at: Date
+  proveedor?: Proveedor
+}
+
+export interface ListaPrecio {
+  id: string
+  proveedor_id: string
+  servicio_id: string
+  precio_unitario: number
+  moneda: string
+  vigencia_desde?: Date
+  vigencia_hasta?: Date
+  descuento_volumen?: any
+  condiciones_comerciales?: string
+  tiempo_pago_dias: number
+  incluye_iva: boolean
+  observaciones?: string
+  is_active: boolean
+  created_at: Date
+  updated_at: Date
+  proveedor?: Proveedor
+  servicio?: CatalogoServicioProveedor
 }
 
 export interface Organismo {

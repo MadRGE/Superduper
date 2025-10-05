@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Calculator, 
   FileText, 
@@ -16,11 +16,13 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
+import { ServiceSelectorModal } from '@/components/Comercial/ServiceSelectorModal';
+import type { ListaPrecio } from '@/types/database';
 
 export const Presupuestos: React.FC = () => {
   const { toast } = useToast();
   const [showNuevoPresupuesto, setShowNuevoPresupuesto] = useState(false);
-  const [selectedItems, setSelectedItems] = useState<any[]>([]);
+  const [showServiceSelector, setShowServiceSelector] = useState(false);
 
   const [presupuesto, setPresupuesto] = useState({
     cliente_id: '',
@@ -37,116 +39,74 @@ export const Presupuestos: React.FC = () => {
     incluye_iva: true
   });
 
-  // Catálogo de servicios predefinidos
-  const catalogoServicios = [
-    {
-      codigo: 'RNPA-01',
-      descripcion: 'Registro RNPA producto alimenticio nacional',
-      precio_unitario: 150000,
-      unidad: 'servicio',
-      categoria: 'ANMAT/INAL'
-    },
-    {
-      codigo: 'RNPA-02',
-      descripcion: 'Renovación RNPA',
-      precio_unitario: 75000,
-      unidad: 'servicio',
-      categoria: 'ANMAT/INAL'
-    },
-    {
-      codigo: 'RNE-01',
-      descripcion: 'Registro RNE establecimiento elaborador',
-      precio_unitario: 200000,
-      unidad: 'servicio',
-      categoria: 'ANMAT/INAL'
-    },
-    {
-      codigo: 'ENACOM-01',
-      descripcion: 'Homologación ENACOM equipo telecomunicaciones',
-      precio_unitario: 180000,
-      unidad: 'servicio',
-      categoria: 'ENACOM'
-    },
-    {
-      codigo: 'ENACOM-LAB',
-      descripcion: 'Ensayos laboratorio homologado ENACOM',
-      precio_unitario: 95000,
-      unidad: 'ensayo',
-      categoria: 'ENACOM'
-    },
-    {
-      codigo: 'CITES-01',
-      descripcion: 'Permiso CITES importación trofeo caza',
-      precio_unitario: 120000,
-      unidad: 'servicio',
-      categoria: 'FAUNA'
-    },
-    {
-      codigo: 'CITES-02',
-      descripcion: 'Permiso CITES exportación fauna viva',
-      precio_unitario: 85000,
-      unidad: 'servicio',
-      categoria: 'FAUNA'
-    },
-    {
-      codigo: 'ANMAC-01',
-      descripcion: 'Gestión importación armas y municiones',
-      precio_unitario: 250000,
-      unidad: 'servicio',
-      categoria: 'ANMaC'
-    },
-    {
-      codigo: 'ANMAC-02',
-      descripcion: 'Generación códigos SIGIMAC',
-      precio_unitario: 500,
-      unidad: 'código',
-      categoria: 'ANMaC'
-    },
-    {
-      codigo: 'SEG-01',
-      descripcion: 'Certificación seguridad eléctrica',
-      precio_unitario: 65000,
-      unidad: 'producto',
-      categoria: 'SIC'
-    },
-    {
-      codigo: 'SENASA-01',
-      descripcion: 'Registro producto veterinario',
-      precio_unitario: 180000,
-      unidad: 'servicio',
-      categoria: 'SENASA'
-    },
-    {
-      codigo: 'DESP-01',
-      descripcion: 'Despacho aduanero importación',
-      precio_unitario: 45000,
-      unidad: 'despacho',
-      categoria: 'ADUANA'
-    },
-    {
-      codigo: 'CONS-01',
-      descripcion: 'Consultoría regulatoria hora',
-      precio_unitario: 15000,
-      unidad: 'hora',
-      categoria: 'CONSULTORÍA'
-    }
-  ];
-
-  const agregarItem = (servicio: any) => {
+  const handleSelectTramite = (tramite: any) => {
     const nuevoItem = {
-      ...servicio,
+      tipo: 'tramite',
+      codigo: tramite.codigo,
+      descripcion: tramite.nombre,
+      categoria: tramite.sigla,
+      precio_unitario: 0,
+      unidad: 'servicio',
       cantidad: 1,
-      subtotal: servicio.precio_unitario
+      subtotal: 0,
+      metadata: tramite
     };
-    
+
     setPresupuesto({
       ...presupuesto,
       items: [...presupuesto.items, nuevoItem]
     });
-    
+
+    setShowServiceSelector(false);
+
     toast({
-      title: "Item agregado",
-      description: servicio.descripcion,
+      title: 'Trámite agregado',
+      description: tramite.nombre
+    });
+  };
+
+  const handleSelectProveedorServicio = (precio: ListaPrecio) => {
+    const nuevoItem = {
+      tipo: 'proveedor',
+      codigo: precio.servicio?.codigo || '',
+      descripcion: precio.servicio?.nombre || '',
+      categoria: precio.proveedor?.razon_social || '',
+      precio_unitario: precio.precio_unitario,
+      unidad: precio.servicio?.unidad || 'servicio',
+      cantidad: 1,
+      subtotal: precio.precio_unitario,
+      incluye_iva: precio.incluye_iva,
+      metadata: precio
+    };
+
+    setPresupuesto({
+      ...presupuesto,
+      items: [...presupuesto.items, nuevoItem]
+    });
+
+    setShowServiceSelector(false);
+
+    toast({
+      title: 'Servicio agregado',
+      description: `${precio.servicio?.nombre} - ${precio.proveedor?.razon_social}`
+    });
+  };
+
+  const agregarItemManual = () => {
+    const nuevoItem = {
+      tipo: 'manual',
+      codigo: 'MANUAL-' + Date.now(),
+      descripcion: '',
+      categoria: '',
+      precio_unitario: 0,
+      unidad: 'servicio',
+      cantidad: 1,
+      subtotal: 0
+    };
+
+    setPresupuesto({
+      ...presupuesto,
+      items: [...presupuesto.items, nuevoItem]
     });
   };
 
@@ -422,35 +382,29 @@ export const Presupuestos: React.FC = () => {
                 </div>
               </div>
 
-              {/* Catálogo de servicios */}
+              {/* Selector de servicios */}
               <div>
                 <h3 className="font-medium mb-2">Agregar Servicios</h3>
-                <div className="max-h-60 overflow-y-auto border rounded-lg p-2">
-                  <div className="grid grid-cols-1 gap-2">
-                    {catalogoServicios.map((servicio, index) => (
-                      <div key={index} className="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
-                        <div className="flex-1">
-                          <p className="text-sm font-medium">{servicio.descripcion}</p>
-                          <p className="text-xs text-gray-500">
-                            {servicio.codigo} • {servicio.categoria}
-                          </p>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <span className="text-sm font-medium">
-                            ${servicio.precio_unitario.toLocaleString('es-AR')}
-                          </span>
-                          <Button 
-                            size="sm" 
-                            variant="outline"
-                            onClick={() => agregarItem(servicio)}
-                          >
-                            <Plus className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                <div className="flex space-x-2">
+                  <Button
+                    onClick={() => setShowServiceSelector(true)}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Seleccionar del Catálogo
+                  </Button>
+                  <Button
+                    onClick={agregarItemManual}
+                    variant="outline"
+                    className="flex-1"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Agregar Item Manual
+                  </Button>
                 </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  Selecciona trámites del catálogo o servicios de proveedores con precios actualizados
+                </p>
               </div>
 
               {/* Items del presupuesto */}
@@ -472,8 +426,36 @@ export const Presupuestos: React.FC = () => {
                         {presupuesto.items.map((item, index) => (
                           <tr key={index} className="border-t">
                             <td className="p-2">
-                              <p className="text-sm">{item.descripcion}</p>
-                              <p className="text-xs text-gray-500">{item.codigo}</p>
+                              {item.tipo === 'manual' ? (
+                                <input
+                                  type="text"
+                                  value={item.descripcion}
+                                  onChange={(e) => {
+                                    const nuevosItems = [...presupuesto.items];
+                                    nuevosItems[index].descripcion = e.target.value;
+                                    setPresupuesto({...presupuesto, items: nuevosItems});
+                                  }}
+                                  placeholder="Descripción del servicio"
+                                  className="w-full px-2 py-1 border rounded text-sm"
+                                />
+                              ) : (
+                                <p className="text-sm">{item.descripcion}</p>
+                              )}
+                              <div className="flex items-center space-x-2 mt-1">
+                                <p className="text-xs text-gray-500">{item.codigo}</p>
+                                {item.tipo === 'proveedor' && (
+                                  <Badge variant="secondary" className="text-xs">Proveedor</Badge>
+                                )}
+                                {item.tipo === 'tramite' && (
+                                  <Badge variant="default" className="text-xs">Trámite SGT</Badge>
+                                )}
+                                {item.tipo === 'manual' && (
+                                  <Badge variant="outline" className="text-xs">Manual</Badge>
+                                )}
+                              </div>
+                              {item.categoria && (
+                                <p className="text-xs text-gray-500 mt-0.5">{item.categoria}</p>
+                              )}
                             </td>
                             <td className="p-2 text-center">
                               <input
@@ -484,7 +466,21 @@ export const Presupuestos: React.FC = () => {
                               />
                             </td>
                             <td className="p-2 text-right text-sm">
-                              ${item.precio_unitario.toLocaleString('es-AR')}
+                              {item.tipo === 'manual' || item.tipo === 'tramite' ? (
+                                <input
+                                  type="number"
+                                  value={item.precio_unitario}
+                                  onChange={(e) => {
+                                    const nuevosItems = [...presupuesto.items];
+                                    nuevosItems[index].precio_unitario = parseFloat(e.target.value);
+                                    nuevosItems[index].subtotal = nuevosItems[index].cantidad * nuevosItems[index].precio_unitario;
+                                    setPresupuesto({...presupuesto, items: nuevosItems});
+                                  }}
+                                  className="w-24 px-2 py-1 border rounded text-right"
+                                />
+                              ) : (
+                                <span>${item.precio_unitario.toLocaleString('es-AR')}</span>
+                              )}
                             </td>
                             <td className="p-2 text-right text-sm font-medium">
                               ${item.subtotal.toLocaleString('es-AR')}
@@ -610,6 +606,15 @@ export const Presupuestos: React.FC = () => {
             </CardContent>
           </Card>
         </div>
+      )}
+
+      {/* Service Selector Modal */}
+      {showServiceSelector && (
+        <ServiceSelectorModal
+          onClose={() => setShowServiceSelector(false)}
+          onSelectTramite={handleSelectTramite}
+          onSelectProveedorServicio={handleSelectProveedorServicio}
+        />
       )}
     </div>
   );
