@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, Building2, User, FileText, Clock, AlertTriangle, CheckCircle, Download, Upload, MessageSquare, CreditCard as Edit, Save, X, Plus, Info } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -31,31 +31,7 @@ export const ExpedienteDetail: React.FC = () => {
 
   const expedienteService = new ExpedienteService();
 
-  useEffect(() => {
-    console.log('ExpedienteDetail montado con ID:', id);
-    // Asegurar que los datos estén cargados
-    fetchExpedientes();
-
-    if (id) {
-      cargarExpediente();
-    }
-  }, [id, fetchExpedientes]);
-
-  // useEffect para debug de navegación
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      console.log('Usuario intentando salir de la página');
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      console.log('ExpedienteDetail desmontado');
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, []);
-
-  const cargarExpediente = () => {
+  const cargarExpediente = useCallback(() => {
     const expedienteEncontrado = state.expedientes.find(exp => exp.id === id);
     if (expedienteEncontrado) {
       setExpediente(expedienteEncontrado);
@@ -118,7 +94,33 @@ export const ExpedienteDetail: React.FC = () => {
         setHistorial(historialInicial);
       }
     }
-  };
+  }, [id, state.expedientes]);
+
+  useEffect(() => {
+    console.log('ExpedienteDetail montado con ID:', id);
+    // Asegurar que los datos estén cargados
+    if (state.expedientes.length === 0) {
+      fetchExpedientes();
+    }
+
+    if (id) {
+      cargarExpediente();
+    }
+  }, [id, cargarExpediente, fetchExpedientes, state.expedientes.length]);
+
+  // useEffect para debug de navegación
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      console.log('Usuario intentando salir de la página');
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      console.log('ExpedienteDetail desmontado');
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
 
   const cambiarEstadoExpediente = async (nuevoEstado: string) => {
     if (!expediente) return;
