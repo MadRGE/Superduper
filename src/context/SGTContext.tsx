@@ -3,8 +3,11 @@ import { mockExpedientes, mockOrganismos, mockTramiteTipos } from '../data/mockD
 import { catalogoTramitesArgentina, buscarTramitePorCodigo, obtenerTramitesPorOrganismo } from '../data/catalogoTramitesCompleto';
 import { ExpedienteService } from '../services/ExpedienteService';
 import { expedienteService } from '../services/ExpedienteService';
+import { DatabaseService } from '../services/DatabaseService';
 import { Expediente, TramiteTipo, Organismo, Cliente } from '../types/database';
 import { useAuth } from '../hooks/use-auth';
+
+const databaseService = new DatabaseService();
 
 interface SGTState {
   expedientes: Expediente[];
@@ -143,19 +146,25 @@ export const SGTProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchTramiteTipos = async () => {
     try {
-      // Usar mock data por ahora
-      dispatch({ type: 'SET_TRAMITE_TIPOS', payload: mockTramiteTipos });
+      // Cargar desde Supabase
+      const tramitesData = await databaseService.getTramiteTipos();
+      dispatch({ type: 'SET_TRAMITE_TIPOS', payload: tramitesData });
     } catch (error) {
       console.error('Error fetching tramite tipos:', error);
+      // Fallback a mock data en caso de error
+      dispatch({ type: 'SET_TRAMITE_TIPOS', payload: mockTramiteTipos });
     }
   };
 
   const fetchOrganismos = async () => {
     try {
-      // Usar mock data por ahora
-      dispatch({ type: 'SET_ORGANISMOS', payload: mockOrganismos });
+      // Cargar desde Supabase
+      const organismosData = await databaseService.getOrganismos();
+      dispatch({ type: 'SET_ORGANISMOS', payload: organismosData });
     } catch (error) {
       console.error('Error fetching organismos:', error);
+      // Fallback a mock data en caso de error
+      dispatch({ type: 'SET_ORGANISMOS', payload: mockOrganismos });
     }
   };
 
