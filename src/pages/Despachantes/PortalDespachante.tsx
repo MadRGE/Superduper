@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Shield, FileText, Users, Calendar, Clock, CheckCircle, AlertTriangle, User, Building2, Phone, Mail, Eye, CreditCard as Edit, Plus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -318,7 +319,8 @@ const ClienteDetalleRestringido: React.FC<{cliente: any}> = ({ cliente }) => {
 // Componente Trámites para Vista Despachante
 const TramitesClienteDespachante: React.FC<{clienteId: string}> = ({ clienteId }) => {
   const { canEditExpediente } = usePermissions();
-  
+  const navigate = useNavigate();
+
   const tramites = [
     {
       id: 'exp-001',
@@ -401,12 +403,19 @@ const TramitesClienteDespachante: React.FC<{clienteId: string}> = ({ clienteId }
                 </div>
 
                 <div className="flex space-x-2">
-                  <Button size="sm" variant="outline">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => navigate(`/expedientes/${tramite.id}`)}
+                  >
                     <Eye className="w-4 h-4 mr-2" />
                     Ver Detalle
                   </Button>
                   {canEditExpediente(tramite) && (
-                    <Button size="sm">
+                    <Button
+                      size="sm"
+                      onClick={() => navigate(`/expedientes/${tramite.id}`)}
+                    >
                       <Edit className="w-4 h-4 mr-2" />
                       Trabajar
                     </Button>
@@ -424,12 +433,14 @@ const TramitesClienteDespachante: React.FC<{clienteId: string}> = ({ clienteId }
 // Componente Tareas del Despachante
 const TareasDespachante: React.FC = () => {
   const { hasPermission } = usePermissions();
-  
+  const navigate = useNavigate();
+
   const tareas = [
     {
       id: 1,
       titulo: 'Revisión documentación RNPA',
       expediente: 'SGT-2025-ANMAT-00123',
+      expediente_id: 'exp-001',
       cliente: 'Alimentos del Sur SA',
       vencimiento: '2025-01-28',
       prioridad: 'alta',
@@ -439,6 +450,7 @@ const TareasDespachante: React.FC = () => {
       id: 2,
       titulo: 'Preparar carpeta técnica',
       expediente: 'SGT-2025-ANMAT-00134',
+      expediente_id: 'exp-002',
       cliente: 'Alimentos del Sur SA',
       vencimiento: '2025-01-30',
       prioridad: 'normal',
@@ -448,6 +460,7 @@ const TareasDespachante: React.FC = () => {
       id: 3,
       titulo: 'Contactar laboratorio ensayos',
       expediente: 'SGT-2025-ENACOM-00087',
+      expediente_id: 'exp-003',
       cliente: 'TechImport SA',
       vencimiento: '2025-01-29',
       prioridad: 'alta',
@@ -482,7 +495,10 @@ const TareasDespachante: React.FC = () => {
                   {tarea.estado.replace('_', ' ')}
                 </Badge>
                 {hasPermission('gestionar_tareas_propias') && (
-                  <Button size="sm">
+                  <Button
+                    size="sm"
+                    onClick={() => navigate(`/expedientes/${tarea.expediente_id}`)}
+                  >
                     Trabajar
                   </Button>
                 )}
