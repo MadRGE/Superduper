@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { 
-  Users, 
-  FileText, 
-  Building2, 
+import {
+  Users,
+  FileText,
+  Building2,
   Package,
   Calendar,
   Award,
@@ -17,7 +17,11 @@ import {
   X,
   Eye,
   Clock,
-  CheckCircle
+  CheckCircle,
+  Mail,
+  Send,
+  MessageSquare,
+  Filter
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -240,11 +244,12 @@ const ClienteDetalle: React.FC<{
 
       {/* Tabs de Información */}
       <Tabs defaultValue="tramites">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="tramites">Trámites Activos</TabsTrigger>
           <TabsTrigger value="habilitaciones">Habilitaciones</TabsTrigger>
           <TabsTrigger value="productos">Productos</TabsTrigger>
           <TabsTrigger value="certificados">Certificados</TabsTrigger>
+          <TabsTrigger value="mensajeria">Mensajería</TabsTrigger>
           <TabsTrigger value="historial">Historial</TabsTrigger>
         </TabsList>
 
@@ -265,6 +270,10 @@ const ClienteDetalle: React.FC<{
 
         <TabsContent value="certificados">
           <CertificadosCliente clienteId={cliente.id} />
+        </TabsContent>
+
+        <TabsContent value="mensajeria">
+          <MensajeriaCliente clienteId={cliente.id} clienteNombre={cliente.razon_social} />
         </TabsContent>
 
         <TabsContent value="historial">
@@ -614,6 +623,384 @@ const CertificadosCliente: React.FC<{clienteId: string}> = ({ clienteId }) => {
         </div>
       </CardContent>
     </Card>
+  );
+};
+
+// Componente Mensajería del Cliente
+const MensajeriaCliente: React.FC<{clienteId: string; clienteNombre: string}> = ({ clienteId, clienteNombre }) => {
+  const [filterEstado, setFilterEstado] = useState('todos');
+  const [filterCanal, setFilterCanal] = useState('todos');
+  const [showEnviarModal, setShowEnviarModal] = useState(false);
+  const { toast } = useToast();
+
+  const mensajes = [
+    {
+      id: 1,
+      fecha: '2025-01-25 10:30:00',
+      tipo: 'documento_requerido',
+      asunto: 'Documentación pendiente - RNPA Yogur Natural',
+      mensaje: 'Hola Alimentos del Sur SA,\n\nNecesitamos que subas los siguientes documentos para continuar con el trámite SGT-2025-ANMAT-00123:\n\n- Certificado de libre venta\n- Análisis bromatológico actualizado\n\nFecha límite: 01/03/2025\n\nSaludos,\nEquipo SGT',
+      destinatario: 'contacto@alimentosdelsur.com.ar',
+      canal: 'email',
+      estado: 'enviado',
+      leido: true,
+      fecha_apertura: '2025-01-25 11:15:00'
+    },
+    {
+      id: 2,
+      fecha: '2025-01-24 16:45:00',
+      tipo: 'observacion_recibida',
+      asunto: 'Observación en RNPA Cereal - Acción requerida',
+      mensaje: 'Hola Alimentos del Sur SA,\n\nEl organismo ANMAT realizó observaciones en tu expediente SGT-2025-ANMAT-00134.\n\nObservaciones:\n- El rótulo debe incluir tabla nutricional completa\n- Falta declaración de alérgenos\n\nPor favor, subsana las observaciones a la brevedad.\n\nSaludos,\nEquipo SGT',
+      destinatario: 'contacto@alimentosdelsur.com.ar',
+      canal: 'email',
+      estado: 'enviado',
+      leido: false
+    },
+    {
+      id: 3,
+      fecha: '2025-01-24 14:20:00',
+      tipo: 'vencimiento_proximo',
+      asunto: 'Vencimiento próximo - RNPA Yogur Natural',
+      mensaje: 'Hola Alimentos del Sur SA,\n\nTe recordamos que el expediente SGT-2025-ANMAT-00123 vence en 3 días.\n\nPor favor, completa las tareas pendientes antes de la fecha límite: 01/03/2025\n\nSaludos,\nEquipo SGT',
+      destinatario: 'contacto@alimentosdelsur.com.ar',
+      canal: 'whatsapp',
+      estado: 'enviado',
+      leido: true,
+      fecha_apertura: '2025-01-24 14:25:00'
+    },
+    {
+      id: 4,
+      fecha: '2025-01-23 11:30:00',
+      tipo: 'certificado_emitido',
+      asunto: 'Certificado emitido - RNPA Galletitas Vainilla',
+      mensaje: 'Hola Alimentos del Sur SA,\n\n¡Excelente noticia! El certificado RNPA para tu producto Galletitas Vainilla fue emitido exitosamente.\n\nPuedes descargarlo desde el portal del cliente.\n\nNúmero RNPA: 04-123456\nVencimiento: 15/03/2026\n\nSaludos,\nEquipo SGT',
+      destinatario: 'contacto@alimentosdelsur.com.ar',
+      canal: 'email',
+      estado: 'enviado',
+      leido: true,
+      fecha_apertura: '2025-01-23 11:45:00'
+    },
+    {
+      id: 5,
+      fecha: '2025-01-22 09:00:00',
+      tipo: 'paso_completado',
+      asunto: 'Tu trámite avanzó: Ensayos de laboratorio completados',
+      mensaje: 'Hola Alimentos del Sur SA,\n\nEl expediente SGT-2025-ANMAT-00123 completó el paso de ensayos de laboratorio.\n\nEstado actual: En proceso (65%)\nPróximo paso: Revisión documental\n\nSaludos,\nEquipo SGT',
+      destinatario: 'contacto@alimentosdelsur.com.ar',
+      canal: 'email',
+      estado: 'enviado',
+      leido: true,
+      fecha_apertura: '2025-01-22 09:30:00'
+    },
+    {
+      id: 6,
+      fecha: '2025-01-20 15:00:00',
+      tipo: 'documento_requerido',
+      asunto: 'Recordatorio: Documentación pendiente',
+      mensaje: 'Hola Alimentos del Sur SA,\n\nEste es un recordatorio sobre la documentación pendiente para el trámite SGT-2025-ANMAT-00134.\n\nFecha límite: 06/03/2025\n\nSaludos,\nEquipo SGT',
+      destinatario: 'contacto@alimentosdelsur.com.ar',
+      canal: 'email',
+      estado: 'programado',
+      fecha_envio: '2025-01-27 10:00:00'
+    }
+  ];
+
+  const mensajesFiltrados = mensajes.filter(m => {
+    if (filterEstado !== 'todos' && m.estado !== filterEstado) return false;
+    if (filterCanal !== 'todos' && m.canal !== filterCanal) return false;
+    return true;
+  });
+
+  const getIconoTipo = (tipo: string) => {
+    switch (tipo) {
+      case 'documento_requerido':
+        return <AlertCircle className="w-5 h-5 text-orange-600" />;
+      case 'observacion_recibida':
+        return <AlertCircle className="w-5 h-5 text-red-600" />;
+      case 'certificado_emitido':
+        return <CheckCircle className="w-5 h-5 text-green-600" />;
+      case 'vencimiento_proximo':
+        return <Clock className="w-5 h-5 text-yellow-600" />;
+      case 'paso_completado':
+        return <CheckCircle className="w-5 h-5 text-blue-600" />;
+      default:
+        return <Mail className="w-5 h-5 text-gray-600" />;
+    }
+  };
+
+  const getEstadoBadge = (estado: string) => {
+    switch (estado) {
+      case 'enviado':
+        return <Badge className="bg-green-100 text-green-800">Enviado</Badge>;
+      case 'programado':
+        return <Badge className="bg-blue-100 text-blue-800">Programado</Badge>;
+      case 'error':
+        return <Badge variant="destructive">Error</Badge>;
+      default:
+        return <Badge variant="secondary">{estado}</Badge>;
+    }
+  };
+
+  const getCanalIcon = (canal: string) => {
+    switch (canal) {
+      case 'email':
+        return <Mail className="w-4 h-4" />;
+      case 'whatsapp':
+        return <MessageSquare className="w-4 h-4" />;
+      default:
+        return <Mail className="w-4 h-4" />;
+    }
+  };
+
+  const handleReenviar = (mensaje: any) => {
+    toast({
+      title: "Mensaje reenviado",
+      description: `Se reenvió el mensaje "${mensaje.asunto}" a ${mensaje.destinatario}`,
+    });
+  };
+
+  return (
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Mail className="w-5 h-5" />
+              <span>Mensajería Automática - {clienteNombre}</span>
+            </div>
+            <Button onClick={() => setShowEnviarModal(true)}>
+              <Send className="w-4 h-4 mr-2" />
+              Enviar Mensaje
+            </Button>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {/* Filtros */}
+          <div className="flex items-center space-x-4 mb-6">
+            <div className="flex items-center space-x-2">
+              <Filter className="w-4 h-4 text-gray-500" />
+              <span className="text-sm font-medium text-gray-700">Filtros:</span>
+            </div>
+            <select
+              value={filterEstado}
+              onChange={(e) => setFilterEstado(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="todos">Todos los estados</option>
+              <option value="enviado">Enviados</option>
+              <option value="programado">Programados</option>
+              <option value="error">Con errores</option>
+            </select>
+            <select
+              value={filterCanal}
+              onChange={(e) => setFilterCanal(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="todos">Todos los canales</option>
+              <option value="email">Email</option>
+              <option value="whatsapp">WhatsApp</option>
+            </select>
+          </div>
+
+          {/* Estadísticas rápidas */}
+          <div className="grid grid-cols-4 gap-4 mb-6">
+            <div className="p-4 bg-blue-50 rounded-lg">
+              <div className="text-2xl font-bold text-blue-900">{mensajes.length}</div>
+              <div className="text-sm text-blue-700">Total</div>
+            </div>
+            <div className="p-4 bg-green-50 rounded-lg">
+              <div className="text-2xl font-bold text-green-900">
+                {mensajes.filter(m => m.estado === 'enviado').length}
+              </div>
+              <div className="text-sm text-green-700">Enviados</div>
+            </div>
+            <div className="p-4 bg-orange-50 rounded-lg">
+              <div className="text-2xl font-bold text-orange-900">
+                {mensajes.filter(m => m.estado === 'enviado' && !m.leido).length}
+              </div>
+              <div className="text-sm text-orange-700">No leídos</div>
+            </div>
+            <div className="p-4 bg-purple-50 rounded-lg">
+              <div className="text-2xl font-bold text-purple-900">
+                {mensajes.filter(m => m.estado === 'programado').length}
+              </div>
+              <div className="text-sm text-purple-700">Programados</div>
+            </div>
+          </div>
+
+          {/* Lista de mensajes */}
+          <div className="space-y-3 max-h-96 overflow-y-auto">
+            {mensajesFiltrados.map((mensaje) => (
+              <div
+                key={mensaje.id}
+                className={`border rounded-lg p-4 hover:border-blue-300 transition-colors ${
+                  !mensaje.leido && mensaje.estado === 'enviado' ? 'bg-blue-50' : 'bg-white'
+                }`}
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-start space-x-3 flex-1">
+                    <div className="mt-1">
+                      {getIconoTipo(mensaje.tipo)}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2 mb-1">
+                        <h4 className="font-medium text-gray-900">{mensaje.asunto}</h4>
+                        {!mensaje.leido && mensaje.estado === 'enviado' && (
+                          <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
+                        )}
+                      </div>
+                      <p className="text-sm text-gray-600 mb-2">
+                        Para: {mensaje.destinatario}
+                      </p>
+                      <p className="text-sm text-gray-700 line-clamp-2 mb-2">
+                        {mensaje.mensaje.substring(0, 150)}...
+                      </p>
+                      <div className="flex items-center space-x-4 text-xs text-gray-500">
+                        <span className="flex items-center space-x-1">
+                          {getCanalIcon(mensaje.canal)}
+                          <span className="uppercase">{mensaje.canal}</span>
+                        </span>
+                        <span>•</span>
+                        <span>
+                          {mensaje.estado === 'enviado' ? 'Enviado: ' : 'Programado: '}
+                          {new Date(mensaje.fecha).toLocaleString('es-AR')}
+                        </span>
+                        {mensaje.leido && mensaje.fecha_apertura && (
+                          <>
+                            <span>•</span>
+                            <span className="text-green-600">
+                              Leído: {new Date(mensaje.fecha_apertura).toLocaleString('es-AR')}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-2 ml-4">
+                    {getEstadoBadge(mensaje.estado)}
+                    <div className="flex space-x-1">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleReenviar(mensaje)}
+                      >
+                        <Send className="w-3 h-3" />
+                      </Button>
+                      <Button size="sm" variant="ghost">
+                        <Eye className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Modal Enviar Mensaje */}
+      {showEnviarModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-2xl">
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <span>Enviar Mensaje a {clienteNombre}</span>
+                <Button variant="ghost" size="sm" onClick={() => setShowEnviarModal(false)}>
+                  <X className="w-4 h-4" />
+                </Button>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Destinatario
+                </label>
+                <input
+                  type="email"
+                  defaultValue="contacto@alimentosdelsur.com.ar"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Canal
+                </label>
+                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                  <option value="email">Email</option>
+                  <option value="whatsapp">WhatsApp</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Tipo de mensaje
+                </label>
+                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                  <option value="documento_requerido">Documento requerido</option>
+                  <option value="observacion_recibida">Observación recibida</option>
+                  <option value="vencimiento_proximo">Vencimiento próximo</option>
+                  <option value="paso_completado">Paso completado</option>
+                  <option value="certificado_emitido">Certificado emitido</option>
+                  <option value="personalizado">Personalizado</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Asunto
+                </label>
+                <input
+                  type="text"
+                  placeholder="Asunto del mensaje"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Mensaje
+                </label>
+                <textarea
+                  rows={6}
+                  placeholder="Escribe tu mensaje aquí..."
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <input type="checkbox" id="programar" className="rounded" />
+                <label htmlFor="programar" className="text-sm text-gray-700">
+                  Programar envío
+                </label>
+                <input
+                  type="datetime-local"
+                  className="ml-2 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="flex justify-end space-x-2 pt-4 border-t">
+                <Button variant="outline" onClick={() => setShowEnviarModal(false)}>
+                  Cancelar
+                </Button>
+                <Button onClick={() => {
+                  toast({
+                    title: "Mensaje enviado",
+                    description: "El mensaje fue enviado exitosamente",
+                  });
+                  setShowEnviarModal(false);
+                }}>
+                  <Send className="w-4 h-4 mr-2" />
+                  Enviar Mensaje
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+    </>
   );
 };
 
