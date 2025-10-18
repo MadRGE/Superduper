@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { MetricsCards } from './MetricsCards';
+import { ResumenCompacto } from './ResumenCompacto';
+import { ExpedientesConProblemas } from './ExpedientesConProblemas';
 import { ActiveExpedientes } from './ActiveExpedientes';
-import { RecentActivity } from './RecentActivity';
-import { VencimientoChart } from './VencimientoChart';
-import { OrganismoStats } from './OrganismoStats';
 import { DashboardSkeleton } from '../../components/ui/DashboardSkeleton';
 
 export const Dashboard: React.FC = () => {
@@ -26,31 +24,22 @@ export const Dashboard: React.FC = () => {
       {/* Page header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
-          <p className="text-gray-600 dark:text-gray-300">Vista general de expedientes y actividades</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Panel de Control</h1>
+          <p className="text-gray-600 dark:text-gray-300">Expedientes que requieren atención inmediata</p>
         </div>
         <div className="text-sm text-gray-500 dark:text-gray-400">
-          Última actualización: {new Date().toLocaleString('es-AR')}
+          Actualizado: {new Date().toLocaleString('es-AR', { hour: '2-digit', minute: '2-digit' })}
         </div>
       </div>
 
-      {/* Metrics */}
-      <MetricsCards />
+      {/* Resumen compacto */}
+      <ResumenCompacto />
 
-      {/* Main content grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
-        {/* Left column - 2 spans */}
-        <div className="lg:col-span-2 space-y-6">
-          <ActiveExpedientes />
-          <VencimientoChart />
-        </div>
+      {/* Expedientes con problemas - PRIORIDAD MÁXIMA */}
+      <ExpedientesConProblemas />
 
-        {/* Right column */}
-        <div className="space-y-6">
-          <OrganismoStats />
-          <RecentActivity />
-        </div>
-      </div>
+      {/* Otros expedientes activos */}
+      <ActiveExpedientes />
     </div>
   );
 };

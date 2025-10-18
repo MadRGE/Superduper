@@ -7,9 +7,13 @@ export const ActiveExpedientes: React.FC = () => {
   const { state } = useSGT();
   
   const activeExpedientes = state.expedientes
-    .filter(e => ['iniciado', 'en_proceso', 'observado'].includes(e.estado))
+    .filter(e => {
+      const isActive = ['iniciado', 'en_proceso'].includes(e.estado);
+      const noProblems = e.estado !== 'vencido' && e.estado !== 'observado' && e.dias_restantes >= 3;
+      return isActive && noProblems;
+    })
     .sort((a, b) => a.dias_restantes - b.dias_restantes)
-    .slice(0, 6);
+    .slice(0, 8);
 
   const getStatusColor = (estado: string, semaforo: string) => {
     if (estado === 'observado') return 'bg-yellow-100 text-yellow-800';
@@ -35,7 +39,8 @@ export const ActiveExpedientes: React.FC = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <FileText className="w-5 h-5 text-gray-400" />
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Expedientes Activos</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Expedientes en Proceso Normal</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Sin problemas o urgencias</p>
           </div>
           <Link 
             to="/expedientes" 
