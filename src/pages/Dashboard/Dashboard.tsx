@@ -1,24 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { ResumenCompacto } from './ResumenCompacto';
 import { ExpedientesConProblemas } from './ExpedientesConProblemas';
 import { ActiveExpedientes } from './ActiveExpedientes';
-import { DashboardSkeleton } from '../../components/ui/DashboardSkeleton';
 
 export const Dashboard: React.FC = () => {
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 800);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (isLoading) {
-    return <DashboardSkeleton />;
-  }
-
   return (
     <div className="space-y-6">
       {/* Page header */}

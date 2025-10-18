@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Building2, User, Mail, Phone, MapPin, CreditCard as Edit, Plus, Eye, FileText, Calendar, DollarSign, Activity, Briefcase, Package, Shield, MessageSquare, Download, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,6 +16,7 @@ import { formatDate } from '@/lib/utils';
 
 export const ClienteDetailEnhanced: React.FC = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const { hasPermission, canViewCliente } = usePermissions();
   
@@ -116,7 +117,7 @@ export const ClienteDetailEnhanced: React.FC = () => {
         description: `${cliente.razon_social} ha sido desactivado`,
       });
       // Redirigir a la lista de clientes
-      window.location.href = '/clientes';
+      navigate('/clientes');
     } catch (error) {
       toast({
         title: "Error",

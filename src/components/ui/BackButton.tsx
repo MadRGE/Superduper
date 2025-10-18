@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
-import { useRobustNavigation } from '@/hooks/useRobustNavigation';
+import { useNavigate } from 'react-router-dom';
 
 interface BackButtonProps {
   to?: string;
@@ -17,16 +17,13 @@ export const BackButton: React.FC<BackButtonProps> = ({
   variant = 'button',
   fallbackUrl = '/'
 }) => {
-  const handleBack = () => {
-    console.log('BackButton: Iniciando navegación...');
+  const navigate = useNavigate();
 
+  const handleBack = () => {
     if (to) {
-      console.log(`BackButton: Navegando directamente a ${to}`);
-      // Navegación directa sin complicaciones
-      window.location.href = to;
+      navigate(to);
     } else {
-      console.log('BackButton: Navegando a fallback');
-      window.location.href = fallbackUrl;
+      navigate(-1);
     }
   };
 

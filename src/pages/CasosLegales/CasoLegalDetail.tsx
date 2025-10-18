@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, Building2, User, FileText, Clock, AlertTriangle, CheckCircle, Download, Upload, MessageSquare, CreditCard as Edit, Save, X, Plus, Briefcase, Activity, History, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,7 @@ import { formatDate } from '@/lib/utils';
 
 export const CasoLegalDetail: React.FC = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const { hasPermission } = usePermissions();
   
@@ -184,7 +185,7 @@ export const CasoLegalDetail: React.FC = () => {
       });
       
       // Redirigir a la lista
-      window.location.href = '/casos-legales';
+      navigate('/casos-legales');
     } catch (error) {
       toast({
         title: "Error",
