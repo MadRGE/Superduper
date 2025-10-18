@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  FileText, 
-  CheckCircle, 
-  AlertCircle, 
+import {
+  FileText,
+  CheckCircle,
+  AlertCircle,
   Clock,
   Download,
   Upload,
   Calendar,
   DollarSign,
   Info,
-  ExternalLink
+  ExternalLink,
+  X
 } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
+import { useToast } from '@/hooks/use-toast';
+import { StorageService } from '@/services/StorageService';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -23,16 +27,18 @@ interface DocumentacionTramiteProps {
   readOnly?: boolean;
 }
 
-export const DocumentacionTramite: React.FC<DocumentacionTramiteProps> = ({ 
-  tramiteTipoId, 
+export const DocumentacionTramite: React.FC<DocumentacionTramiteProps> = ({
+  tramiteTipoId,
   expedienteId,
   onDocumentUpload,
   readOnly = false
 }) => {
+  const { toast } = useToast();
   const [tramite, setTramite] = useState<any>(null);
   const [documentosSubidos, setDocumentosSubidos] = useState<any[]>([]);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [selectedDoc, setSelectedDoc] = useState<any>(null);
+  const [uploading, setUploading] = useState(false);
   
   useEffect(() => {
     // Buscar el trámite en el catálogo
@@ -43,10 +49,27 @@ export const DocumentacionTramite: React.FC<DocumentacionTramiteProps> = ({
     
     // Cargar documentos ya subidos si existe expediente
     if (expedienteId) {
-      const docs = JSON.parse(localStorage.getItem(`sgt_docs_${expedienteId}`) || '[]');
-      setDocumentosSubidos(docs);
+      cargarDocumentos();
     }
   }, [tramiteTipoId, expedienteId]);
+
+  const cargarDocumentos = async () => {
+    if (!expedienteId) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('documentos')
+        .select('*')
+        .eq('expediente_id', expedienteId)
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setDocumentosSubidos(data || []);
+    } catch (error) {
+      console.error('Error cargando documentos:', error);
+    }
+  };
 
   if (!tramite) {
     return (
@@ -68,7 +91,8 @@ export const DocumentacionTramite: React.FC<DocumentacionTramiteProps> = ({
   };
 
   const isDocumentoSubido = (documento: string) => {
-    return documentosSubidos.some(subido => 
+    return documentosSubidos.some(subido =>
+      subido.tipo?.toLowerCase().includes(documento.toLowerCase()) ||
       subido.nombre.toLowerCase().includes(documento.toLowerCase())
     );
   };
@@ -78,36 +102,106 @@ export const DocumentacionTramite: React.FC<DocumentacionTramiteProps> = ({
     setShowUploadModal(true);
   };
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    
-    // Always close the modal first, regardless of file selection
-    setShowUploadModal(false);
-    setSelectedDoc(null);
-    
-    if (!file || !selectedDoc) return;
-
-    const nuevoDocumento = {
-      id: `doc-${Date.now()}`,
-      expediente_id: expedienteId,
-      nombre: file.name,
-      tipo: file.type,
-      size: file.size,
-      estado: 'subido',
-      documento_requerido: selectedDoc.documento,
-      formato_esperado: selectedDoc.formato,
-      created_at: new Date().toISOString()
-    };
-
-    const nuevosDocumentos = [...documentosSubidos, nuevoDocumento];
-    setDocumentosSubidos(nuevosDocumentos);
-
-    if (expedienteId) {
-      localStorage.setItem(`sgt_docs_${expedienteId}`, JSON.stringify(nuevosDocumentos));
+  const handleDownloadDocument = async (documento: any) => {
+    if (!documento.storage_path) {
+      toast({
+        title: 'Error',
+        description: 'Este documento no tiene archivo asociado',
+        variant: 'destructive'
+      });
+      return;
     }
 
-    if (onDocumentUpload) {
-      onDocumentUpload(nuevoDocumento);
+    const { error } = await StorageService.downloadFileToDevice(
+      documento.storage_path,
+      documento.nombre
+    );
+
+    if (error) {
+      toast({
+        title: 'Error al descargar',
+        description: error.message,
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (!file || !selectedDoc || !expedienteId) {
+      setShowUploadModal(false);
+      setSelectedDoc(null);
+      return;
+    }
+
+    setUploading(true);
+
+    try {
+      const user = (await supabase.auth.getUser()).data.user;
+      if (!user) throw new Error('Usuario no autenticado');
+
+      // Upload file to Supabase Storage
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = `${expedienteId}/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('documentos')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (uploadError) throw uploadError;
+
+      // Create document record in database
+      const { data: newDoc, error: dbError } = await supabase
+        .from('documentos')
+        .insert({
+          expediente_id: expedienteId,
+          nombre: file.name,
+          tipo: selectedDoc.documento,
+          descripcion: selectedDoc.detalle || null,
+          storage_path: filePath,
+          formato: file.type,
+          size_kb: Math.round(file.size / 1024),
+          subido_por: user.id,
+          estado: 'revision',
+          is_active: true,
+          metadata: {
+            formato_esperado: selectedDoc.formato,
+            vigencia_maxima: selectedDoc.vigencia_maxima || null,
+            firma: selectedDoc.firma || null
+          }
+        })
+        .select()
+        .single();
+
+      if (dbError) throw dbError;
+
+      toast({
+        title: 'Documento subido',
+        description: `${file.name} se subió correctamente`,
+      });
+
+      // Reload documents
+      await cargarDocumentos();
+
+      if (onDocumentUpload) {
+        onDocumentUpload(newDoc);
+      }
+    } catch (error: any) {
+      console.error('Error subiendo documento:', error);
+      toast({
+        title: 'Error al subir documento',
+        description: error.message || 'No se pudo subir el archivo',
+        variant: 'destructive'
+      });
+    } finally {
+      setUploading(false);
+      setShowUploadModal(false);
+      setSelectedDoc(null);
     }
   };
 
@@ -233,30 +327,37 @@ export const DocumentacionTramite: React.FC<DocumentacionTramiteProps> = ({
                       )}
                     </div>
                   </div>
-                  <div className="ml-4">
-                    {!readOnly && (
-                      <Button 
-                        size="sm" 
-                        variant={subido ? "outline" : "default"}
+                  <div className="ml-4 flex flex-col gap-2">
+                    {!readOnly && !subido && (
+                      <Button
+                        size="sm"
+                        variant="default"
                         onClick={() => handleUploadDocument(doc)}
                       >
-                        {subido ? (
-                          <>
-                            <Download className="w-4 h-4 mr-1" />
-                            Ver
-                          </>
-                        ) : (
-                          <>
-                            <Upload className="w-4 h-4 mr-1" />
-                            Subir
-                          </>
-                        )}
+                        <Upload className="w-4 h-4 mr-1" />
+                        Subir
                       </Button>
                     )}
                     {subido && (
-                      <div className="text-xs text-green-600 mt-1 text-center">
-                        ✓ Subido
-                      </div>
+                      <>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            const docSubido = documentosSubidos.find(d =>
+                              d.tipo?.toLowerCase().includes(doc.documento.toLowerCase()) ||
+                              d.nombre.toLowerCase().includes(doc.documento.toLowerCase())
+                            );
+                            if (docSubido) handleDownloadDocument(docSubido);
+                          }}
+                        >
+                          <Download className="w-4 h-4 mr-1" />
+                          Descargar
+                        </Button>
+                        <div className="text-xs text-green-600 text-center">
+                          ✓ Subido
+                        </div>
+                      </>
                     )}
                   </div>
                 </div>
@@ -414,15 +515,27 @@ export const DocumentacionTramite: React.FC<DocumentacionTramiteProps> = ({
                   type="file"
                   onChange={handleFileUpload}
                   accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  disabled={uploading}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 disabled:opacity-50"
                 />
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   Formatos aceptados: {selectedDoc.formato}
                 </p>
               </div>
 
+              {uploading && (
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">Subiendo archivo...</p>
+                </div>
+              )}
+
               <div className="flex justify-end space-x-2">
-                <Button variant="outline" onClick={() => setShowUploadModal(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowUploadModal(false)}
+                  disabled={uploading}
+                >
                   Cancelar
                 </Button>
               </div>

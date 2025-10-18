@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  Upload, 
-  FileText, 
-  Download, 
-  CheckCircle, 
+import {
+  Upload,
+  FileText,
+  Download,
+  CheckCircle,
   AlertCircle,
   Clock,
   Plus,
   X,
   Eye
 } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
+import { StorageService } from '@/services/StorageService';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -22,6 +24,7 @@ export const DocumentosClienteContent: React.FC = () => {
   const [expedientes, setExpedientes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [uploadData, setUploadData] = useState({
     expediente_id: '',
     nombre: '',
@@ -39,31 +42,45 @@ export const DocumentosClienteContent: React.FC = () => {
   const cargarDatos = async () => {
     try {
       setLoading(true);
-      
-      // Cargar expedientes del cliente
-      const expedientesStorage = localStorage.getItem('sgt_expedientes');
-      const todosExpedientes = expedientesStorage ? JSON.parse(expedientesStorage) : [];
-      
-      const expedientesCliente = todosExpedientes.filter((exp: any) => 
-        exp.cliente_id === cliente.id || exp.cliente_nombre === cliente.razon_social
-      );
-      
-      setExpedientes(expedientesCliente);
-      
-      // Cargar todos los documentos de los expedientes del cliente
-      const todosDocumentos: any[] = [];
-      expedientesCliente.forEach((exp: any) => {
-        const docsExpediente = JSON.parse(
-          localStorage.getItem(`sgt_documentos_${exp.id}`) || '[]'
-        );
-        todosDocumentos.push(...docsExpediente.map((doc: any) => ({
-          ...doc,
-          expediente_codigo: exp.codigo,
-          expediente_alias: exp.alias
-        })));
-      });
-      
-      setDocumentos(todosDocumentos);
+
+      // Cargar expedientes del cliente desde Supabase
+      const { data: expedientesData, error: expError } = await supabase
+        .from('expedientes')
+        .select('id, codigo, alias, cliente_id')
+        .eq('cliente_id', cliente.id)
+        .eq('is_active', true);
+
+      if (expError) throw expError;
+
+      setExpedientes(expedientesData || []);
+
+      // Cargar documentos de los expedientes del cliente
+      if (expedientesData && expedientesData.length > 0) {
+        const expedienteIds = expedientesData.map(exp => exp.id);
+
+        const { data: docsData, error: docsError } = await supabase
+          .from('documentos')
+          .select('*')
+          .in('expediente_id', expedienteIds)
+          .eq('is_active', true)
+          .order('created_at', { ascending: false });
+
+        if (docsError) throw docsError;
+
+        // Enrich documents with expediente info
+        const documentosEnriquecidos = (docsData || []).map(doc => {
+          const expediente = expedientesData.find(exp => exp.id === doc.expediente_id);
+          return {
+            ...doc,
+            expediente_codigo: expediente?.codigo,
+            expediente_alias: expediente?.alias
+          };
+        });
+
+        setDocumentos(documentosEnriquecidos);
+      } else {
+        setDocumentos([]);
+      }
     } catch (error) {
       console.error('Error cargando datos:', error);
       toast({
@@ -76,47 +93,99 @@ export const DocumentosClienteContent: React.FC = () => {
     }
   };
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || !uploadData.expediente_id) return;
 
-    // Simular subida de archivo
-    const nuevoDocumento = {
-      id: `doc-${Date.now()}`,
-      expediente_id: uploadData.expediente_id,
-      nombre: uploadData.nombre || file.name,
-      tipo: file.type,
-      size: file.size,
-      estado: 'revision',
-      descripcion: uploadData.descripcion,
-      created_at: new Date().toISOString(),
-      expediente_codigo: expedientes.find(e => e.id === uploadData.expediente_id)?.codigo,
-      expediente_alias: expedientes.find(e => e.id === uploadData.expediente_id)?.alias
-    };
+    setUploading(true);
 
-    // Guardar en localStorage
-    const docsExpediente = JSON.parse(
-      localStorage.getItem(`sgt_documentos_${uploadData.expediente_id}`) || '[]'
+    try {
+      const user = (await supabase.auth.getUser()).data.user;
+      if (!user) throw new Error('Usuario no autenticado');
+
+      // Upload file to Supabase Storage
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = `${uploadData.expediente_id}/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('documentos')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (uploadError) throw uploadError;
+
+      // Create document record in database
+      const { error: dbError } = await supabase
+        .from('documentos')
+        .insert({
+          expediente_id: uploadData.expediente_id,
+          nombre: uploadData.nombre || file.name,
+          tipo: uploadData.tipo,
+          descripcion: uploadData.descripcion || null,
+          storage_path: filePath,
+          formato: file.type,
+          size_kb: Math.round(file.size / 1024),
+          subido_por: user.id,
+          subido_por_rol: 'cliente',
+          estado: 'revision',
+          is_active: true
+        });
+
+      if (dbError) throw dbError;
+
+      toast({
+        title: "Documento subido",
+        description: `${uploadData.nombre || file.name} se subió correctamente`,
+      });
+
+      // Reload documents
+      await cargarDatos();
+
+      // Reset form
+      setUploadData({
+        expediente_id: '',
+        nombre: '',
+        tipo: 'pdf',
+        descripcion: ''
+      });
+      setShowUploadModal(false);
+    } catch (error: any) {
+      console.error('Error subiendo documento:', error);
+      toast({
+        title: "Error al subir documento",
+        description: error.message || 'No se pudo subir el archivo',
+        variant: "destructive"
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleDownloadDocument = async (documento: any) => {
+    if (!documento.storage_path) {
+      toast({
+        title: 'Error',
+        description: 'Este documento no tiene archivo asociado',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    const { error } = await StorageService.downloadFileToDevice(
+      documento.storage_path,
+      documento.nombre
     );
-    docsExpediente.push(nuevoDocumento);
-    localStorage.setItem(`sgt_documentos_${uploadData.expediente_id}`, JSON.stringify(docsExpediente));
 
-    // Actualizar estado local
-    setDocumentos([...documentos, nuevoDocumento]);
-
-    toast({
-      title: "Documento subido",
-      description: `${nuevoDocumento.nombre} se subió correctamente`,
-    });
-
-    // Resetear formulario
-    setUploadData({
-      expediente_id: '',
-      nombre: '',
-      tipo: 'pdf',
-      descripcion: ''
-    });
-    setShowUploadModal(false);
+    if (error) {
+      toast({
+        title: 'Error al descargar',
+        description: error.message,
+        variant: 'destructive'
+      });
+    }
   };
 
   const getEstadoDocumento = (estado: string) => {
@@ -236,7 +305,7 @@ export const DocumentosClienteContent: React.FC = () => {
                         </p>
                         <div className="flex items-center space-x-4 text-xs text-gray-500 mt-1">
                           <span>Subido: {formatDate(documento.created_at)}</span>
-                          <span>Tamaño: {Math.round(documento.size / 1024)} KB</span>
+                          <span>Tamaño: {documento.size_kb || 0} KB</span>
                         </div>
                       </div>
                     </div>
@@ -245,10 +314,12 @@ export const DocumentosClienteContent: React.FC = () => {
                         {documento.estado}
                       </Badge>
                       <div className="flex space-x-1">
-                        <Button variant="ghost" size="sm">
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDownloadDocument(documento)}
+                          title="Descargar documento"
+                        >
                           <Download className="w-4 h-4" />
                         </Button>
                       </div>
@@ -340,15 +411,27 @@ export const DocumentosClienteContent: React.FC = () => {
                   type="file"
                   onChange={handleFileUpload}
                   accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  disabled={uploading}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50"
                 />
                 <p className="text-xs text-gray-500 mt-1">
                   Formatos aceptados: PDF, JPG, PNG, DOC, DOCX, XLS, XLSX
                 </p>
               </div>
 
+              {uploading && (
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                  <p className="text-sm text-gray-600 mt-2">Subiendo archivo...</p>
+                </div>
+              )}
+
               <div className="flex justify-end space-x-2">
-                <Button variant="outline" onClick={() => setShowUploadModal(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowUploadModal(false)}
+                  disabled={uploading}
+                >
                   Cancelar
                 </Button>
               </div>
