@@ -1,0 +1,1465 @@
+{
+  "version": "1.0",
+  "generated_at": "2025-09-30T22:38:20.705185",
+  "models": [
+    {
+      "id": "ADU-SIRA",
+      "name": "SIRA / Capacidad Económica",
+      "organismo": "AFIP/Aduana",
+      "subtipo": [
+        "Inicial",
+        "Rectificativa"
+      ],
+      "campos_clave": [
+        "CUIT",
+        "NCM",
+        "Proveedor",
+        "INCOTERM",
+        "FOB",
+        "CIF",
+        "Banco",
+        "Destino"
+      ],
+      "documentos": [
+        "Proforma/Invoice",
+        "Contrato",
+        "Packing List",
+        "Catálogo/Ficha técnica"
+      ],
+      "flujo": [
+        "Alta",
+        "Carga de documentos",
+        "Presentación",
+        "Observaciones",
+        "Aprobado/Denegado",
+        "Cierre"
+      ],
+      "sla_dias": 15,
+      "roles": [
+        "gestor",
+        "cliente",
+        "despachante",
+        "auditor"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "ADU-MUESTRAS",
+      "name": "Autorización Ingreso de Muestras",
+      "organismo": "Aduana + Sanitario según NCM",
+      "subtipo": [
+        "Courier",
+        "Carga"
+      ],
+      "campos_clave": [
+        "NCM",
+        "Finalidad",
+        "Cantidad",
+        "Organismo Interviniente"
+      ],
+      "documentos": [
+        "Nota Solicitud",
+        "Invoice sin valor comercial",
+        "Ficha seguridad (si aplica)"
+      ],
+      "flujo": [
+        "Alta",
+        "Solicitud",
+        "Respuesta autoridad",
+        "Entrega",
+        "Cierre"
+      ],
+      "sla_dias": 7,
+      "roles": [
+        "gestor",
+        "despachante",
+        "cliente"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "ADU-REIMP-RECH",
+      "name": "Reimportación por Rechazo",
+      "organismo": "AFIP/Aduana",
+      "subtipo": [
+        "Total",
+        "Parcial"
+      ],
+      "campos_clave": [
+        "DUA origen",
+        "Motivo rechazo",
+        "Estado mercadería"
+      ],
+      "documentos": [
+        "BL/AWB",
+        "Certificados",
+        "Acta rechazo",
+        "Invoice retorno"
+      ],
+      "flujo": [
+        "Alta",
+        "Presentación",
+        "Intervenciones",
+        "Liberación",
+        "Cierre"
+      ],
+      "sla_dias": 10,
+      "roles": [
+        "gestor",
+        "despachante",
+        "cliente"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "ADU-IMP-TEMP",
+      "name": "Importación Temporaria",
+      "organismo": "AFIP/Aduana",
+      "subtipo": [
+        "Transformación",
+        "Perfeccionamiento"
+      ],
+      "campos_clave": [
+        "Plazo",
+        "Proceso industrial",
+        "Subproductos"
+      ],
+      "documentos": [
+        "Contrato",
+        "Plan de producción",
+        "Detalle de procesos"
+      ],
+      "flujo": [
+        "Alta",
+        "Autorización",
+        "Seguimiento",
+        "Reexportación/Transformación",
+        "Cierre"
+      ],
+      "sla_dias": 20,
+      "roles": [
+        "gestor",
+        "cliente"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "ADU-LNA",
+      "name": "Licencia No Automática (LNA)",
+      "organismo": "Secretaría de Comercio",
+      "subtipo": [
+        "Inicial",
+        "Ampliación"
+      ],
+      "campos_clave": [
+        "NCM",
+        "Antecedentes",
+        "Volúmenes"
+      ],
+      "documentos": [
+        "Fichas técnicas",
+        "Catálogo",
+        "Historial importaciones"
+      ],
+      "flujo": [
+        "Alta",
+        "Presentación",
+        "Observaciones",
+        "Aprobado",
+        "Cierre"
+      ],
+      "sla_dias": 25,
+      "roles": [
+        "gestor",
+        "cliente"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "ADU-CERT-ORIGEN",
+      "name": "Certificado de Origen",
+      "organismo": "Cámara/Entidad emisora",
+      "subtipo": [
+        "ALADI",
+        "MERCOSUR",
+        "No preferencial",
+        "SGP"
+      ],
+      "campos_clave": [
+        "Régimen",
+        "País destino",
+        "Entidad emisora"
+      ],
+      "documentos": [
+        "Invoice",
+        "Lista de empaque",
+        "Declaración de origen"
+      ],
+      "flujo": [
+        "Alta",
+        "Emisión",
+        "Firma",
+        "Entrega",
+        "Cierre"
+      ],
+      "sla_dias": 3,
+      "roles": [
+        "gestor",
+        "cliente"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "INAL-RNE",
+      "name": "Habilitación RNE",
+      "organismo": "INAL/ANMAT",
+      "subtipo": [
+        "Inicial",
+        "Ampliación",
+        "Actualización"
+      ],
+      "campos_clave": [
+        "Establecimiento",
+        "RT",
+        "Domicilio",
+        "Rubro"
+      ],
+      "documentos": [
+        "Planos",
+        "BPM",
+        "Análisis de agua",
+        "Contrato residuos"
+      ],
+      "flujo": [
+        "Alta",
+        "Inspección",
+        "Observaciones",
+        "Aprobado",
+        "Cierre"
+      ],
+      "sla_dias": 30,
+      "roles": [
+        "gestor",
+        "cliente",
+        "auditor"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "INAL-RNPA",
+      "name": "Registro RNPA",
+      "organismo": "INAL/ANMAT",
+      "subtipo": [
+        "Alimentos",
+        "Bebidas",
+        "Suplementos"
+      ],
+      "campos_clave": [
+        "Marca",
+        "Denominación",
+        "Composición",
+        "Vida útil",
+        "Rotulado"
+      ],
+      "documentos": [
+        "Rótulo",
+        "Fórmula",
+        "Info nutricional",
+        "COA/estudios (si aplica)"
+      ],
+      "flujo": [
+        "Alta",
+        "Presentación",
+        "Observaciones",
+        "Aprobado",
+        "Cierre"
+      ],
+      "sla_dias": 25,
+      "roles": [
+        "gestor",
+        "cliente",
+        "auditor"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "INAL-IMP-AUT",
+      "name": "Autorización de Importación de Alimentos",
+      "organismo": "INAL/ANMAT",
+      "subtipo": [
+        "Envase consumo",
+        "Granel"
+      ],
+      "campos_clave": [
+        "NCM",
+        "País origen",
+        "Shelf-life"
+      ],
+      "documentos": [
+        "COA",
+        "Libre venta",
+        "Rótulo origen",
+        "Traducciones"
+      ],
+      "flujo": [
+        "Alta",
+        "Intervención",
+        "Autorización",
+        "Cierre"
+      ],
+      "sla_dias": 10,
+      "roles": [
+        "gestor",
+        "despachante",
+        "cliente"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "SENASA-INSCRIP",
+      "name": "Inscripción Importador/Exportador",
+      "organismo": "SENASA",
+      "subtipo": [
+        "Inicial",
+        "Actualización"
+      ],
+      "campos_clave": [
+        "CUIT",
+        "Rubros",
+        "Depósitos"
+      ],
+      "documentos": [
+        "Manuales",
+        "BPM",
+        "Contratos"
+      ],
+      "flujo": [
+        "Alta",
+        "Evaluación",
+        "Aprobación",
+        "Cierre"
+      ],
+      "sla_dias": 15,
+      "roles": [
+        "gestor",
+        "cliente"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "SENASA-IMP",
+      "name": "Autorización Sanitaria de Importación",
+      "organismo": "SENASA",
+      "subtipo": [
+        "Cárnico",
+        "Lácteos",
+        "Vegetales"
+      ],
+      "campos_clave": [
+        "NCM",
+        "País origen",
+        "Planta",
+        "Cadena de frío"
+      ],
+      "documentos": [
+        "Certificado sanitario origen",
+        "Fitosanitario/Zoosanitario",
+        "Plan de frío (si aplica)"
+      ],
+      "flujo": [
+        "Alta",
+        "Revisión documental",
+        "Intervención",
+        "Autorización",
+        "Cierre"
+      ],
+      "sla_dias": 10,
+      "roles": [
+        "gestor",
+        "cliente",
+        "despachante"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "SENASA-ROT-ENV",
+      "name": "Rotulado/Aprobación de Envases",
+      "organismo": "SENASA",
+      "subtipo": [
+        "Contacto alimentario",
+        "Insumos agro"
+      ],
+      "campos_clave": [
+        "Material",
+        "Uso",
+        "Compatibilidad"
+      ],
+      "documentos": [
+        "Ficha técnica",
+        "Migración global/específica"
+      ],
+      "flujo": [
+        "Alta",
+        "Ensayo",
+        "Aprobación",
+        "Cierre"
+      ],
+      "sla_dias": 20,
+      "roles": [
+        "gestor",
+        "cliente"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "ENACOM-HOMO",
+      "name": "Homologación ENACOM",
+      "organismo": "ENACOM",
+      "subtipo": [
+        "BT/WiFi",
+        "Celular/5G",
+        "IoT",
+        "RF"
+      ],
+      "campos_clave": [
+        "Marca",
+        "Modelo",
+        "Bandas",
+        "Potencia",
+        "Norma"
+      ],
+      "documentos": [
+        "Informe laboratorio",
+        "Fotos ID",
+        "Manual",
+        "Etiqueta"
+      ],
+      "flujo": [
+        "Alta",
+        "Ensayos/CB",
+        "Presentación",
+        "Certificado",
+        "Cierre"
+      ],
+      "sla_dias": 20,
+      "roles": [
+        "gestor",
+        "cliente",
+        "auditor"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "ENACOM-FAM-AGRUP",
+      "name": "Agrupamiento por Familia (ENACOM)",
+      "organismo": "ENACOM",
+      "subtipo": [
+        "Idénticos",
+        "Similares"
+      ],
+      "campos_clave": [
+        "Criterio familia",
+        "Versiones",
+        "Firmware"
+      ],
+      "documentos": [
+        "Declaración de familia",
+        "Evidencias de similitud"
+      ],
+      "flujo": [
+        "Alta",
+        "Evaluación",
+        "Aprobación",
+        "Cierre"
+      ],
+      "sla_dias": 7,
+      "roles": [
+        "gestor",
+        "cliente"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "CHAS-SEGEL",
+      "name": "Seguridad Eléctrica (CHAS)",
+      "organismo": "OCP + Sec. Comercio",
+      "subtipo": [
+        "Electrodomésticos",
+        "Lámparas/LED",
+        "TIC"
+      ],
+      "campos_clave": [
+        "Tensión",
+        "Clase",
+        "Norma",
+        "Serie/Lote"
+      ],
+      "documentos": [
+        "Informe de Ensayo",
+        "CB/CoC",
+        "Rótulo/Manual",
+        "Plan seguimiento"
+      ],
+      "flujo": [
+        "Alta",
+        "Ensayos",
+        "OCP",
+        "CHAS",
+        "Seguimiento",
+        "Cierre"
+      ],
+      "sla_dias": 30,
+      "roles": [
+        "gestor",
+        "cliente",
+        "auditor"
+      ],
+      "ncm_tags": [],
+      "normas_refs": [
+        "Res 169/2018",
+        "Res 1038/2021",
+        "Res 31/2023"
+      ]
+    },
+    {
+      "id": "CHAS-SEGUIMIENTO",
+      "name": "Ensayos de Seguimiento (CHAS)",
+      "organismo": "OCP",
+      "subtipo": [
+        "Muestreo anual",
+        "Verificación de mercado"
+      ],
+      "campos_clave": [
+        "Lote",
+        "Muestra",
+        "Fecha plan"
+      ],
+      "documentos": [
+        "Acta toma de muestra",
+        "Informes seguimiento"
+      ],
+      "flujo": [
+        "Alta",
+        "Muestreo",
+        "Ensayos",
+        "Informe",
+        "Cierre"
+      ],
+      "sla_dias": 20,
+      "roles": [
+        "gestor",
+        "cliente",
+        "auditor"
+      ],
+      "ncm_tags": [],
+      "normas_refs": [
+        "Res 31/2023 art.5"
+      ]
+    },
+    {
+      "id": "EMC-CUMPL",
+      "name": "Compatibilidad Electromagnética (EMC)",
+      "organismo": "Laboratorio / OCP",
+      "subtipo": [
+        "Industrial",
+        "Residencial",
+        "TIC"
+      ],
+      "campos_clave": [
+        "Norma",
+        "Configuración",
+        "Modos"
+      ],
+      "documentos": [
+        "Informes EMC",
+        "Plan de pruebas"
+      ],
+      "flujo": [
+        "Alta",
+        "Ensayos",
+        "Informe",
+        "Cierre"
+      ],
+      "sla_dias": 15,
+      "roles": [
+        "gestor",
+        "cliente"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "ROHS-DECL",
+      "name": "Conformidad RoHS",
+      "organismo": "Fabricante/Importador",
+      "subtipo": [
+        "Declaración",
+        "Ensayos puntuales"
+      ],
+      "campos_clave": [
+        "Sustancias restringidas",
+        "Partes críticas"
+      ],
+      "documentos": [
+        "Declaración RoHS",
+        "Resultados XRF/ICP (si aplica)"
+      ],
+      "flujo": [
+        "Alta",
+        "Evidencias",
+        "Aprobación interna",
+        "Cierre"
+      ],
+      "sla_dias": 5,
+      "roles": [
+        "gestor",
+        "cliente"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "CONTACTO-ALIM-DECL",
+      "name": "Aptitud para Contacto con Alimentos",
+      "organismo": "Laboratorio / INAL",
+      "subtipo": [
+        "Migración global",
+        "Específica"
+      ],
+      "campos_clave": [
+        "Material",
+        "Uso",
+        "Condiciones contacto"
+      ],
+      "documentos": [
+        "Informe de migración",
+        "Ficha técnica"
+      ],
+      "flujo": [
+        "Alta",
+        "Ensayo",
+        "Informe",
+        "Cierre"
+      ],
+      "sla_dias": 12,
+      "roles": [
+        "gestor",
+        "cliente"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "DNM-VERIF-PRIM",
+      "name": "Verificación Primitiva",
+      "organismo": "DNM/INTI",
+      "subtipo": [
+        "Surtidores",
+        "Balanzas",
+        "Medidores"
+      ],
+      "campos_clave": [
+        "Equipo",
+        "Ubicación",
+        "Patrones",
+        "OAV"
+      ],
+      "documentos": [
+        "Planillas verificación",
+        "Certificados patrón"
+      ],
+      "flujo": [
+        "Alta",
+        "Programación",
+        "Ensayo",
+        "Certificado",
+        "Cierre"
+      ],
+      "sla_dias": 7,
+      "roles": [
+        "gestor",
+        "cliente",
+        "laboratorio",
+        "auditor"
+      ],
+      "ncm_tags": [],
+      "normas_refs": [
+        "SIMELA/IOLMS"
+      ]
+    },
+    {
+      "id": "DNM-VERIF-PER",
+      "name": "Verificación Periódica",
+      "organismo": "DNM/INTI",
+      "subtipo": [
+        "Surtidores",
+        "Balanzas",
+        "Medidores"
+      ],
+      "campos_clave": [
+        "Equipo",
+        "Fecha última",
+        "Frecuencia"
+      ],
+      "documentos": [
+        "Actas",
+        "Certificados"
+      ],
+      "flujo": [
+        "Alta",
+        "Programación",
+        "Ensayo",
+        "Certificado",
+        "Cierre"
+      ],
+      "sla_dias": 7,
+      "roles": [
+        "gestor",
+        "cliente",
+        "laboratorio"
+      ],
+      "ncm_tags": [],
+      "normas_refs": [
+        "SIMELA/IOLMS"
+      ]
+    },
+    {
+      "id": "DNM-APR-MOD",
+      "name": "Aprobación de Modelo (Metrología)",
+      "organismo": "DNM/INTI",
+      "subtipo": [
+        "Nacional",
+        "Reconocimiento OIML"
+      ],
+      "campos_clave": [
+        "Norma",
+        "Rango",
+        "Clase exactitud"
+      ],
+      "documentos": [
+        "Dossier técnico",
+        "Planos",
+        "Informes"
+      ],
+      "flujo": [
+        "Alta",
+        "Ensayos",
+        "Aprobación",
+        "Cierre"
+      ],
+      "sla_dias": 30,
+      "roles": [
+        "gestor",
+        "cliente",
+        "laboratorio"
+      ],
+      "ncm_tags": [],
+      "normas_refs": [
+        "OIML CS"
+      ]
+    },
+    {
+      "id": "CITES-IMP",
+      "name": "CITES Importación",
+      "organismo": "Autoridad Ambiental",
+      "subtipo": [
+        "Trofeos",
+        "Vivos",
+        "Muestras"
+      ],
+      "campos_clave": [
+        "Especie",
+        "Anexo",
+        "Origen"
+      ],
+      "documentos": [
+        "Permiso CITES",
+        "Fotos",
+        "Trazabilidad"
+      ],
+      "flujo": [
+        "Alta",
+        "Solicitud",
+        "Permiso",
+        "Ingreso Aduana",
+        "Cierre"
+      ],
+      "sla_dias": 15,
+      "roles": [
+        "gestor",
+        "cliente",
+        "despachante"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "CITES-EXP",
+      "name": "CITES Exportación",
+      "organismo": "Autoridad Ambiental",
+      "subtipo": [
+        "Trofeos",
+        "Vivos",
+        "Muestras"
+      ],
+      "campos_clave": [
+        "Especie",
+        "Anexo",
+        "Destino"
+      ],
+      "documentos": [
+        "Permiso CITES",
+        "Fotos",
+        "Trazabilidad"
+      ],
+      "flujo": [
+        "Alta",
+        "Solicitud",
+        "Permiso",
+        "Salida Aduana",
+        "Cierre"
+      ],
+      "sla_dias": 15,
+      "roles": [
+        "gestor",
+        "cliente",
+        "despachante"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "CITES-REEXP",
+      "name": "CITES Reexportación",
+      "organismo": "Autoridad Ambiental",
+      "subtipo": [
+        "Trofeos",
+        "Vivos",
+        "Muestras"
+      ],
+      "campos_clave": [
+        "Especie",
+        "Anexo",
+        "Origen/Destino"
+      ],
+      "documentos": [
+        "Permiso previo",
+        "Evidencia legal de ingreso"
+      ],
+      "flujo": [
+        "Alta",
+        "Solicitud",
+        "Permiso",
+        "Salida Aduana",
+        "Cierre"
+      ],
+      "sla_dias": 12,
+      "roles": [
+        "gestor",
+        "cliente",
+        "despachante"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "RENPRE-INS",
+      "name": "Inscripción/Reinscripción RENPRE",
+      "organismo": "SEDRONAR",
+      "subtipo": [
+        "Inicial",
+        "Renovación"
+      ],
+      "campos_clave": [
+        "Sustancias",
+        "Volúmenes"
+      ],
+      "documentos": [
+        "Antecedentes",
+        "Procedimientos internos"
+      ],
+      "flujo": [
+        "Alta",
+        "Presentación",
+        "Observaciones",
+        "Aprobado",
+        "Cierre"
+      ],
+      "sla_dias": 20,
+      "roles": [
+        "gestor",
+        "cliente",
+        "auditor"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "RENPRE-MOV",
+      "name": "Movimientos RENPRE",
+      "organismo": "SEDRONAR",
+      "subtipo": [
+        "Altas",
+        "Bajas",
+        "Transferencias"
+      ],
+      "campos_clave": [
+        "Sustancia",
+        "Cantidad",
+        "Destino"
+      ],
+      "documentos": [
+        "Remitos",
+        "Facturas"
+      ],
+      "flujo": [
+        "Alta",
+        "Declaración",
+        "Validación",
+        "Cierre"
+      ],
+      "sla_dias": 3,
+      "roles": [
+        "gestor",
+        "cliente"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "ANMAC-IMP",
+      "name": "ANMaC Importación",
+      "organismo": "ANMaC",
+      "subtipo": [
+        "Armas",
+        "Municiones",
+        "Elementos"
+      ],
+      "campos_clave": [
+        "Categoría",
+        "Cantidades",
+        "Destino"
+      ],
+      "documentos": [
+        "Antecedentes",
+        "Pólizas",
+        "Certificados"
+      ],
+      "flujo": [
+        "Alta",
+        "Presentación",
+        "Intervención",
+        "Autorización",
+        "Cierre"
+      ],
+      "sla_dias": 30,
+      "roles": [
+        "gestor",
+        "cliente",
+        "auditor"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "ANMAC-COMER",
+      "name": "ANMaC Comercialización",
+      "organismo": "ANMaC",
+      "subtipo": [
+        "Habilitación",
+        "Ampliación"
+      ],
+      "campos_clave": [
+        "Categorías",
+        "Custodia",
+        "Depósito"
+      ],
+      "documentos": [
+        "Manual de seguridad",
+        "Pólizas"
+      ],
+      "flujo": [
+        "Alta",
+        "Inspección",
+        "Aprobación",
+        "Cierre"
+      ],
+      "sla_dias": 30,
+      "roles": [
+        "gestor",
+        "cliente",
+        "auditor"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "CSV-IND",
+      "name": "CSV Vehicular (individual)",
+      "organismo": "Seguridad Vial",
+      "subtipo": [
+        "Moto",
+        "Motorhome",
+        "Auto"
+      ],
+      "campos_clave": [
+        "VIN",
+        "LCM existente",
+        "Modificaciones"
+      ],
+      "documentos": [
+        "Título/Factura",
+        "Fotos",
+        "Planilla técnica"
+      ],
+      "flujo": [
+        "Alta",
+        "Inspección",
+        "Observaciones",
+        "Aprobado",
+        "Cierre"
+      ],
+      "sla_dias": 10,
+      "roles": [
+        "gestor",
+        "cliente"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "LCM-MODELO",
+      "name": "Licencia de Configuración de Modelo (LCM)",
+      "organismo": "Seguridad Vial/Fabricante",
+      "subtipo": [
+        "Nacional",
+        "Importada"
+      ],
+      "campos_clave": [
+        "Marca/Modelo",
+        "Versión",
+        "Familia"
+      ],
+      "documentos": [
+        "Dossier técnico",
+        "Ensayos",
+        "Plan de producción"
+      ],
+      "flujo": [
+        "Alta",
+        "Ensayos",
+        "Aprobación",
+        "Cierre"
+      ],
+      "sla_dias": 45,
+      "roles": [
+        "gestor",
+        "cliente",
+        "fabricante"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "AUTOPART-CHAS",
+      "name": "Autopartes - Marcado/CHAS",
+      "organismo": "Sec. Comercio / OCP",
+      "subtipo": [
+        "Críticas",
+        "No críticas"
+      ],
+      "campos_clave": [
+        "NCM",
+        "Marcado",
+        "Norma"
+      ],
+      "documentos": [
+        "Ensayos",
+        "Etiquetado",
+        "Certificados"
+      ],
+      "flujo": [
+        "Alta",
+        "Ensayos",
+        "OCP",
+        "CHAS",
+        "Cierre"
+      ],
+      "sla_dias": 25,
+      "roles": [
+        "gestor",
+        "cliente"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "MAYDS-BATT",
+      "name": "Pilas/Baterías (Cumplimiento Ambiental)",
+      "organismo": "MAyDS",
+      "subtipo": [
+        "Primarias",
+        "Secundarias"
+      ],
+      "campos_clave": [
+        "Química",
+        "Capacidad",
+        "Etiquetado"
+      ],
+      "documentos": [
+        "Ensayos/etiquetas",
+        "Plan seguimiento"
+      ],
+      "flujo": [
+        "Alta",
+        "Presentación",
+        "Observaciones",
+        "Aprobado",
+        "Cierre"
+      ],
+      "sla_dias": 20,
+      "roles": [
+        "gestor",
+        "cliente",
+        "auditor"
+      ],
+      "ncm_tags": [],
+      "normas_refs": [
+        "Res 31/23 (o vigente)"
+      ]
+    },
+    {
+      "id": "MAYDS-RAEE",
+      "name": "RAEE / Plan de Gestión",
+      "organismo": "MAyDS",
+      "subtipo": [
+        "Plan anual",
+        "Adhesión"
+      ],
+      "campos_clave": [
+        "Categoría RAEE",
+        "Volúmenes"
+      ],
+      "documentos": [
+        "Plan de gestión",
+        "Contratos operador"
+      ],
+      "flujo": [
+        "Alta",
+        "Presentación",
+        "Aprobación",
+        "Cierre"
+      ],
+      "sla_dias": 30,
+      "roles": [
+        "gestor",
+        "cliente"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "ANMAT-IMP-DM",
+      "name": "Importador Productos Médicos",
+      "organismo": "ANMAT",
+      "subtipo": [
+        "Habilitación",
+        "Ampliación"
+      ],
+      "campos_clave": [
+        "Clase riesgo",
+        "Depósito",
+        "RT"
+      ],
+      "documentos": [
+        "Manual calidad",
+        "POEs",
+        "Contratos"
+      ],
+      "flujo": [
+        "Alta",
+        "Inspección",
+        "Observaciones",
+        "Aprobado",
+        "Cierre"
+      ],
+      "sla_dias": 45,
+      "roles": [
+        "gestor",
+        "cliente",
+        "auditor"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "ANMAT-DM-REG",
+      "name": "Registro de Producto Médico / Notificación",
+      "organismo": "ANMAT",
+      "subtipo": [
+        "Clase I",
+        "Clase II",
+        "Clase III",
+        "Clase IV"
+      ],
+      "campos_clave": [
+        "UDI/GTIN",
+        "Indicación de uso"
+      ],
+      "documentos": [
+        "Dossier técnico",
+        "Ensayos",
+        "IFU/Etiqueta"
+      ],
+      "flujo": [
+        "Alta",
+        "Presentación",
+        "Observaciones",
+        "Aprobado",
+        "Cierre"
+      ],
+      "sla_dias": 35,
+      "roles": [
+        "gestor",
+        "cliente",
+        "auditor"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "EXP-CERT-FITO",
+      "name": "Certificado Fitosanitario de Exportación",
+      "organismo": "SENASA",
+      "subtipo": [
+        "Vegetales",
+        "Derivados"
+      ],
+      "campos_clave": [
+        "País destino",
+        "Tratamientos"
+      ],
+      "documentos": [
+        "Solicitud",
+        "Factura",
+        "Packing"
+      ],
+      "flujo": [
+        "Alta",
+        "Inspección/Tratamiento",
+        "Emisión",
+        "Cierre"
+      ],
+      "sla_dias": 5,
+      "roles": [
+        "gestor",
+        "cliente"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "EXP-CERT-ZOO",
+      "name": "Certificado Zoosanitario de Exportación",
+      "organismo": "SENASA",
+      "subtipo": [
+        "Cárnico",
+        "Lácteos"
+      ],
+      "campos_clave": [
+        "País destino",
+        "Planta"
+      ],
+      "documentos": [
+        "Solicitud",
+        "Factura",
+        "Packing",
+        "Resultados"
+      ],
+      "flujo": [
+        "Alta",
+        "Inspección",
+        "Emisión",
+        "Cierre"
+      ],
+      "sla_dias": 5,
+      "roles": [
+        "gestor",
+        "cliente"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "EXP-CERT-SANI",
+      "name": "Certificado Sanitario de Exportación (Alimentos)",
+      "organismo": "Autoridad Sanitaria",
+      "subtipo": [
+        "General",
+        "Específico"
+      ],
+      "campos_clave": [
+        "País destino",
+        "Requisitos destino"
+      ],
+      "documentos": [
+        "Solicitud",
+        "Factura",
+        "Packing"
+      ],
+      "flujo": [
+        "Alta",
+        "Verificación",
+        "Emisión",
+        "Cierre"
+      ],
+      "sla_dias": 5,
+      "roles": [
+        "gestor",
+        "cliente"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "FDA-PRIOR-NOTICE",
+      "name": "FDA Prior Notice (alimentos a EE.UU.)",
+      "organismo": "FDA",
+      "subtipo": [
+        "Online",
+        "Broker"
+      ],
+      "campos_clave": [
+        "FCE/SID (si aplica)",
+        "Facility"
+      ],
+      "documentos": [
+        "Labels",
+        "Invoice",
+        "Packing"
+      ],
+      "flujo": [
+        "Alta",
+        "Carga datos",
+        "Envío PN",
+        "Confirmación",
+        "Cierre"
+      ],
+      "sla_dias": 2,
+      "roles": [
+        "gestor",
+        "cliente"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "FCC-ID",
+      "name": "FCC (equipos RF a EE.UU.)",
+      "organismo": "FCC",
+      "subtipo": [
+        "SDoC",
+        "Certification"
+      ],
+      "campos_clave": [
+        "Bandas",
+        "Potencia",
+        "Módulos"
+      ],
+      "documentos": [
+        "Test reports",
+        "User manual",
+        "Label"
+      ],
+      "flujo": [
+        "Alta",
+        "Ensayos",
+        "TCB",
+        "Grant",
+        "Cierre"
+      ],
+      "sla_dias": 20,
+      "roles": [
+        "gestor",
+        "cliente"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "CE-MARK",
+      "name": "Marcado CE (UE)",
+      "organismo": "UE",
+      "subtipo": [
+        "Módulos A-H",
+        "Auto-declaración"
+      ],
+      "campos_clave": [
+        "Directivas",
+        "Normas armonizadas"
+      ],
+      "documentos": [
+        "DoC",
+        "Expediente técnico"
+      ],
+      "flujo": [
+        "Alta",
+        "Evaluación",
+        "Declaración/Certificación",
+        "Cierre"
+      ],
+      "sla_dias": 20,
+      "roles": [
+        "gestor",
+        "cliente"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    },
+    {
+      "id": "INMETRO-BR",
+      "name": "INMETRO (Brasil) - Preparación",
+      "organismo": "INMETRO",
+      "subtipo": [
+        "Familia",
+        "Lote"
+      ],
+      "campos_clave": [
+        "OCP Brasil",
+        "Norma ABNT/IEC"
+      ],
+      "documentos": [
+        "Test reports",
+        "Fotos",
+        "Etiquetas"
+      ],
+      "flujo": [
+        "Alta",
+        "Ensayos/Reconocimiento",
+        "Certificación",
+        "Cierre"
+      ],
+      "sla_dias": 30,
+      "roles": [
+        "gestor",
+        "cliente"
+      ],
+      "ncm_tags": [],
+      "normas_refs": []
+    }
+  ]
+}
