@@ -475,6 +475,13 @@ export interface Database {
           metadata: Json | null
           is_active: boolean | null
           created_at: string | null
+          checklist_item_id: string | null
+          fecha_vencimiento: string | null
+          dias_vigencia: number | null
+          requiere_aprobacion: boolean | null
+          nivel_aprobacion_actual: number | null
+          responsable_id: string | null
+          notas_internas: string | null
         }
         Insert: {
           id?: string

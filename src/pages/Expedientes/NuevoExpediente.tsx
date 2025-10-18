@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronRight, ChevronLeft, Save, FileText, User, Upload, CheckCircle, Building2, Calendar, AlertCircle } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Save, FileText, User, Upload, CheckCircle, Building2, Calendar, AlertCircle, X } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -27,6 +27,8 @@ export const NuevoExpediente: React.FC = () => {
     observaciones: '',
     documentos: [],
     nuevo_cliente: false,
+    requiere_documentacion: true,
+    documentacion_checklist: [],
     cliente_data: {
       razon_social: '',
       cuit: '',
@@ -474,34 +476,87 @@ const Step3Documentos: React.FC<{ formData: any; setFormData: any }> = ({ formDa
 
   return (
     <div className="space-y-6">
-      <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Documentación Inicial</h2>
-      
-      <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg">
-        <div className="flex items-start space-x-2">
-          <AlertCircle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 mt-0.5" />
-          <div>
-            <p className="text-sm text-yellow-800 dark:text-yellow-200">
-              Los documentos marcados con (*) son obligatorios para iniciar el trámite.
-            </p>
-            <p className="text-sm text-yellow-700 dark:text-yellow-300 mt-1">
-              Podrá subir documentación adicional una vez creado el expediente.
-            </p>
-          </div>
+      <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Documentación del Trámite</h2>
+
+      {/* Pregunta sobre requisitos de documentación */}
+      <div className="p-6 bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-300 dark:border-blue-700 rounded-lg">
+        <h3 className="font-medium text-blue-900 dark:text-blue-300 mb-3 text-lg">
+          ¿Este trámite requiere documentación específica?
+        </h3>
+        <p className="text-sm text-blue-700 dark:text-blue-300 mb-4">
+          Si selecciona "Sí", se generará automáticamente un checklist con todos los documentos necesarios según el tipo de trámite.
+        </p>
+        <div className="flex space-x-4">
+          <button
+            type="button"
+            onClick={() => {
+              setFormData({ ...formData, requiere_documentacion: true });
+              if (checklist.length > 0) {
+                setFormData({ ...formData, requiere_documentacion: true, documentacion_checklist: checklist });
+              }
+            }}
+            className={`px-6 py-3 rounded-lg font-medium transition-all ${
+              formData.requiere_documentacion
+                ? 'bg-blue-600 text-white shadow-lg'
+                : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-2 border-gray-300 dark:border-gray-600 hover:border-blue-300'
+            }`}
+          >
+            <CheckCircle className="w-5 h-5 inline mr-2" />
+            Sí, requiere documentación
+          </button>
+          <button
+            type="button"
+            onClick={() => setFormData({ ...formData, requiere_documentacion: false, documentacion_checklist: [] })}
+            className={`px-6 py-3 rounded-lg font-medium transition-all ${
+              !formData.requiere_documentacion
+                ? 'bg-gray-600 text-white shadow-lg'
+                : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-2 border-gray-300 dark:border-gray-600 hover:border-gray-400'
+            }`}
+          >
+            <X className="w-5 h-5 inline mr-2" />
+            No requiere documentación
+          </button>
         </div>
       </div>
 
-      {/* Usar el nuevo componente de documentación */}
-      {formData.tramite_tipo_id && (
-        <DocumentacionTramite 
-          tramiteTipoId={formData.tramite_tipo_id}
-          readOnly={true}
-        />
+      {/* Mostrar información si NO requiere documentación */}
+      {!formData.requiere_documentacion && (
+        <div className="p-4 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg">
+          <p className="text-sm text-gray-700 dark:text-gray-200">
+            El trámite se creará sin un checklist de documentación predefinido. Podrá agregar documentos manualmente después de crear el expediente.
+          </p>
+        </div>
       )}
 
-      {/* Checklist para selección */}
-      <div className="space-y-3">
-        <h3 className="font-medium text-gray-900 dark:text-gray-100">Confirmar documentos a preparar</h3>
-        {checklist.map((doc, index) => (
+      {/* Mostrar checklist si SÍ requiere documentación */}
+      {formData.requiere_documentacion && (
+        <>
+          <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg">
+            <div className="flex items-start space-x-2">
+              <AlertCircle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 mt-0.5" />
+              <div>
+                <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                  Los documentos marcados con (*) son obligatorios para iniciar el trámite.
+                </p>
+                <p className="text-sm text-yellow-700 dark:text-yellow-300 mt-1">
+                  Podrá subir documentación adicional una vez creado el expediente.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Usar el nuevo componente de documentación */}
+          {formData.tramite_tipo_id && (
+            <DocumentacionTramite
+              tramiteTipoId={formData.tramite_tipo_id}
+              readOnly={true}
+            />
+          )}
+
+          {/* Checklist para selección */}
+          <div className="space-y-3">
+            <h3 className="font-medium text-gray-900 dark:text-gray-100">Confirmar documentos a preparar</h3>
+            {checklist.map((doc, index) => (
           <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
             <div className="flex items-center space-x-3">
               <input
@@ -531,15 +586,17 @@ const Step3Documentos: React.FC<{ formData: any; setFormData: any }> = ({ formDa
               </Badge>
             </div>
           </div>
-        ))}
-      </div>
+            ))}
+          </div>
 
-      <div className="p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-center">
-        <Upload className="mx-auto w-12 h-12 text-gray-400 dark:text-gray-500 mb-2" />
-        <p className="text-sm text-gray-600 dark:text-gray-300">
-          La carga de documentos se realizará después de crear el expediente
-        </p>
-      </div>
+          <div className="p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-center">
+            <Upload className="mx-auto w-12 h-12 text-gray-400 dark:text-gray-500 mb-2" />
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              La carga de documentos se realizará después de crear el expediente
+            </p>
+          </div>
+        </>
+      )}
     </div>
   );
 };

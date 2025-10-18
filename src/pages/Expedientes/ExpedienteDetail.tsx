@@ -9,6 +9,8 @@ import { useSGT } from '../../context/SGTContext';
 import { ExpedienteService } from '../../services/ExpedienteService';
 import { DocumentacionTramite } from '@/components/DocumentacionTramite';
 import { BackButton } from '@/components/ui/BackButton';
+import { DocumentStatusPanel } from '@/components/Documentacion/DocumentStatusPanel';
+import { ChecklistManager } from '@/components/Documentacion/ChecklistManager';
 
 export const ExpedienteDetail: React.FC = () => {
   const { id } = useParams();
@@ -647,14 +649,31 @@ export const ExpedienteDetail: React.FC = () => {
             </CardContent>
           </Card>
 
+          {/* Document Status Panel */}
+          <DocumentStatusPanel
+            expedienteId={expediente.id}
+            documentos={documentos}
+            showDetails={true}
+          />
+
+          {/* Checklist Manager */}
+          <ChecklistManager
+            expedienteId={expediente.id}
+            tramiteTipoId={expediente.tramite_tipo_id}
+            onChecklistUpdate={(updatedChecklist) => {
+              console.log('Checklist actualizado:', updatedChecklist);
+            }}
+            readOnly={false}
+          />
+
           {/* Documentación Detallada del Trámite */}
-          <DocumentacionTramite 
+          <DocumentacionTramite
             tramiteTipoId={expediente.tramite_tipo_id}
             expedienteId={expediente.id}
             onDocumentUpload={(doc) => {
               const nuevosDocumentos = [...documentos, doc];
               setDocumentos(nuevosDocumentos);
-              
+
               // Agregar al historial
               const nuevaEntradaHistorial = {
                 id: `hist-${expediente.id}-${Date.now()}`,
@@ -665,13 +684,13 @@ export const ExpedienteDetail: React.FC = () => {
                 estado_nuevo: null,
                 usuario: 'Usuario Actual',
                 fecha: new Date().toISOString(),
-                detalles: { 
+                detalles: {
                   documento_nombre: doc.nombre,
                   documento_tipo: doc.tipo,
                   size: doc.size
                 }
               };
-              
+
               const historialActualizado = [...historial, nuevaEntradaHistorial];
               setHistorial(historialActualizado);
               localStorage.setItem(`sgt_historial_${expediente.id}`, JSON.stringify(historialActualizado));
