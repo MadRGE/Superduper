@@ -1,9 +1,33 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { usePermissions } from '@/hooks/usePermissions';
 import { ResumenCompacto } from './ResumenCompacto';
 import { ExpedientesConProblemas } from './ExpedientesConProblemas';
 import { ActiveExpedientes } from './ActiveExpedientes';
 
 export const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
+  const { userRole } = usePermissions();
+
+  // Redirigir despachantes a su portal específico
+  useEffect(() => {
+    if (userRole === 'despachante') {
+      navigate('/despachantes/portal');
+    }
+  }, [userRole, navigate]);
+
+  // Si es despachante, mostrar mensaje de carga mientras redirige
+  if (userRole === 'despachante') {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-300">Redirigiendo a tu portal...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Page header */}

@@ -45,11 +45,20 @@ interface NavigationItem {
   adminOnly?: boolean;
 }
 
-// Elementos de navegación de nivel superior (acceso frecuente)
-const topLevelNavigation: NavigationItem[] = [
-  { name: 'Dashboard', href: '/', icon: Home },
-  { name: 'Notificaciones', href: '/notificaciones', icon: Bell },
-];
+// Función para obtener navegación de nivel superior según rol
+const getTopLevelNavigation = (userRole: string): NavigationItem[] => {
+  if (userRole === 'despachante') {
+    return [
+      { name: 'Mi Portal', href: '/despachantes/portal', icon: Home },
+      { name: 'Notificaciones', href: '/notificaciones', icon: Bell },
+    ];
+  }
+
+  return [
+    { name: 'Dashboard', href: '/', icon: Home },
+    { name: 'Notificaciones', href: '/notificaciones', icon: Bell },
+  ];
+};
 
 // Módulos agrupados
 const navigationModules: NavigationModule[] = [
@@ -94,13 +103,6 @@ const navigationModules: NavigationModule[] = [
     ]
   },
   {
-    name: 'Portales de Usuario',
-    icon: UserCheck,
-    items: [
-      { name: 'Portal Despachante', href: '/despachantes/portal', permission: 'ver_clientes_asignados' },
-    ]
-  },
-  {
     name: 'Administración',
     icon: Crown,
     adminOnly: true,
@@ -116,6 +118,8 @@ export const Sidebar: React.FC = () => {
   const location = useLocation();
   const { hasPermission, userRole } = usePermissions();
   const [expandedModules, setExpandedModules] = React.useState<string[]>([]);
+
+  const topLevelNavigation = getTopLevelNavigation(userRole);
 
   const toggleModuleExpanded = (moduleName: string) => {
     setExpandedModules(prev => 
