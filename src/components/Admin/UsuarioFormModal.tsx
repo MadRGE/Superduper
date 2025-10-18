@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { DatabaseService } from '@/services/DatabaseService';
-import { Usuario, Cliente } from '@/types/database';
+import { Usuario, Cliente, Despachante } from '@/types/database';
 import { ROLES } from '@/types/roles';
 
 const databaseService = new DatabaseService();
@@ -26,16 +26,20 @@ export const UsuarioFormModal: React.FC<UsuarioFormModalProps> = ({
     email: '',
     rol: 'gestor',
     estado: 'activo',
+    entidad_id: '',
+    entidad_tipo: '',
     clientes_asignados: [] as string[],
     permisos_especiales: [] as string[],
     requiere_cambio_password: false
   });
   const [clientes, setClientes] = useState<Cliente[]>([]);
+  const [despachantes, setDespachantes] = useState<Despachante[]>([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
     loadClientes();
+    loadDespachantes();
     if (usuario) {
       setFormData({
         nombre: usuario.nombre,
@@ -43,6 +47,8 @@ export const UsuarioFormModal: React.FC<UsuarioFormModalProps> = ({
         email: usuario.email,
         rol: usuario.rol,
         estado: usuario.estado || 'activo',
+        entidad_id: usuario.entidad_id || '',
+        entidad_tipo: (usuario as any).entidad_tipo || '',
         clientes_asignados: usuario.clientes_asignados || [],
         permisos_especiales: usuario.permisos_especiales || [],
         requiere_cambio_password: usuario.requiere_cambio_password || false
@@ -59,6 +65,24 @@ export const UsuarioFormModal: React.FC<UsuarioFormModalProps> = ({
     }
   };
 
+  const loadDespachantes = async () => {
+    try {
+      const data = await databaseService.getDespachantes();
+      setDespachantes(data);
+    } catch (error) {
+      console.error('Error loading despachantes:', error);
+    }
+  };
+
+  const handleRolChange = (newRol: string) => {
+    setFormData(prev => ({
+      ...prev,
+      rol: newRol,
+      entidad_id: '',
+      entidad_tipo: newRol === 'despachante' ? 'despachante' : newRol === 'cliente' ? 'cliente' : ''
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -70,6 +94,7 @@ export const UsuarioFormModal: React.FC<UsuarioFormModalProps> = ({
           apellido: formData.apellido,
           rol: formData.rol,
           estado: formData.estado,
+          entidad_id: formData.entidad_id || null,
           clientes_asignados: formData.clientes_asignados,
           permisos_especiales: formData.permisos_especiales,
           requiere_cambio_password: formData.requiere_cambio_password
@@ -85,6 +110,7 @@ export const UsuarioFormModal: React.FC<UsuarioFormModalProps> = ({
           email: formData.email,
           rol: formData.rol,
           estado: formData.estado,
+          entidad_id: formData.entidad_id || null,
           clientes_asignados: formData.clientes_asignados,
           permisos_especiales: formData.permisos_especiales,
           requiere_cambio_password: true,
@@ -195,7 +221,7 @@ export const UsuarioFormModal: React.FC<UsuarioFormModalProps> = ({
                   <Shield className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <select
                     value={formData.rol}
-                    onChange={(e) => setFormData({ ...formData, rol: e.target.value })}
+                    onChange={(e) => handleRolChange(e.target.value)}
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     required
                   >
@@ -224,10 +250,64 @@ export const UsuarioFormModal: React.FC<UsuarioFormModalProps> = ({
               </div>
             </div>
 
-            {(formData.rol === 'despachante' || formData.rol === 'gestor') && (
+            {formData.rol === 'despachante' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Asociar a Despachante *
+                </label>
+                <div className="relative">
+                  <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <select
+                    value={formData.entidad_id}
+                    onChange={(e) => setFormData({ ...formData, entidad_id: e.target.value })}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  >
+                    <option value="">Seleccione un despachante</option>
+                    {despachantes.map(despachante => (
+                      <option key={despachante.id} value={despachante.id}>
+                        {despachante.nombre} - {despachante.cuit}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Este usuario tendrá acceso a los datos del despachante seleccionado
+                </p>
+              </div>
+            )}
+
+            {formData.rol === 'cliente' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Asociar a Cliente *
+                </label>
+                <div className="relative">
+                  <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <select
+                    value={formData.entidad_id}
+                    onChange={(e) => setFormData({ ...formData, entidad_id: e.target.value })}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  >
+                    <option value="">Seleccione un cliente</option>
+                    {clientes.map(cliente => (
+                      <option key={cliente.id} value={cliente.id}>
+                        {cliente.razon_social} - {cliente.cuit}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Este usuario solo podrá ver datos del cliente seleccionado
+                </p>
+              </div>
+            )}
+
+            {(formData.rol === 'gestor' || formData.rol === 'despachante') && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Clientes Asignados
+                  Clientes Asignados (opcional para gestores/despachantes)
                 </label>
                 <div className="border border-gray-300 rounded-lg p-4 max-h-48 overflow-y-auto">
                   {clientes.length === 0 ? (
@@ -248,6 +328,9 @@ export const UsuarioFormModal: React.FC<UsuarioFormModalProps> = ({
                     </div>
                   )}
                 </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Selecciona los clientes que este usuario puede gestionar
+                </p>
               </div>
             )}
 

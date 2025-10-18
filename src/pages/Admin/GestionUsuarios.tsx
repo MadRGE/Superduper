@@ -15,7 +15,8 @@ import {
   Eye,
   UserCheck,
   UserX,
-  Filter
+  Filter,
+  Building
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -31,6 +32,7 @@ const databaseService = new DatabaseService();
 
 export const GestionUsuarios: React.FC = () => {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+  const [usuariosEnriquecidos, setUsuariosEnriquecidos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRol, setFilterRol] = useState('');
@@ -49,6 +51,7 @@ export const GestionUsuarios: React.FC = () => {
       setLoading(true);
       const data = await databaseService.getUsuarios();
       setUsuarios(data);
+      await enrichUsuarios(data);
     } catch (error) {
       console.error('Error loading usuarios:', error);
       toast({
@@ -58,6 +61,35 @@ export const GestionUsuarios: React.FC = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const enrichUsuarios = async (usuarios: Usuario[]) => {
+    try {
+      const clientes = await databaseService.getClientes();
+      const despachantes = await databaseService.getDespachantes();
+
+      const enriched = usuarios.map(usuario => {
+        let entidad = null;
+        const usuarioAny = usuario as any;
+
+        if (usuarioAny.entidad_tipo === 'cliente' && usuario.entidad_id) {
+          entidad = clientes.find(c => c.id === usuario.entidad_id);
+        } else if (usuarioAny.entidad_tipo === 'despachante' && usuario.entidad_id) {
+          entidad = despachantes.find(d => d.id === usuario.entidad_id);
+        }
+
+        return {
+          ...usuario,
+          entidad_nombre: entidad ? (entidad.razon_social || entidad.nombre) : null,
+          entidad_tipo: usuarioAny.entidad_tipo
+        };
+      });
+
+      setUsuariosEnriquecidos(enriched);
+    } catch (error) {
+      console.error('Error enriching usuarios:', error);
+      setUsuariosEnriquecidos(usuarios);
     }
   };
 
@@ -109,11 +141,12 @@ export const GestionUsuarios: React.FC = () => {
     setShowModal(true);
   };
 
-  const filteredUsuarios = usuarios.filter(usuario => {
+  const filteredUsuarios = usuariosEnriquecidos.filter(usuario => {
     const matchesSearch =
       usuario.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
       usuario.apellido?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      usuario.email.toLowerCase().includes(searchTerm.toLowerCase());
+      usuario.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (usuario.entidad_nombre && usuario.entidad_nombre.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const matchesRol = !filterRol || usuario.rol === filterRol;
     const matchesEstado = !filterEstado || usuario.estado === filterEstado;
@@ -246,9 +279,18 @@ export const GestionUsuarios: React.FC = () => {
                           </span>
                         )}
                       </div>
+                      {usuario.entidad_nombre && (
+                        <div className="mt-2 flex items-center text-sm text-blue-600">
+                          <Building className="w-4 h-4 mr-1" />
+                          <span className="font-medium">
+                            {usuario.entidad_tipo === 'cliente' ? 'Cliente: ' : 'Despachante: '}
+                            {usuario.entidad_nombre}
+                          </span>
+                        </div>
+                      )}
                       {usuario.clientes_asignados && usuario.clientes_asignados.length > 0 && (
                         <div className="mt-2 text-xs text-gray-500">
-                          {usuario.clientes_asignados.length} cliente(s) asignado(s)
+                          {usuario.clientes_asignados.length} cliente(s) asignado(s) adicionales
                         </div>
                       )}
                     </div>
