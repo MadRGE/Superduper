@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Search, Filter, BookOpen, Building2, Tag, Clock } from 'lucide-react';
 import { useSGT } from '../../context/SGTContext';
 import { catalogoTramitesArgentina } from '@/data/catalogoTramitesCompleto';
+import { TramiteDetailModal } from '@/components/Catalogo/TramiteDetailModal';
 
 export const Catalogo: React.FC = () => {
   const { state, catalogoTramites } = useSGT();
@@ -9,6 +10,14 @@ export const Catalogo: React.FC = () => {
   const [selectedRubro, setSelectedRubro] = useState('');
   const [selectedOrganismo, setSelectedOrganismo] = useState('');
   const [showDetailed, setShowDetailed] = useState(false);
+  const [selectedTramite, setSelectedTramite] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleIniciarTramite = (tramite: any) => {
+    console.log('Iniciar trámite:', tramite);
+    setIsModalOpen(false);
+    // Aquí se puede navegar a crear expediente con este trámite pre-seleccionado
+  };
 
   // Combinar trámites del estado con el catálogo completo
   const allTramites = [
@@ -114,7 +123,14 @@ export const Catalogo: React.FC = () => {
       {/* Tramites Grid */}
       <div className={`grid gap-6 ${showDetailed ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
         {filteredTramites.map((tramite) => (
-          <div key={tramite.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+          <div
+            key={tramite.id}
+            onClick={() => {
+              setSelectedTramite(tramite);
+              setIsModalOpen(true);
+            }}
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-600 transition-all cursor-pointer"
+          >
             <div className="p-6">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center space-x-2">
@@ -218,8 +234,14 @@ export const Catalogo: React.FC = () => {
               </div>
               
               <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
-                <button className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
-                  Iniciar Trámite
+                <button
+                  onClick={() => {
+                    setSelectedTramite(tramite);
+                    setIsModalOpen(true);
+                  }}
+                  className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                >
+                  Ver Detalles
                 </button>
               </div>
             </div>
@@ -228,14 +250,22 @@ export const Catalogo: React.FC = () => {
       </div>
 
       {filteredTramites.length === 0 && (
-        <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-          <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+        <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="mx-auto w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
             <Search className="w-8 h-8 text-gray-400" />
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No se encontraron trámites</h3>
-          <p className="text-gray-500">Intenta ajustar los filtros de búsqueda.</p>
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No se encontraron trámites</h3>
+          <p className="text-gray-500 dark:text-gray-400">Intenta ajustar los filtros de búsqueda.</p>
         </div>
       )}
+
+      {/* Modal de Detalle del Trámite */}
+      <TramiteDetailModal
+        tramite={selectedTramite}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onIniciarTramite={handleIniciarTramite}
+      />
     </div>
   );
 };
