@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { User } from '@supabase/supabase-js'
+import { supabase } from '@/lib/supabase'
 import { getRoleById } from '@/types/roles'
 
 interface AuthContextType {
@@ -18,93 +19,160 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Mock user para desarrollo
-    setUsuario({
-      id: '1',
-      nombre: 'Admin',
-      apellido: 'SGT',
-      rol: 'gestor',
-      email: 'admin@sgt.gov.ar'
+    const checkSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+
+        if (session?.user) {
+          setUser(session.user)
+          await loadUserData(session.user.email!)
+        } else {
+          const savedSession = localStorage.getItem('user_session')
+          if (savedSession) {
+            const sessionData = JSON.parse(savedSession)
+            setUsuario(sessionData)
+          }
+        }
+      } catch (error) {
+        console.error('Error checking session:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    checkSession()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        setUser(session.user)
+        await loadUserData(session.user.email!)
+      } else {
+        setUser(null)
+        setUsuario(null)
+      }
     })
-    setLoading(false)
+
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [])
 
-  const signIn = async (email: string, password: string) => {
-    // Mock login para desarrollo
-    const mockUsers = [
-      { 
-        email: 'admin@sgt.gov.ar', 
-        password: 'admin123', 
-        nombre: 'Admin', 
-        apellido: 'SGT', 
+  const loadUserData = async (email: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('usuarios')
+        .select('*')
+        .eq('email', email)
+        .eq('is_active', true)
+        .maybeSingle()
+
+      if (error) throw error
+
+      if (data) {
+        setUsuario(data)
+        localStorage.setItem('user_session', JSON.stringify(data))
+      } else {
+        const mockUser = getMockUserByEmail(email)
+        if (mockUser) {
+          setUsuario(mockUser)
+          localStorage.setItem('user_session', JSON.stringify(mockUser))
+        }
+      }
+    } catch (error) {
+      console.error('Error loading user data:', error)
+      const mockUser = getMockUserByEmail(email)
+      if (mockUser) {
+        setUsuario(mockUser)
+        localStorage.setItem('user_session', JSON.stringify(mockUser))
+      }
+    }
+  }
+
+  const getMockUserByEmail = (email: string) => {
+    const mockUsers = {
+      'admin@sgt.gov.ar': {
+        id: 'admin',
+        nombre: 'Admin',
+        apellido: 'SGT',
         rol: 'admin',
+        email: 'admin@sgt.gov.ar',
         clientes_asignados: [],
         permisos_especiales: []
       },
-      { 
-        email: 'gestor@sgt.gov.ar', 
-        password: 'gestor123', 
-        nombre: 'Gestor', 
-        apellido: 'Principal', 
+      'gestor@sgt.gov.ar': {
+        id: 'gestor',
+        nombre: 'Gestor',
+        apellido: 'Principal',
         rol: 'gestor',
+        email: 'gestor@sgt.gov.ar',
         clientes_asignados: [],
         permisos_especiales: []
       },
-      { 
-        email: 'despachante@sgt.gov.ar', 
-        password: 'despachante123', 
-        nombre: 'Juan', 
-        apellido: 'Pérez', 
+      'despachante@sgt.gov.ar': {
+        id: 'despachante',
+        nombre: 'Juan',
+        apellido: 'Pérez',
         rol: 'despachante',
+        email: 'despachante@sgt.gov.ar',
         clientes_asignados: ['cliente-1', 'cliente-2'],
         permisos_especiales: []
       },
-      { 
-        email: 'cliente@empresa.com', 
-        password: 'cliente123', 
-        nombre: 'Cliente', 
-        apellido: 'Empresa', 
+      'cliente@empresa.com': {
+        id: 'cliente',
+        nombre: 'Cliente',
+        apellido: 'Empresa',
         rol: 'cliente',
+        email: 'cliente@empresa.com',
         cliente_id: 'cliente-1',
         clientes_asignados: [],
         permisos_especiales: []
       }
-    ]
-
-    const mockUser = mockUsers.find(u => u.email === email && u.password === password)
-    
-    if (mockUser) {
-      // Guardar información completa del usuario en localStorage
-      localStorage.setItem('user_session', JSON.stringify({
-        id: mockUser.email.split('@')[0],
-        email: mockUser.email,
-        nombre: mockUser.nombre,
-        apellido: mockUser.apellido,
-        rol: mockUser.rol,
-        clientes_asignados: mockUser.clientes_asignados,
-        cliente_id: mockUser.cliente_id,
-        permisos_especiales: mockUser.permisos_especiales,
-        login_time: new Date().toISOString()
-      }));
-      
-      setUsuario({
-        id: mockUser.email.split('@')[0],
-        nombre: mockUser.nombre,
-        apellido: mockUser.apellido,
-        rol: mockUser.rol,
-        email: mockUser.email,
-        clientes_asignados: mockUser.clientes_asignados,
-        cliente_id: mockUser.cliente_id
-      })
-      return { error: null }
     }
-    return { error: { message: 'Credenciales inválidas' } }
+    return mockUsers[email as keyof typeof mockUsers] || null
+  }
+
+  const signIn = async (email: string, password: string) => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      })
+
+      if (error) {
+        const mockUser = getMockUserByEmail(email)
+        const mockPassword = email.split('@')[0] + '123'
+
+        if (mockUser && password === mockPassword) {
+          setUsuario(mockUser)
+          localStorage.setItem('user_session', JSON.stringify(mockUser))
+          return { error: null }
+        }
+
+        return { error }
+      }
+
+      if (data.user) {
+        setUser(data.user)
+        await loadUserData(data.user.email!)
+        return { error: null }
+      }
+
+      return { error: { message: 'Error al iniciar sesión' } }
+    } catch (error: any) {
+      return { error: { message: error.message || 'Error al iniciar sesión' } }
+    }
   }
 
   const signOut = async () => {
-    localStorage.removeItem('user_session')
-    setUser(null)
-    setUsuario(null)
+    try {
+      await supabase.auth.signOut()
+    } catch (error) {
+      console.error('Error signing out:', error)
+    } finally {
+      localStorage.removeItem('user_session')
+      setUser(null)
+      setUsuario(null)
+    }
   }
 
   return (

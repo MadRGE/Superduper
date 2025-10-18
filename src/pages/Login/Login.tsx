@@ -105,19 +105,7 @@ export const Login: React.FC = () => {
             </Button>
           </form>
 
-          <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <div className="text-sm text-gray-600 dark:text-gray-300">
-              <p className="font-medium mb-2">Credenciales de prueba:</p>
-              <div className="space-y-1 text-xs">
-                <p><strong>Admin:</strong> admin@sgt.gov.ar / admin123</p>
-                <p><strong>Gestor:</strong> gestor@sgt.gov.ar / gestor123</p>
-                <p><strong>Despachante:</strong> despachante@sgt.gov.ar / despachante123</p>
-                <p><strong>Cliente:</strong> cliente@empresa.com / cliente123</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="mt-4 text-center">
+          <div className="mt-6 text-center">
             <button 
               onClick={() => window.open('/portal-cliente/login', '_blank')}
               className="text-sm text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-100"

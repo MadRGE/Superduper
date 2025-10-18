@@ -988,6 +988,157 @@ export class DatabaseService {
     return this.getProductosByCliente(clienteId);
   }
 
+  // ==================== USUARIOS ====================
+
+  async getUsuarios() {
+    const { data, error } = await supabase
+      .from('usuarios')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching usuarios:', error);
+      throw error;
+    }
+    return data;
+  }
+
+  async getUsuarioById(id: string) {
+    const { data, error } = await supabase
+      .from('usuarios')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (error) {
+      console.error('Error fetching usuario:', error);
+      throw error;
+    }
+    return data;
+  }
+
+  async getUsuarioByEmail(email: string) {
+    const { data, error } = await supabase
+      .from('usuarios')
+      .select('*')
+      .eq('email', email)
+      .eq('is_active', true)
+      .maybeSingle();
+
+    if (error) {
+      console.error('Error fetching usuario by email:', error);
+      throw error;
+    }
+    return data;
+  }
+
+  async createUsuario(usuario: Inserts<'usuarios'>) {
+    const { data, error } = await supabase
+      .from('usuarios')
+      .insert(usuario)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error creating usuario:', error);
+      throw error;
+    }
+    return data;
+  }
+
+  async updateUsuario(id: string, updates: Updates<'usuarios'>) {
+    const { data, error} = await supabase
+      .from('usuarios')
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error updating usuario:', error);
+      throw error;
+    }
+    return data;
+  }
+
+  async deactivateUsuario(id: string) {
+    const { data, error } = await supabase
+      .from('usuarios')
+      .update({
+        is_active: false,
+        estado: 'inactivo',
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error deactivating usuario:', error);
+      throw error;
+    }
+    return data;
+  }
+
+  async reactivateUsuario(id: string) {
+    const { data, error } = await supabase
+      .from('usuarios')
+      .update({
+        is_active: true,
+        estado: 'activo',
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error reactivating usuario:', error);
+      throw error;
+    }
+    return data;
+  }
+
+  async assignClientesToUsuario(usuarioId: string, clienteIds: string[]) {
+    const { data, error } = await supabase
+      .from('usuarios')
+      .update({
+        clientes_asignados: clienteIds,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', usuarioId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error assigning clientes to usuario:', error);
+      throw error;
+    }
+    return data;
+  }
+
+  async getAuditoriaUsuarios(usuarioId?: string) {
+    let query = supabase
+      .from('auditoria_usuarios')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (usuarioId) {
+      query = query.eq('usuario_id', usuarioId);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error('Error fetching auditoria:', error);
+      throw error;
+    }
+    return data;
+  }
+
   async generateExpedienteCodigo(organismoSigla: string): Promise<string> {
     const year = new Date().getFullYear();
     
