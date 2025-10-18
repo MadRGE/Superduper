@@ -12,7 +12,7 @@ export const Header: React.FC = () => {
   const pendingNotifications = state.notifications.filter(n => !n.read).length;
 
   return (
-    <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50 px-6 py-4 sticky top-0 z-50 shadow-sm">
+    <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 sticky top-0 z-40 shadow-sm transition-shadow">
       <div className="flex items-center justify-between">
         {/* Search */}
         <div className="flex-1 max-w-lg">

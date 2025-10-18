@@ -22,24 +22,24 @@ export const OrganismoStats: React.FC = () => {
   }).sort((a, b) => b.total - a.total);
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-      <div className="p-6 border-b border-gray-200">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow flex flex-col h-full">
+      <div className="p-6 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center space-x-2">
           <Building2 className="w-5 h-5 text-gray-400" />
-          <h2 className="text-lg font-semibold text-gray-900">Estadísticas por Organismo</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Estadísticas por Organismo</h2>
         </div>
       </div>
       
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-gray-100 dark:divide-gray-700 max-h-96 overflow-y-auto">
         {organismoStats.map((org) => (
           <div key={org.id} className="p-4">
             <div className="flex items-center justify-between mb-3">
               <div>
-                <h3 className="font-medium text-gray-900">{org.sigla}</h3>
+                <h3 className="font-medium text-gray-900 dark:text-gray-100">{org.sigla}</h3>
                 <p className="text-sm text-gray-500 truncate">{org.canal}</p>
               </div>
               <div className="text-right">
-                <div className="text-lg font-bold text-gray-900">{org.total}</div>
+                <div className="text-lg font-bold text-gray-900 dark:text-gray-100">{org.total}</div>
                 <div className="text-xs text-gray-500">expedientes</div>
               </div>
             </div>

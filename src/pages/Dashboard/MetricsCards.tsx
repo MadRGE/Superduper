@@ -81,13 +81,13 @@ export const MetricsCards: React.FC = () => {
     red: 'bg-red-50 text-red-600',
     green: 'bg-green-50 text-green-600',
     yellow: 'bg-yellow-50 text-yellow-600',
-    purple: 'bg-purple-50 text-purple-600'
+    purple: 'bg-teal-50 text-teal-600'
   };
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 lg:gap-6">
       {metrics.map((metric) => (
-        <div key={metric.title} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div key={metric.title} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 flex flex-col min-h-[160px] hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
             <div className={`p-3 rounded-lg ${colorClasses[metric.color]}`}>
               <metric.icon className="w-6 h-6" />
@@ -98,9 +98,9 @@ export const MetricsCards: React.FC = () => {
               {metric.change}
             </div>
           </div>
-          <div className="mt-4">
-            <h3 className="text-sm font-medium text-gray-500">{metric.title}</h3>
-            <p className="text-2xl font-bold text-gray-900 mt-1">{metric.value}</p>
+          <div className="mt-4 flex-1 flex flex-col justify-end">
+            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">{metric.title}</h3>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">{metric.value}</p>
           </div>
         </div>
       ))}

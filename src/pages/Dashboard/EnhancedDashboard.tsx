@@ -130,7 +130,7 @@ export const EnhancedDashboard: React.FC = () => {
       change: '+15%',
       changeType: 'positive',
       icon: CheckCircle,
-      color: 'indigo',
+      color: 'blue',
       details: 'expedientes finalizados',
       action: 'Revisar'
     },
@@ -160,7 +160,7 @@ export const EnhancedDashboard: React.FC = () => {
     blue: 'from-blue-500 to-blue-600',
     green: 'from-green-500 to-green-600',
     emerald: 'from-emerald-500 to-emerald-600',
-    indigo: 'from-indigo-500 to-indigo-600',
+    indigo: 'from-teal-500 to-teal-600',
     red: 'from-red-500 to-red-600',
     orange: 'from-orange-500 to-orange-600'
   };
@@ -182,9 +182,9 @@ export const EnhancedDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="space-y-6">
       {/* Dashboard Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
@@ -218,7 +218,7 @@ export const EnhancedDashboard: React.FC = () => {
         </div>
       </div>
 
-      <div className="px-6 py-6 space-y-6">
+      <div className="space-y-6">
         {/* Priority Alerts Bar */}
         {alerts.filter(a => a.actionRequired).length > 0 && (
           <div className="bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-lg p-4">

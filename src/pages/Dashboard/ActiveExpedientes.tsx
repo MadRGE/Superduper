@@ -30,12 +30,12 @@ export const ActiveExpedientes: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-      <div className="p-6 border-b border-gray-200">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+      <div className="p-6 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <FileText className="w-5 h-5 text-gray-400" />
-            <h2 className="text-lg font-semibold text-gray-900">Expedientes Activos</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Expedientes Activos</h2>
           </div>
           <Link 
             to="/expedientes" 
@@ -46,17 +46,17 @@ export const ActiveExpedientes: React.FC = () => {
         </div>
       </div>
       
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-gray-100 dark:divide-gray-700">
         {activeExpedientes.map((expediente) => (
           <Link
             key={expediente.id}
             to={`/expedientes/${expediente.id}`}
-            className="block p-6 hover:bg-gray-50 transition-colors"
+            className="block p-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           >
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <div className="flex items-center space-x-3 mb-2">
-                  <h3 className="font-medium text-gray-900 truncate">
+                  <h3 className="font-medium text-gray-900 dark:text-gray-100 truncate">
                     {expediente.alias}
                   </h3>
                   <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(expediente.estado, expediente.semaforo)}`}>
