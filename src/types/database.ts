@@ -9,6 +9,329 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      laboratorios_certificadores: {
+        Row: {
+          id: string
+          nombre: string
+          sigla: string
+          tipo: string
+          pais: string
+          acreditacion: Json
+          alcances: string[]
+          contacto: Json
+          estado: string
+          metadata: Json
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          nombre: string
+          sigla: string
+          tipo: string
+          pais: string
+          acreditacion?: Json
+          alcances?: string[]
+          contacto?: Json
+          estado?: string
+          metadata?: Json
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          nombre?: string
+          sigla?: string
+          tipo?: string
+          pais?: string
+          acreditacion?: Json
+          alcances?: string[]
+          contacto?: Json
+          estado?: string
+          metadata?: Json
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      normas_tecnicas: {
+        Row: {
+          id: string
+          codigo: string
+          titulo: string
+          organismo: string
+          año: number | null
+          categoria: string
+          alcance: string | null
+          vigente: boolean
+          reemplaza: string | null
+          equivalencias: Json
+          link_documento: string | null
+          metadata: Json
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          codigo: string
+          titulo: string
+          organismo: string
+          año?: number | null
+          categoria: string
+          alcance?: string | null
+          vigente?: boolean
+          reemplaza?: string | null
+          equivalencias?: Json
+          link_documento?: string | null
+          metadata?: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          codigo?: string
+          titulo?: string
+          organismo?: string
+          año?: number | null
+          categoria?: string
+          alcance?: string | null
+          vigente?: boolean
+          reemplaza?: string | null
+          equivalencias?: Json
+          link_documento?: string | null
+          metadata?: Json
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      expedientes_consumo: {
+        Row: {
+          id: string
+          expediente_id: string | null
+          cliente_id: string | null
+          tipo_producto: string
+          categoria: string
+          marca: string
+          modelo: string
+          fabricante: string
+          pais_origen: string
+          especificaciones_tecnicas: Json
+          laboratorio_id: string | null
+          certificado_numero: string
+          certificado_fecha_emision: string
+          certificado_vigencia_anos: number
+          fecha_vencimiento: string
+          normas_aplicadas: Json
+          ensayos_realizados: Json
+          resultado_general: string | null
+          requiere_qr: boolean
+          qr_generado: boolean
+          qr_contenido: Json
+          rotulado_completo: boolean
+          vigilancias: Json
+          proxima_vigilancia: string | null
+          estado: string
+          costo_ensayos: number
+          costo_certificacion: number
+          costo_total: number
+          documentos_adjuntos: Json
+          certificado_url: string | null
+          ficha_tecnica_url: string | null
+          manual_usuario_url: string | null
+          metadata: Json
+          notas_internas: string | null
+          is_active: boolean
+          created_at: string
+          updated_at: string
+          created_by: string | null
+          updated_by: string | null
+        }
+        Insert: Omit<Database['public']['Tables']['expedientes_consumo']['Row'], 'id' | 'created_at' | 'updated_at'> & {
+          id?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['expedientes_consumo']['Insert']>
+      }
+      expedientes_epp: {
+        Row: {
+          id: string
+          expediente_id: string | null
+          cliente_id: string | null
+          categoria_riesgo: string
+          tipo_epp: string
+          marca: string
+          modelo: string
+          fabricante: string
+          pais_origen: string
+          descripcion: string | null
+          especificaciones_tecnicas: Json
+          laboratorio_id: string | null
+          certificado_numero: string
+          certificado_tipo: string | null
+          certificado_fecha_emision: string
+          certificado_vigencia_anos: number
+          fecha_vencimiento: string
+          normas_aplicadas: Json
+          ensayos_realizados: Json
+          protecciones_verificadas: Json
+          resultado_general: string | null
+          rotulado_completado: boolean
+          rotulado_datos: Json
+          vigilancias: Json
+          proxima_vigilancia: string | null
+          frecuencia_vigilancia: string
+          estado: string
+          costo_ensayos: number
+          costo_certificacion: number
+          costo_djc: number
+          costo_total: number
+          documentos_adjuntos: Json
+          certificado_url: string | null
+          djc_url: string | null
+          manual_usuario_url: string | null
+          metadata: Json
+          notas_internas: string | null
+          is_active: boolean
+          created_at: string
+          updated_at: string
+          created_by: string | null
+          updated_by: string | null
+        }
+        Insert: Omit<Database['public']['Tables']['expedientes_epp']['Row'], 'id' | 'created_at' | 'updated_at'> & {
+          id?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['expedientes_epp']['Insert']>
+      }
+      expedientes_eficiencia: {
+        Row: {
+          id: string
+          expediente_id: string | null
+          cliente_id: string | null
+          categoria_producto: string
+          marca: string
+          modelo: string
+          fabricante: string
+          pais_origen: string
+          año_modelo: number | null
+          descripcion: string | null
+          especificaciones_tecnicas: Json
+          consumo_energetico: number
+          unidad_consumo: string
+          indicador_eficiencia: string | null
+          valor_indicador: number | null
+          clase_energetica: string
+          clase_energetica_anterior: string | null
+          percentil_comparativo: number | null
+          potencial_ahorro: number | null
+          laboratorio_id: string | null
+          certificado_numero: string
+          certificado_fecha_emision: string
+          certificado_vigencia_anos: number
+          fecha_vencimiento: string
+          normas_aplicadas: Json
+          metodologia_ensayo: string | null
+          ensayos_realizados: Json
+          etiqueta_generada: boolean
+          etiqueta_datos: Json
+          ficha_informacion: Json
+          qr_incluido: boolean
+          qr_codigo: string | null
+          registrado_base_datos: boolean
+          fecha_registro: string | null
+          codigo_acceso_publico: string | null
+          enlace_portal_dnrt: string | null
+          vigilancias: Json
+          proxima_vigilancia: string | null
+          estado: string
+          costo_ensayos: number
+          costo_certificacion: number
+          costo_etiquetado: number
+          costo_total: number
+          documentos_adjuntos: Json
+          certificado_url: string | null
+          informe_ensayos_url: string | null
+          etiqueta_url: string | null
+          ficha_informacion_url: string | null
+          metadata: Json
+          notas_internas: string | null
+          is_active: boolean
+          created_at: string
+          updated_at: string
+          created_by: string | null
+          updated_by: string | null
+        }
+        Insert: Omit<Database['public']['Tables']['expedientes_eficiencia']['Row'], 'id' | 'created_at' | 'updated_at'> & {
+          id?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['expedientes_eficiencia']['Insert']>
+      }
+      expedientes_electromecanico: {
+        Row: {
+          id: string
+          expediente_id: string | null
+          cliente_id: string | null
+          tipo_regulacion: string
+          tipo_producto: string
+          marca: string
+          modelo: string
+          fabricante: string
+          pais_origen: string
+          descripcion: string | null
+          especificaciones_tecnicas: Json
+          laboratorio_id: string | null
+          certificado_numero: string
+          certificado_tipo: string | null
+          certificado_fecha_emision: string
+          certificado_vigencia_anos: number
+          fecha_vencimiento: string
+          normas_aplicadas: Json
+          ensayos_realizados: Json
+          protecciones_verificadas: Json
+          resultado_general: string | null
+          rotulado_completado: boolean
+          rotulado_datos: Json
+          ficha_argentina: boolean
+          ficha_tipo: string | null
+          es_repuesto_insumo: boolean
+          repuesto_bien_final_id: string | null
+          consulta_tecnica_dnrt: Json
+          vigilancias: Json
+          proxima_vigilancia: string | null
+          estado: string
+          es_certificado_anterior: boolean
+          certificacion_anterior_tipo: string | null
+          certificacion_anterior_vencimiento: string | null
+          costo_ensayos: number
+          costo_certificacion: number
+          costo_djc: number
+          costo_total: number
+          documentos_adjuntos: Json
+          certificado_url: string | null
+          djc_url: string | null
+          manual_usuario_url: string | null
+          esquema_electrico_url: string | null
+          metadata: Json
+          notas_internas: string | null
+          is_active: boolean
+          created_at: string
+          updated_at: string
+          created_by: string | null
+          updated_by: string | null
+        }
+        Insert: Omit<Database['public']['Tables']['expedientes_electromecanico']['Row'], 'id' | 'created_at' | 'updated_at'> & {
+          id?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['expedientes_electromecanico']['Insert']>
+      }
       organismos: {
         Row: {
           id: string

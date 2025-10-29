@@ -34,6 +34,10 @@ import { ClienteExpedientesDashboard } from './pages/Clientes/ClienteDashboardEx
 import { CasosLegalesList } from './pages/CasosLegales/CasosLegalesList';
 import { CasoLegalDetail } from './pages/CasosLegales/CasoLegalDetail';
 import ModuloFinancieroContable from './pages/Finanzas/ModuloFinancieroContable';
+import { ConsumoManager } from './pages/ModulosNormativos/ConsumoManager';
+import { EPPManager } from './pages/ModulosNormativos/EPPManager';
+import { EficienciaManager } from './pages/ModulosNormativos/EficienciaManager';
+import { ElectromecanicoManager } from './pages/ModulosNormativos/ElectromecanicoManager';
 import { SGTProvider } from './context/SGTContext';
 import { startAutomations } from './services/AutomationService';
 import { Toaster } from '@/components/ui/toaster';
@@ -100,6 +104,10 @@ const AppContent: React.FC = () => {
         <Route path="/admin/usuarios" element={<Layout><GestionUsuarios /></Layout>} />
         <Route path="/despachantes/portal" element={<Layout><PortalDespachante /></Layout>} />
         <Route path="/finanzas" element={<Layout><ModuloFinancieroContable /></Layout>} />
+        <Route path="/modulos/consumo" element={<Layout><ConsumoManager /></Layout>} />
+        <Route path="/modulos/epp" element={<Layout><EPPManager /></Layout>} />
+        <Route path="/modulos/eficiencia" element={<Layout><EficienciaManager /></Layout>} />
+        <Route path="/modulos/electromecanico" element={<Layout><ElectromecanicoManager /></Layout>} />
       </Routes>
     </Router>
   );

@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { usePermissions } from '@/hooks/usePermissions';
-import { 
-  Home, 
-  FileText, 
-  BookOpen, 
-  Users, 
-  BarChart3, 
+import {
+  Home,
+  FileText,
+  BookOpen,
+  Users,
+  BarChart3,
   Bell,
   Settings,
   Building2,
@@ -19,7 +19,11 @@ import {
   Calculator,
   Receipt,
   Briefcase,
-  ChevronRight
+  ChevronRight,
+  Zap,
+  Lightbulb,
+  ShoppingCart,
+  HardHat
 } from 'lucide-react';
 
 interface NavigationSubItem {
@@ -80,6 +84,16 @@ const navigationModules: NavigationModule[] = [
     permission: 'ver_todos_clientes',
     items: [
       { name: 'Clientes', href: '/clientes', permission: 'ver_todos_clientes' },
+    ]
+  },
+  {
+    name: 'Módulos Normativos',
+    icon: Shield,
+    items: [
+      { name: 'Productos de Consumo', href: '/modulos/consumo' },
+      { name: 'EPP', href: '/modulos/epp' },
+      { name: 'Eficiencia Energética', href: '/modulos/eficiencia' },
+      { name: 'Electromecánico', href: '/modulos/electromecanico' },
     ]
   },
   {
